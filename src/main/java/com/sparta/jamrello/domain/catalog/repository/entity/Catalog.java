@@ -35,6 +35,7 @@ public class Catalog extends TimeStamp {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     @ColumnDefault("false")
     private boolean status;
 
@@ -42,7 +43,7 @@ public class Catalog extends TimeStamp {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @OneToMany(mappedBy = "column", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Card> cards;
 
     @Builder

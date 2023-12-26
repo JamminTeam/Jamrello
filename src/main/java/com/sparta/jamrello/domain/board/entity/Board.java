@@ -37,13 +37,13 @@ public class Board extends TimeStamp {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
+    @ColumnDefault("'#ffffff'")
     private String backgroundColor;
 
     @ColumnDefault("false")
     private boolean status;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Catalog> catalogList = new ArrayList<>();
 
     @OneToMany(mappedBy = "board")
