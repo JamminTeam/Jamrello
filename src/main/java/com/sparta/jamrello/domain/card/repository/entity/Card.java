@@ -60,10 +60,10 @@ public class Card extends TimeStamp {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime dueDay;
 
-    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "cardcollaborator", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CardCollaborator> cardCollaborators = new ArrayList<>();
 
     @Builder

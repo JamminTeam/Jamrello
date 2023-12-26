@@ -42,7 +42,7 @@ public class Catalog extends TimeStamp {
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @OneToMany(mappedBy = "column", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "catalog", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Card> cards;
 
     @Builder
