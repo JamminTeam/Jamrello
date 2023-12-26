@@ -35,14 +35,15 @@ public class Catalog extends TimeStamp {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     @ColumnDefault("false")
     private boolean status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private Board board;
 
-    @OneToMany(mappedBy = "catalog", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Card> cards;
 
     @Builder

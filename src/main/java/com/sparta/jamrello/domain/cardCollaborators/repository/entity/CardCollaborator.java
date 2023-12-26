@@ -20,10 +20,10 @@ public class CardCollaborator {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", referencedColumnName = "id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "card_id", referencedColumnName = "id")
+    @JoinColumn(name = "card_id")
     private Card card;
 }
