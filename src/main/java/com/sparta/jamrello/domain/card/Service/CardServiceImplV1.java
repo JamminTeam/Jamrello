@@ -1,7 +1,8 @@
 package com.sparta.jamrello.domain.card.Service;
 
+import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CreateCardRequestDto;
-import com.sparta.jamrello.domain.card.dto.response.CreateCardResponseDto;
+import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.card.repository.CardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
@@ -13,8 +14,10 @@ import com.sparta.jamrello.global.dto.BaseResponse;
 import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,18 +28,38 @@ public class CardServiceImplV1 implements CardService {
     private final MemberRepository memberRepository;
 
     @Override
-    public ResponseEntity<BaseResponse> createCard(Long catalogId, Long memberId,
+    public ResponseEntity<BaseResponse<CardResponseDto>> createCard(Long catalogId,
+        Long memberId,
         CreateCardRequestDto requestDto) {
         Catalog catalog = findCatalog(catalogId);
         Member member = findMember(memberId);
 
         Card card = cardRepository.save(requestDto.toEntity(member, catalog));
 
-        return ResponseEntity.status(200).body(
-            new BaseResponse(
-                ResponseCode.CREATED_CARD.getMessage(),
-                ResponseCode.CREATED_CARD.getHttpStatus(),
-                new CreateCardResponseDto(card.getTitle()))
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+            BaseResponse.of(ResponseCode.CREATED_CARD, new CardResponseDto(card.getTitle()))
+        );
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<BaseResponse<CardResponseDto>> updateCard(Long cardId,
+        Long memberId,
+        CardRequestDto requestDto) {
+        Card card = findCard(cardId);
+        checkMember(memberId, card);
+        card.update(requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.UPDATE_CARD, new CardResponseDto(
+                card.getTitle(), card.getMember().getNickname(), card.getDescription(),
+                card.getBackgroundColor()))
+        );
+    }
+
+    private Card findCard(Long id) {
+        return cardRepository.findById(id).orElseThrow(() ->
+            new BisException(ErrorCode.NOT_FOUND_CARD)
         );
     }
 
@@ -50,5 +73,11 @@ public class CardServiceImplV1 implements CardService {
         return memberRepository.findById(id).orElseThrow(() ->
             new BisException(ErrorCode.NOT_FOUND_MEMBER)
         );
+    }
+
+    private void checkMember(Long id, Card card) {
+        if (!id.equals(card.getMember().getId())) {
+            throw new BisException(ErrorCode.REJECTED_EXECUSION);
+        }
     }
 }

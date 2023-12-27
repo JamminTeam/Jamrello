@@ -1,5 +1,6 @@
 package com.sparta.jamrello.domain.card.repository.entity;
 
+import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
 import com.sparta.jamrello.domain.comment.repository.Comment;
@@ -79,4 +80,9 @@ public class Card extends TimeStamp {
         this.catalog = catalog;
     }
 
+    public void update(CardRequestDto requestDto) {
+        this.title = requestDto.title();
+        this.description = requestDto.description();
+        this.backgroundColor = requestDto.backgroundColor();
+    }
 }
