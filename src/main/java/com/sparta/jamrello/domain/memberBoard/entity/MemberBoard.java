@@ -1,4 +1,4 @@
-package com.sparta.jamrello.global.entity;
+package com.sparta.jamrello.domain.memberBoard.entity;
 
 import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
@@ -32,4 +32,14 @@ public class MemberBoard {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private MemberBoardRoleEnum role;
+
+    public MemberBoard(Member member, Board board, MemberBoardRoleEnum memberBoardRoleEnum) {
+        this.member = member;
+        this.board = board;
+        this.role = memberBoardRoleEnum;
+    }
+
+    public void updateRole(MemberBoardRoleEnum role) {
+        this.role = role;
+    }
 }
