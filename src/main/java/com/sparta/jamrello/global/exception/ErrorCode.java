@@ -44,7 +44,10 @@ public enum ErrorCode {
 
     DUPLICATE_EMAIL(CONFLICT, "중복된 Email 입니다"),
 
-    DUPLICATE_USERNAME_AND_EMAIL(CONFLICT, "중복된 Username 혹은 Email 입니다.")
+    DUPLICATE_USERNAME_AND_EMAIL(CONFLICT, "중복된 Username 혹은 Email 입니다."),
+
+    // 그외 예외
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
 
     ;
 
