@@ -1,6 +1,7 @@
 package com.sparta.jamrello.domain.member.controller;
 
 import com.sparta.jamrello.domain.member.dto.EmailRequestDto;
+import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
 import com.sparta.jamrello.domain.member.service.MemberServiceImpl;
 import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
@@ -50,6 +51,34 @@ public class MemberController {
         ResponseCode.SEND_MAIL.getHttpStatus(),
         emailRequestDto
     ));
+  }
+
+  @PostMapping("/signup")
+  public ResponseEntity<BaseResponse> signupMember (
+      @Valid @RequestBody SignupRequestDto signupRequestDto,
+      BindingResult bindingResult
+  ) {
+    // Validation 예외처리
+    List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+    if (fieldErrors.size() > 0) {
+      for (FieldError fieldError : bindingResult.getFieldErrors()) {
+        log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
+      }
+      return ResponseEntity.status(ErrorCode.INVALID_VALUE.getStatus()).body(
+          new BaseResponse(
+              ErrorCode.INVALID_VALUE.getMsg(),
+              ErrorCode.INVALID_VALUE.getStatus().value(),
+              ""
+          ));
+    }
+
+    memberService.signup(signupRequestDto);
+    return ResponseEntity.status(201).body(
+        new BaseResponse(
+            ResponseCode.SIGNUP.getMessage(),
+            ResponseCode.SIGNUP.getHttpStatus(),
+            ""
+        ));
   }
 
 }
