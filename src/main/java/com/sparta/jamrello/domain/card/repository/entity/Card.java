@@ -1,6 +1,5 @@
 package com.sparta.jamrello.domain.card.repository.entity;
 
-import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
 import com.sparta.jamrello.domain.comment.repository.Comment;
@@ -63,17 +62,17 @@ public class Card extends TimeStamp {
     private LocalDateTime dueDay;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CardCollaborator> cardCollaborators = new ArrayList<>();
+    private List<CardCollaborator> cardCollaboratorList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
     @Builder
-    public Card(String title, String description, Member member, Board board, Catalog catalog) {
+    public Card(String title, String description, Member member, Catalog catalog) {
         this.title = title;
         this.description = description;
         this.member = member;
