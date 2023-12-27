@@ -1,7 +1,7 @@
 package com.sparta.jamrello.domain.card.repository.entity;
 
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
-import com.sparta.jamrello.domain.comment.repository.Comment;
+import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.global.time.TimeStamp;
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import jakarta.persistence.CascadeType;
@@ -61,7 +61,7 @@ public class Card extends TimeStamp {
     private LocalDateTime dueDay;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CardCollaborator> cardCollaborators = new ArrayList<>();

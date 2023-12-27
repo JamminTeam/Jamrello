@@ -1,8 +1,6 @@
 package com.sparta.jamrello.domain.comment.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -11,15 +9,10 @@ import com.sparta.jamrello.JamrelloApplication;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
-import com.sparta.jamrello.domain.comment.service.CommentService.CommentService;
+import com.sparta.jamrello.domain.comment.service.CommentService;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
-import com.sparta.jamrello.global.dto.BaseResponse;
-import com.sparta.jamrello.global.exception.BisException;
-import com.sparta.jamrello.global.exception.ErrorCode;
 import com.sparta.jamrello.global.security.UserDetailsImpl;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,10 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -78,7 +69,7 @@ class CommentControllerTest {
     public void createCommentTest() throws Exception {
 
         CommentRequestDto commentRequestDto = new CommentRequestDto("test comment");
-        Comment comment = commentRequestDto.toEntity(testMember, card);
+        Comment comment = Comment.createCommentOf(commentRequestDto.content(), testMember, card);
 
         given(commentService.createComment(testMember.getId(), card.getId(), commentRequestDto))
             .willReturn(comment);
