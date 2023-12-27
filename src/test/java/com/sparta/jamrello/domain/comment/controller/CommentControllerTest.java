@@ -31,6 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -52,8 +53,15 @@ class CommentControllerTest {
     @BeforeEach
     public void setUp() {
 
-        // Mock 테스트 UserDetails 생성
         testMember = new Member("testUser", "password", "nickname", "email@email.com");
+
+//        Authentication authentication = Mockito.mock(Authentication.class);
+//        UserDetailsImpl memberDetails = Mockito.mock(UserDetailsImpl.class);
+//        when(authentication.getPrincipal()).thenReturn(memberDetails);
+//        when(memberDetails.getMember()).thenReturn(testMember); // 사용자명 설정
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Mock 테스트 UserDetails 생성
         UserDetailsImpl testUserDetails = new UserDetailsImpl(testMember);
 
         // SecurityContext 에 인증된 사용자 설정
@@ -84,17 +92,9 @@ class CommentControllerTest {
 
             )
             .andExpect(MockMvcResultMatchers.status().is(200))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.msg").value("댓글이 생성되었습니다"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.data").value("test comment"))
             .andReturn();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        String responseString = mvcResult.getResponse().getContentAsString();
-        BaseResponse baseResponse = objectMapper.readValue(responseString, BaseResponse.class);
-
-        // Then
-        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
-        Assertions.assertEquals("댓글이 생성되었습니다", baseResponse.getMsg());
-        Assertions.assertNotNull(baseResponse.getData());
 
     }
 

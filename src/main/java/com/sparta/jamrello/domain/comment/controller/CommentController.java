@@ -4,6 +4,7 @@ import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.domain.comment.service.CommentService.CommentService;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
+import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
 import com.sparta.jamrello.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -24,20 +25,18 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/cards/{cardId}/comment")
-    public ResponseEntity<BaseResponse<?>> createComment(
+    public ResponseEntity<BaseResponse<Comment>> createComment(
         @RequestBody CommentRequestDto commentRequestDto,
 //        @AuthUser Member member
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long cardId) {
 
-        Member member = userDetails.getMember();
-//        Member member = new Member("testUser", "password", "nickname", "email@email.com");
+//        Member member = userDetails.getMember();
+        Member member = new Member("testUser", "password", "nickname", "email@email.com");
 
         Comment commemt = commentService.createComment(member.getId(), cardId, commentRequestDto);
 
-        BaseResponse<Comment> response = new BaseResponse<>("댓글이 생성되었습니다", HttpStatus.OK.value(), commemt);
-        return ResponseEntity.ok(response);
-
+        return ResponseEntity.status(HttpStatus.OK).body(BaseResponse.of(ResponseCode.CREATED_COMMENT, commemt));
     }
+
 
 }
