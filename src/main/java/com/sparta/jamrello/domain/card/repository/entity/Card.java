@@ -36,7 +36,7 @@ public class Card extends TimeStamp {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "catalog_id", referencedColumnName = "id")
+    @JoinColumn(name = "catalog_id")
     private Catalog catalog;
 
     @Column(nullable = false)
@@ -46,7 +46,7 @@ public class Card extends TimeStamp {
 
     private String imageUrl;
 
-    @ColumnDefault("#ffffff")
+    @ColumnDefault("'#ffffff'")
     private String backgroundColor;
 
     @ColumnDefault("false")
