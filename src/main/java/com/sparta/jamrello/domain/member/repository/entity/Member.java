@@ -1,8 +1,9 @@
 package com.sparta.jamrello.domain.member.repository.entity;
 
-import com.sparta.jamrello.global.entity.MemberBoard;
+import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import com.sparta.jamrello.domain.comment.repository.Comment;
+import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
 import com.sparta.jamrello.global.time.TimeStamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -48,6 +49,9 @@ public class Member extends TimeStamp {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberBoard> memberBoards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Card> cards = new ArrayList<>();
 
     @Builder
     public Member(String username, String password, String nickname, String email) {
