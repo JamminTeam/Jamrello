@@ -1,4 +1,4 @@
-//package com.sprta.jamrello.global.annotation;
+//package com.sparta.jamrello.global.annotation;
 //
 //
 //import java.lang.annotation.ElementType;

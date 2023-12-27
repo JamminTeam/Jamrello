@@ -1,13 +1,18 @@
 package com.sparta.jamrello.domain.comment.dto;
 
-import com.sparta.jamrello.domain.comment.repository.Comment;
+import com.sparta.jamrello.domain.card.repository.entity.Card;
+import com.sparta.jamrello.domain.comment.repository.entity.Comment;
+import com.sparta.jamrello.domain.member.repository.entity.Member;
 
 public record CommentRequestDto(
-        String content
+    String content
 ) {
-    public Comment toEntity() {
+
+    public Comment toEntity(Member member, Card card) {
         return Comment.builder()
-                .content(content)
-                .build();
+            .member(member)
+            .card(card)
+            .content(content)
+            .build();
     }
 }

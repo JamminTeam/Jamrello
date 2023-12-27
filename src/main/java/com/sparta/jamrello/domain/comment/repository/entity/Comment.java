@@ -1,4 +1,4 @@
-package com.sparta.jamrello.domain.comment.repository;
+package com.sparta.jamrello.domain.comment.repository.entity;
 
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
@@ -12,10 +12,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
+@Getter
 @Table(name = "comments")
 public class Comment extends TimeStamp {
 
@@ -34,7 +36,9 @@ public class Comment extends TimeStamp {
     private String content;
 
     @Builder
-    public Comment(String content) {
+    public Comment(Member member, Card card, String content) {
+        this.member = member;
+        this.card = card;
         this.content = content;
     }
 }
