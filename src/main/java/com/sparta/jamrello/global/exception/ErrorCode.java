@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
     // 400 BAD_REQUEST
+    INVALID_VALUE(HttpStatus.BAD_REQUEST,"잘못된 입력값입니다."),
 
     // 401 UNAUTHORIZED
     REJECTED_EXECUSION(UNAUTHORIZED, "수정 권한이 없습니다"),

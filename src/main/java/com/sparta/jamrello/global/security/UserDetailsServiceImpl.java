@@ -1,6 +1,7 @@
 package com.sparta.jamrello.global.security;
 
 import com.sparta.jamrello.domain.member.repository.entity.Member;
+
 import com.sparta.jamrello.domain.member.repository.entity.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

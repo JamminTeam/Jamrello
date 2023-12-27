@@ -1,4 +1,4 @@
-package com.sparta.jamrello.global.security;
+package com.sparta.jamrello.global.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,6 +17,7 @@ import java.net.URLDecoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,11 +48,11 @@ public class JwtUtil {
     // 로그 설정
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
-//    private final RefreshTokenRepository refreshTokenRepository;
-//
-//    public JwtUtil(RefreshTokenRepository refreshTokenRepository) {
-//        this.refreshTokenRepository = refreshTokenRepository;
-//    }
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public JwtUtil(RefreshTokenRepository refreshTokenRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
     @PostConstruct
     public void init() {
@@ -60,13 +61,13 @@ public class JwtUtil {
     }
 
     // AccessToken 생성
-    public String createAccessToken(String nickname) {
+    public String createAccessToken(String username) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(nickname) // 사용자 식별자값(ID)
-                        .claim(AUTHORIZATION_KEY, "User")
+                        .setSubject(username) // 사용자 식별자값(ID)
+                        .claim(AUTHORIZATION_KEY, "USER")
                         .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME)) // 만료 시간
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
@@ -74,12 +75,12 @@ public class JwtUtil {
     }
 
     // RefreshToken 생성
-    public String createRefreshToken(String nickname) {
+    public String createRefreshToken(String username) {
         Date date = new Date();
 
         return Jwts.builder()
-                .setSubject(nickname) // 사용자 식별자값(ID)
-                .claim(AUTHORIZATION_KEY, "User")
+                .setSubject(username) // 사용자 식별자값(ID)
+                .claim(AUTHORIZATION_KEY, "USER")
                 .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME)) // 만료 시간
                 .setIssuedAt(date) // 발급일
                 .signWith(key, signatureAlgorithm) // 암호화 알고리즘
@@ -100,41 +101,41 @@ public class JwtUtil {
         res.addCookie(cookie);
     }
 
-//    // RefreshToken 객체 생성 및 DB 저장
-//    public void saveRefreshJwtToDB(String refreshToken, String nickname) {
-//        // RefreshToken DB에 저장
-//        RefreshToken refreshTokenEntity = RefreshToken.builder()
-//                .refreshToken(refreshToken)
-//                .keyNickname(nickname)
-//                .build();
-//
-//        refreshTokenRepository.save(refreshTokenEntity);
-//    }
+    // RefreshToken 객체 생성 및 DB 저장
+    public void saveRefreshJwtToDB(String refreshToken, String username) {
+        // RefreshToken DB에 저장
+        RefreshToken refreshTokenEntity = RefreshToken.builder()
+                .refreshToken(refreshToken)
+                .keyUsername(username)
+                .build();
 
-//    // RefreshToken DB 중복 조회 검사
-//    public boolean checkTokenDBByToken(String token) {
-//        Claims user = getUserInfoFromToken(token);
-//        try {
-//            Optional<RefreshToken> refreshToken = refreshTokenRepository.findByKeyNickname(user.getSubject());
-//            if (refreshToken.isPresent()) {
-//                return true;
-//            }
-//        } catch (IllegalArgumentException e) {
-//            return false;
-//        }
-//
-//        throw new IllegalArgumentException("존재하지 않는 토큰입니다.");
-//    }
-//
-//    // RefreshToken DB에서 nickname으로 가져오기
-//    public RefreshToken getTokenDBByNickname(String nickname) {
-//        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByKeyNickname(nickname);
-//        if (refreshToken.isPresent()) {
-//            return refreshToken.get();
-//        } else {
-//            throw new NullPointerException();
-//        }
-//    }
+        refreshTokenRepository.save(refreshTokenEntity);
+    }
+
+    // RefreshToken DB 중복 조회 검사
+    public boolean checkTokenDBByToken(String token) {
+        Claims user = getUserInfoFromToken(token);
+        try {
+            Optional<RefreshToken> refreshToken = refreshTokenRepository.findByKeyUsername(user.getSubject());
+            if (refreshToken.isPresent()) {
+                return true;
+            }
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+
+        throw new IllegalArgumentException("존재하지 않는 토큰입니다.");
+    }
+
+    // RefreshToken DB에서 username으로 가져오기
+    public RefreshToken getTokenDBByusername(String username) {
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByKeyUsername(username);
+        if (refreshToken.isPresent()) {
+            return refreshToken.get();
+        } else {
+            throw new NullPointerException();
+        }
+    }
 
 
     // header 에서 JWT 가져오기
