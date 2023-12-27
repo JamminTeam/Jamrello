@@ -8,11 +8,4 @@ public record CommentRequestDto(
     String content
 ) {
 
-    public Comment toEntity(Member member, Card card) {
-        return Comment.builder()
-            .member(member)
-            .card(card)
-            .content(content)
-            .build();
-    }
 }

@@ -1,4 +1,4 @@
-package com.sparta.jamrello.domain.comment.service.CommentService;
+package com.sparta.jamrello.domain.comment.service;
 
 import com.sparta.jamrello.domain.card.repository.CardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
@@ -35,7 +35,7 @@ public class CommentService {
             throw new BisException(ErrorCode.NOT_FOUND_CARD);
         }
 
-        Comment comment = commentRequestDto.toEntity(member.get(), card.get());
+        Comment comment = Comment.createCommentOf(commentRequestDto.content(), member.get(), card.get());
         commentRepository.save(comment);
 
         return comment;
