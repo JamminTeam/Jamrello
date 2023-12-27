@@ -1,5 +1,6 @@
 package com.sparta.jamrello.global.security.jwt;
 
+import com.sparta.jamrello.global.utils.RedisService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -50,8 +51,11 @@ public class JwtUtil {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtUtil(RefreshTokenRepository refreshTokenRepository) {
+    private final RedisService redisService;
+
+    public JwtUtil(RefreshTokenRepository refreshTokenRepository, RedisService redisService) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.redisService = redisService;
     }
 
     @PostConstruct
@@ -125,6 +129,11 @@ public class JwtUtil {
         }
 
         throw new IllegalArgumentException("존재하지 않는 토큰입니다.");
+    }
+
+    // AccessToken 로그아웃 여부 검사
+    public boolean checkTokenAboutLogout(String token) {
+        return redisService.checkExistsValue(token);
     }
 
     // RefreshToken DB에서 username으로 가져오기

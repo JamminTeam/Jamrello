@@ -50,11 +50,19 @@ public class Member extends TimeStamp {
     private List<MemberBoard> memberBoards = new ArrayList<>();
 
     @Builder
-    public Member(String username, String password, String nickname, String email) {
+    private Member(String username, String password, String nickname, String email) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         this.email = email;
     }
 
+    public static Member createMember(String username, String password, String nickname, String email) {
+        return Member.builder().
+            username(username).
+            password(password).
+            nickname(nickname).
+            email(email).
+            build();
+    }
 }

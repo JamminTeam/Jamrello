@@ -17,6 +17,8 @@ public enum ErrorCode {
 
     ACCESS_DENIED(UNAUTHORIZED, "유효하지 못한 토큰입니다."),
 
+LOGOUT_USER(UNAUTHORIZED, "로그아웃한 유저입니다. 다시 로그인해주세요."),
+
     EXPIRED_TOKEN(UNAUTHORIZED, "만료된 토큰입니다. 다시로그인하세요."),
 
     NOT_EXIST_REFRESH_TOKEN(UNAUTHORIZED, "리프레시토큰이 존재하지 않습니다."),

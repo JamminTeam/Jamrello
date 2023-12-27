@@ -3,12 +3,15 @@ package com.sparta.jamrello.global.config;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.jamrello.global.security.CustomLogoutHandler;
 import com.sparta.jamrello.global.security.UserDetailsServiceImpl;
 import com.sparta.jamrello.global.security.jwt.JwtAuthenticationFilter;
 import com.sparta.jamrello.global.security.jwt.JwtAuthorizationFilter;
 import com.sparta.jamrello.global.security.jwt.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -17,6 +20,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
@@ -29,11 +34,15 @@ public class WebSecurityConfig {
 
     private final ObjectMapper objectMapper;
 
-    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration, ObjectMapper objectMapper) {
+    private final CustomLogoutHandler logoutHandler;
+
+    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration, ObjectMapper objectMapper,
+        CustomLogoutHandler logoutHandler) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
         this.authenticationConfiguration = authenticationConfiguration;
         this.objectMapper = objectMapper;
+        this.logoutHandler = logoutHandler;
     }
 
     @Bean
@@ -71,6 +80,15 @@ public class WebSecurityConfig {
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
+        http.logout()
+            .logoutUrl("/api/members/logout")
+            .deleteCookies("refreshtoken")
+                .addLogoutHandler(logoutHandler)
+                    .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK ))
+                        .permitAll();
+
+
+
 
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
@@ -80,4 +98,6 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
+
 }

@@ -53,6 +53,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     return;
                 }
 
+                if (jwtUtil.checkTokenAboutLogout(accessTokenValue)) {
+                    log.error("로그아웃한 유저입니다. 다시 로그인 해주세요");
+                    setResponse(res, ErrorCode.LOGOUT_USER);
+                    return;
+                }
+
             } catch (ExpiredJwtException e) {
                 // 만료된 accessToken 일경우 accessToken 재발급
                 // 쿠키에서 리프레시 토큰가져와서 유효성 검사후  발급

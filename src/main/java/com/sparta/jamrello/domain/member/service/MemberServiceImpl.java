@@ -65,8 +65,8 @@ public class MemberServiceImpl implements MemberService{
     // 비밀번호 암호화
     password = passwordEncoder.encode(password);
 
-    // 새 유저 등록
-    Member member = new Member(username, password, nickname, email);
+    // 새 멤버 등록
+    Member member = Member.createMember(username, password, nickname, email);
     memberRepository.save(member);
   }
 

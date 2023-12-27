@@ -26,7 +26,6 @@ public class MemberController {
 
   private final MemberServiceImpl memberService;
 
-
   @PostMapping("/email")
   public ResponseEntity<BaseResponse> authenticationEmail (
       @Valid @RequestBody EmailRequestDto emailRequestDto,
