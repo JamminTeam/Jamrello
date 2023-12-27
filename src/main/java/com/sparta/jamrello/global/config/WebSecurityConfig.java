@@ -76,7 +76,8 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
-                .requestMatchers("/api/members/**").permitAll()// 회원가입, 로그인요청 인증허가
+                .requestMatchers("/api/members/signup", "/api/members/email", "/api/members/login")
+                .permitAll()// 회원가입, 로그인요청 인증허가
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
@@ -84,8 +85,8 @@ public class WebSecurityConfig {
             .logoutUrl("/api/members/logout")
             .deleteCookies("refreshtoken")
                 .addLogoutHandler(logoutHandler)
-                    .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK ))
-                        .permitAll();
+                    .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK ));
+//                        .permitAll();
 
 
 

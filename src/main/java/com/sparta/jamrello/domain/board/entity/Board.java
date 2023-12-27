@@ -1,8 +1,8 @@
 package com.sparta.jamrello.domain.board.entity;
 
-import com.sparta.jamrello.global.entity.MemberBoard;
 import com.sparta.jamrello.domain.board.dto.request.BoardRequestDto;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
+import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
 import com.sparta.jamrello.global.time.TimeStamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

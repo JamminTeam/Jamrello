@@ -14,6 +14,7 @@ public enum ResponseCode {
     LOGIN(200, "로그인 성공"),
     SUCCESS_REISSUANCETOKEN(200, "토큰이 재발급되었습니다. 다시 시도해주세요."),
     LOGOUT(200, "로그아웃 성공"),
+    GET_MY_PROFILE(200, "회원정보 가져오기 성공"),
     UPDATE_MY_PROFILE(200, "회원정보 수정 완료"),
     WITHDRWA_MEMBER(200, "회원탈퇴 완료"),
 
