@@ -2,7 +2,6 @@ package com.sparta.jamrello.domain.card.controller;
 
 import com.sparta.jamrello.domain.card.Service.CardServiceImplV1;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
-import com.sparta.jamrello.domain.card.dto.request.CreateCardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.global.dto.BaseResponse;
 import com.sparta.jamrello.global.security.UserDetailsImpl;
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,8 +29,17 @@ public class CardController {
         @PathVariable Long boardId,
         @PathVariable Long catalogId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,   // @AuthUser 추후 수정
-        @RequestBody CreateCardRequestDto requestDto) {
+        @RequestBody CardRequestDto requestDto) {
         return cardService.createCard(catalogId, userDetails.getMember().getId(), requestDto);
+    }
+
+    @GetMapping("/{cardId}")
+    public ResponseEntity<BaseResponse<CardResponseDto>> getCard(
+        @PathVariable Long boardId,
+        @PathVariable Long catalogId,
+        @PathVariable Long cardId
+    ) {
+        return cardService.getCard(cardId);
     }
 
     @PatchMapping("/{cardId}")

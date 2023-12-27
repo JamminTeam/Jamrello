@@ -73,9 +73,8 @@ public class Card extends TimeStamp {
     private Member member;
 
     @Builder
-    public Card(String title, String description, Member member, Catalog catalog) {
+    public Card(String title, Member member, Catalog catalog) {
         this.title = title;
-        this.description = description;
         this.member = member;
         this.catalog = catalog;
     }

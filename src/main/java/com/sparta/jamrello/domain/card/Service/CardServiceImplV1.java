@@ -1,7 +1,6 @@
 package com.sparta.jamrello.domain.card.Service;
 
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
-import com.sparta.jamrello.domain.card.dto.request.CreateCardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.card.repository.CardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
@@ -29,14 +28,23 @@ public class CardServiceImplV1 implements CardService {
 
     @Override
     public ResponseEntity<BaseResponse<CardResponseDto>> createCard(Long catalogId, Long memberId,
-        CreateCardRequestDto requestDto) {
+        CardRequestDto requestDto) {
 
         Catalog catalog = findCatalog(catalogId);
         Member member = findMember(memberId);
-        Card card = cardRepository.save(requestDto.toEntity(member, catalog));
+        Card card = Card.builder().title(requestDto.title()).member(member).catalog(catalog)
+            .build();
+        cardRepository.save(card);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
             BaseResponse.of(ResponseCode.CREATED_CARD, new CardResponseDto(card.getTitle()))
+        );
+    }
+
+    public ResponseEntity<BaseResponse<CardResponseDto>> getCard(Long cardId) {
+        Card card = findCard(cardId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.GET_CARD_CONTENT, new CardResponseDto(card.getTitle()))
         );
     }
 
