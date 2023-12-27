@@ -14,4 +14,6 @@ public interface CardService {
 
     ResponseEntity<BaseResponse<CardResponseDto>> updateCard(Long cardId, Long memberId,
         CardRequestDto requestDto);
+
+    ResponseEntity<BaseResponse<String>> deleteCard(Long cardId, Long memberId);
 }

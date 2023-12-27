@@ -28,12 +28,11 @@ public class CardServiceImplV1 implements CardService {
     private final MemberRepository memberRepository;
 
     @Override
-    public ResponseEntity<BaseResponse<CardResponseDto>> createCard(Long catalogId,
-        Long memberId,
+    public ResponseEntity<BaseResponse<CardResponseDto>> createCard(Long catalogId, Long memberId,
         CreateCardRequestDto requestDto) {
+
         Catalog catalog = findCatalog(catalogId);
         Member member = findMember(memberId);
-
         Card card = cardRepository.save(requestDto.toEntity(member, catalog));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -43,17 +42,32 @@ public class CardServiceImplV1 implements CardService {
 
     @Override
     @Transactional
-    public ResponseEntity<BaseResponse<CardResponseDto>> updateCard(Long cardId,
-        Long memberId,
+    public ResponseEntity<BaseResponse<CardResponseDto>> updateCard(Long cardId, Long memberId,
         CardRequestDto requestDto) {
+
         Card card = findCard(cardId);
         checkMember(memberId, card);
         card.update(requestDto);
+        CardResponseDto responseDto = new CardResponseDto(
+            card.getTitle(), card.getMember().getNickname(),
+            card.getDescription(), card.getBackgroundColor()
+        );
 
         return ResponseEntity.status(HttpStatus.OK).body(
-            BaseResponse.of(ResponseCode.UPDATE_CARD, new CardResponseDto(
-                card.getTitle(), card.getMember().getNickname(), card.getDescription(),
-                card.getBackgroundColor()))
+            BaseResponse.of(ResponseCode.UPDATE_CARD, responseDto)
+        );
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<BaseResponse<String>> deleteCard(Long cardId, Long memberId) {
+
+        Card card = findCard(cardId);
+        checkMember(memberId, card);
+        cardRepository.delete(card);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.DELETE_CARD, "")
         );
     }
 
