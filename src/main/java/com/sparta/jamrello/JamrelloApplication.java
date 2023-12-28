@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@SpringBootApplication(exclude = SecurityAutoConfiguration.class)  // 인증기능 구현이 끝날떄까지 비활성화
+@SpringBootApplication
 @EnableJpaAuditing
 public class JamrelloApplication {
 
