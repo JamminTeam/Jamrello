@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,6 +14,9 @@ import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.card.repository.CardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
+import com.sparta.jamrello.domain.cardCollaborators.dto.CardCollaboratorRequestDto;
+import com.sparta.jamrello.domain.cardCollaborators.repository.CardCollaboratorRepository;
+import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
 import com.sparta.jamrello.domain.catalog.repository.entity.CatalogRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
@@ -45,6 +49,9 @@ class CardServiceImplV1Test {
 
     @Mock
     MemberRepository memberRepository;
+
+    @Mock
+    CardCollaboratorRepository cardCollaboratorRepository;
 
     @InjectMocks
     CardServiceImplV1 cardService;
@@ -188,5 +195,54 @@ class CardServiceImplV1Test {
         verify(cardRepository, times(1)).delete(any(Card.class));
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(ResponseCode.DELETE_CARD.getMessage(), response.getBody().getMsg());
+    }
+
+    @Test
+    @DisplayName("작업자 추가 성공")
+    void addCollaboratorTest_success() {
+        // given
+        Member collaborator = new Member("col", "pass", "col", "col@email");
+        CardCollaborator cardCollaborator = new CardCollaborator(collaborator, card);
+        CardCollaboratorRequestDto colRequestDto = new CardCollaboratorRequestDto("col");
+        collaborator.setId(1L);
+
+        when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
+        when(memberRepository.findByUsername(anyString())).thenReturn(Optional.of(collaborator));
+        when(cardCollaboratorRepository.findByCardIdAndMemberId(anyLong(), anyLong()))
+            .thenReturn(Optional.empty());
+        when(cardCollaboratorRepository.save(any(CardCollaborator.class)))
+            .thenReturn(cardCollaborator);
+
+        // when
+        ResponseEntity<BaseResponse<String>> response = cardService.addCollaborator(1L, 1L,
+            colRequestDto);
+
+        // then
+        assertEquals(ResponseCode.ADD_USER.getMessage(), response.getBody().getMsg());
+        assertEquals(collaborator.getId(),
+            card.getCardCollaboratorList().get(0).getMember().getId());
+    }
+
+    @Test
+    @DisplayName("작업자 추가 실패 - 이미 존재하는 작업자")
+    void addCollaboratorTest_alreadyExist() {
+        // given
+        Member collaborator = new Member("col", "pass", "col", "col@email");
+        CardCollaborator cardCollaborator = new CardCollaborator(collaborator, card);
+        CardCollaboratorRequestDto colRequestDto = new CardCollaboratorRequestDto("col");
+        collaborator.setId(1L);
+
+        when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
+        when(memberRepository.findByUsername(anyString())).thenReturn(Optional.of(collaborator));
+        when(cardCollaboratorRepository.findByCardIdAndMemberId(anyLong(), anyLong()))
+            .thenReturn(Optional.of(cardCollaborator));
+
+        // when
+        BisException e = assertThrows(BisException.class, () -> {
+            cardService.addCollaborator(1L, 1L, colRequestDto);
+        });
+
+        // then
+        assertEquals(ErrorCode.ALREADY_EXIST_COLLABORATOR, e.getErrorCode());
     }
 }

@@ -128,6 +128,7 @@ public class CardServiceImplV1 implements CardService {
         CardCollaborator cardCollaborator = CardCollaborator.builder()
             .member(collaborator).card(card).build();
         cardCollaboratorRepository.save(cardCollaborator);
+        card.getCardCollaboratorList().add(cardCollaborator);
 
         return ResponseEntity.status(HttpStatus.OK).body(
             BaseResponse.of(ResponseCode.ADD_USER, "")
