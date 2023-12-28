@@ -1,5 +1,6 @@
 package com.sparta.jamrello.domain.member.service;
 
+import com.sparta.jamrello.domain.member.dto.DeleteMemberRequestDto;
 import com.sparta.jamrello.domain.member.dto.EmailRequestDto;
 import com.sparta.jamrello.domain.member.dto.MemberResponseDto;
 import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
@@ -7,6 +8,7 @@ import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.security.UserDetailsImpl;
+import com.sparta.jamrello.global.security.jwt.RefreshTokenRepository;
 import com.sparta.jamrello.global.utils.EmailService;
 import com.sparta.jamrello.global.utils.RedisService;
 import java.time.Duration;
@@ -22,6 +24,8 @@ public class MemberServiceImpl implements MemberService{
   private static final String AUTH_CODE_PREFIX = "AuthCode ";
 
   private final MemberRepository memberRepository;
+
+  private final RefreshTokenRepository refreshTokenRepository;
 
   private final PasswordEncoder passwordEncoder;
 
@@ -101,6 +105,24 @@ public class MemberServiceImpl implements MemberService{
     return MemberResponseDto.buildMemberResponseDto(member);
   }
 
+  @Override
+  @Transactional
+  public void deleteMember(Long memberId, DeleteMemberRequestDto deleteMemberRequestDto, Member loginMember) {
+    Member member = findUserInDBById(memberId);
+
+    if (!member.getUsername().equals(loginMember.getUsername())) {
+      throw new IllegalArgumentException("본인이 탈퇴 할 수 있습니다.");
+    }
+
+    if (!passwordEncoder.matches(deleteMemberRequestDto.password(), member.getPassword())) {
+      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+    }
+
+    memberRepository.delete(member);
+    refreshTokenRepository.deleteByKeyUsername(member.getUsername());
+
+  }
+
   public void sameMemberInDBByUsername(String username) {
     if (memberRepository.existsUserByUsername(username)) {
       throw new IllegalArgumentException("이미 가입한 유저입니다.");
@@ -119,7 +141,7 @@ public class MemberServiceImpl implements MemberService{
     return member;
   }
 
-  public void sameMemberInDBByEmail(String email) {
+  private void sameMemberInDBByEmail(String email) {
     if (memberRepository.existsUserByEmail(email)) {
       throw new IllegalArgumentException("이미 가입된 이메일이 존재합니다.");
     }

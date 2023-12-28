@@ -77,7 +77,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setStatus(200);
         response.setCharacterEncoding("utf-8");
         PrintWriter writer = response.getWriter();
-        writer.println("200 : Ok");
+        writer.println(" 200 : Ok");
         writer.println("로그인 성공!");
     }
 

@@ -1,11 +1,13 @@
 package com.sparta.jamrello.domain.member.controller;
 
+import com.sparta.jamrello.domain.member.dto.DeleteMemberRequestDto;
 import com.sparta.jamrello.domain.member.dto.EmailRequestDto;
 import com.sparta.jamrello.domain.member.dto.MemberResponseDto;
 import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
 import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.domain.member.service.MemberServiceImpl;
+import com.sparta.jamrello.global.annotation.AuthUser;
 import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
 import com.sparta.jamrello.global.exception.ErrorCode;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -118,8 +121,17 @@ public class MemberController {
     );
   }
 
-
-
+  @DeleteMapping("/{memberId}")
+  public ResponseEntity<BaseResponse> deleteMember (
+      @PathVariable("memberId") Long memberId,
+      @RequestBody DeleteMemberRequestDto deleteMemberRequestDto,
+      @AuthUser Member loginMember
+  ) {
+    memberService.deleteMember(memberId, deleteMemberRequestDto, loginMember);
+    return ResponseEntity.status(ResponseCode.DELETE_USER.getHttpStatus()).body(
+        BaseResponse.of(ResponseCode.DELETE_USER, "")
+    );
+  }
 
 
 
