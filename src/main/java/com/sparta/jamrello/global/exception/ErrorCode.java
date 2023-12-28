@@ -10,11 +10,14 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
     // 400 BAD_REQUEST
+    INVALID_VALUE(HttpStatus.BAD_REQUEST,"잘못된 입력값입니다."),
 
     // 401 UNAUTHORIZED
     REJECTED_EXECUSION(UNAUTHORIZED, "수정 권한이 없습니다"),
 
     ACCESS_DENIED(UNAUTHORIZED, "유효하지 못한 토큰입니다."),
+
+    LOGOUT_USER(UNAUTHORIZED, "로그아웃한 유저입니다. 다시 로그인해주세요."),
 
     EXPIRED_TOKEN(UNAUTHORIZED, "만료된 토큰입니다. 다시로그인하세요."),
 
@@ -43,7 +46,10 @@ public enum ErrorCode {
 
     DUPLICATE_EMAIL(CONFLICT, "중복된 Email 입니다"),
 
-    DUPLICATE_USERNAME_AND_EMAIL(CONFLICT, "중복된 Username 혹은 Email 입니다.")
+    DUPLICATE_USERNAME_AND_EMAIL(CONFLICT, "중복된 Username 혹은 Email 입니다."),
+
+    // 그외 예외
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
 
     ;
 
