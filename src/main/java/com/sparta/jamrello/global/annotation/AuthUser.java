@@ -19,7 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 public @interface AuthUser {
 
 }
-
 /**
  * 시큐리티 완성하시면 주석 풀고 사용하시면 됩니다.
  *
