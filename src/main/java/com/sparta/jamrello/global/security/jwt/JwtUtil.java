@@ -108,10 +108,7 @@ public class JwtUtil {
     // RefreshToken 객체 생성 및 DB 저장
     public void saveRefreshJwtToDB(String refreshToken, String username) {
         // RefreshToken DB에 저장
-        RefreshToken refreshTokenEntity = RefreshToken.builder()
-                .refreshToken(refreshToken)
-                .keyUsername(username)
-                .build();
+        RefreshToken refreshTokenEntity = RefreshToken.createRefreshToken(refreshToken, username);
 
         refreshTokenRepository.save(refreshTokenEntity);
     }

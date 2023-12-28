@@ -7,12 +7,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
+
 @Entity
 @Getter
 @Table(name = "refreshTokens")
-@NoArgsConstructor
-@AllArgsConstructor
 public class RefreshToken extends TimeStamp {
 
   @Id
@@ -25,4 +23,17 @@ public class RefreshToken extends TimeStamp {
 
   @Column(nullable = false)
   private String keyUsername;
+
+  @Builder
+  public RefreshToken (String refreshToken, String keyUsername) {
+    this.refreshToken = refreshToken;
+    this.keyUsername = keyUsername;
+  }
+
+  public static RefreshToken createRefreshToken (String refreshToken, String keyUsername) {
+    return RefreshToken.builder()
+        .refreshToken(refreshToken)
+        .keyUsername(keyUsername)
+        .build();
+  }
 }

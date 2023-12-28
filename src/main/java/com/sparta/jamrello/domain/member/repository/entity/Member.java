@@ -44,13 +44,13 @@ public class Member extends TimeStamp {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CardCollaborator> cardCollaboratorList = new ArrayList<>();
+    private List<CardCollaborator> cardCollaborators = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MemberBoard> memberBoardList = new ArrayList<>();
+    private List<MemberBoard> memberBoards = new ArrayList<>();
 
     @Builder
-    private Member(String username, String password, String nickname, String email) {
+    public Member(String username, String password, String nickname, String email) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
@@ -58,11 +58,12 @@ public class Member extends TimeStamp {
     }
 
     public static Member createMember(String username, String password, String nickname, String email) {
-        return Member.builder().
-            username(username).
-            password(password).
-            nickname(nickname).
-            email(email).
-            build();
+        return Member.builder()
+            .username(username)
+            .password(password)
+            .nickname(nickname)
+            .email(email)
+            .build();
     }
+
 }

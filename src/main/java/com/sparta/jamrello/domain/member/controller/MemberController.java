@@ -44,18 +44,15 @@ public class MemberController {
         log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
       }
       return ResponseEntity.status(ErrorCode.INVALID_VALUE.getStatus()).body(
-          new BaseResponse(ErrorCode.INVALID_VALUE.getMsg(),
+          BaseResponse.of(
+              ErrorCode.INVALID_VALUE.getMsg(),
               ErrorCode.INVALID_VALUE.getStatus().value(),
               emailRequestDto
           ));
     }
 
     memberService.sendCodeToEmail(emailRequestDto);
-    return ResponseEntity.ok().body(new BaseResponse(
-        ResponseCode.SEND_MAIL.getMessage(),
-        ResponseCode.SEND_MAIL.getHttpStatus(),
-        emailRequestDto
-    ));
+    return ResponseEntity.ok().body(BaseResponse.of(ResponseCode.SEND_MAIL, emailRequestDto));
   }
 
   @PostMapping("/signup")
@@ -70,7 +67,7 @@ public class MemberController {
         log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
       }
       return ResponseEntity.status(ErrorCode.INVALID_VALUE.getStatus()).body(
-          new BaseResponse(
+          BaseResponse.of(
               ErrorCode.INVALID_VALUE.getMsg(),
               ErrorCode.INVALID_VALUE.getStatus().value(),
               ""
@@ -78,12 +75,7 @@ public class MemberController {
     }
 
     memberService.signup(signupRequestDto);
-    return ResponseEntity.status(201).body(
-        new BaseResponse(
-            ResponseCode.SIGNUP.getMessage(),
-            ResponseCode.SIGNUP.getHttpStatus(),
-            ""
-        ));
+    return ResponseEntity.status(201).body(BaseResponse.of(ResponseCode.SIGNUP, ""));
   }
 
   @GetMapping("/{memberId}")
@@ -93,7 +85,7 @@ public class MemberController {
   ) {
     MemberResponseDto memberResponseDto = memberService.getProfile(memberId, userDetails);
     return ResponseEntity.status(ResponseCode.GET_MY_PROFILE.getHttpStatus()).body(
-        new BaseResponse(ResponseCode.GET_MY_PROFILE.getMessage(), ResponseCode.GET_MY_PROFILE.getHttpStatus(), memberResponseDto)
+        BaseResponse.of(ResponseCode.GET_MY_PROFILE, memberResponseDto)
     );
   }
 

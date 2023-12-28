@@ -50,7 +50,6 @@ public class MemberServiceImpl implements MemberService{
   @Override
   public void signup(SignupRequestDto signupRequestDto) {
     String username = signupRequestDto.username();
-    String password = signupRequestDto.password();
     String nickname = signupRequestDto.nickname();
     String email = signupRequestDto.email();
     String authCode = signupRequestDto.code();
@@ -65,7 +64,7 @@ public class MemberServiceImpl implements MemberService{
     sameMemberInDBByNickname(nickname);
 
     // 비밀번호 암호화
-    password = passwordEncoder.encode(password);
+    String password = passwordEncoder.encode(signupRequestDto.password());
 
     // 새 멤버 등록
     Member member = Member.createMember(username, password, nickname, email);

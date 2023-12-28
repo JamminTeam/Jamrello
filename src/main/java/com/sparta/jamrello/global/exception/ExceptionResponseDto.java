@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 @Getter
-public class ExceptionResponseDto extends RuntimeException{
+public class ExceptionResponseDto {
 
     private final String msg;
     private final HttpStatus status;
