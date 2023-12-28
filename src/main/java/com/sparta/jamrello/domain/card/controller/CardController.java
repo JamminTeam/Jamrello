@@ -2,6 +2,7 @@ package com.sparta.jamrello.domain.card.controller;
 
 import com.sparta.jamrello.domain.card.Service.CardServiceImplV1;
 import com.sparta.jamrello.domain.card.dto.request.CardCatalogRequestDto;
+import com.sparta.jamrello.domain.card.dto.request.CardPositionRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.cardCollaborators.dto.CardCollaboratorRequestDto;
@@ -105,5 +106,17 @@ public class CardController {
         @RequestBody CardCatalogRequestDto requestDto
     ) {
         return cardService.changeCardCatalog(cardId, userDetails.getMember().getId(), requestDto);
+    }
+
+    @PatchMapping("/{cardId}/pos")
+    public ResponseEntity<BaseResponse<String>> updateCardPos(
+        @PathVariable Long boardId,
+        @PathVariable Long catalogId,
+        @PathVariable Long cardId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody CardPositionRequestDto requestDto
+    ) {
+        return cardService.updateCardPos(catalogId, cardId, userDetails.getMember().getId(),
+            requestDto);
     }
 }

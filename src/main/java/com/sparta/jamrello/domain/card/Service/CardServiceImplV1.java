@@ -1,6 +1,7 @@
 package com.sparta.jamrello.domain.card.Service;
 
 import com.sparta.jamrello.domain.card.dto.request.CardCatalogRequestDto;
+import com.sparta.jamrello.domain.card.dto.request.CardPositionRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.card.repository.CardRepository;
@@ -16,6 +17,7 @@ import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
 import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,8 @@ public class CardServiceImplV1 implements CardService {
         Member member = findMember(memberId);
         Card card = Card.builder()
             .title(requestDto.title()).member(member).catalog(catalog).build();
+        card.setPosition((long) (catalog.getCardList().size() + 1));
+
         cardRepository.save(card);
         catalog.getCardList().add(card);
 
@@ -55,7 +59,10 @@ public class CardServiceImplV1 implements CardService {
     public ResponseEntity<BaseResponse<List<CardResponseDto>>> getAllCards(Long catalogId) {
 
         Catalog catalog = findCatalog(catalogId);
+
         List<Card> cardList = catalog.getCardList();
+        cardList.sort(Comparator.comparing(Card::getPosition));
+
         List<CardResponseDto> cardResponseDtoList = cardList.stream()
             .map(card -> new CardResponseDto(
                 card.getTitle(),
@@ -164,6 +171,36 @@ public class CardServiceImplV1 implements CardService {
         );
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<BaseResponse<String>> updateCardPos(Long catalogId, Long cardId,
+        Long memberId, CardPositionRequestDto requestDto) {
+
+        Catalog catalog = findCatalog(catalogId);
+
+        if (requestDto.pos() > catalog.getCardList().size() || requestDto.pos() < 1) {
+            throw new BisException(ErrorCode.POSITION_OVER);
+        }
+
+        Card card = findCard(cardId);
+        checkMember(memberId, card);
+
+        Long currentPos = card.getPosition();
+        Long changePos = requestDto.pos();
+
+        if (changePos > currentPos) {
+            cardRepository.decreasePositionBeforeUpdate(catalogId, currentPos, changePos);
+        } else {
+            cardRepository.increasePositionBeforeUpdate(catalogId, currentPos, changePos);
+        }
+
+        cardRepository.updateCardPosition(cardId, changePos);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.MOVE_CARD_POSITION, "")
+        );
+    }
+
     private Card findCard(Long id) {
         return cardRepository.findById(id).orElseThrow(() ->
             new BisException(ErrorCode.NOT_FOUND_CARD)
@@ -183,9 +220,9 @@ public class CardServiceImplV1 implements CardService {
     }
 
     private void checkMember(Long id, Card card) {
-        // 작업자인 경우에도 조작 가능 로직 추가
-
-        if (!id.equals(card.getMember().getId())) {
+        if (!id.equals(card.getMember().getId()) &&
+            card.getCardCollaboratorList().stream()
+                .noneMatch(collaborator -> id.equals(collaborator.getMember().getId()))) {
             throw new BisException(ErrorCode.REJECTED_EXECUSION);
         }
     }

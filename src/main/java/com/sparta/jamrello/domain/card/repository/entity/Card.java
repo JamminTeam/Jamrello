@@ -25,6 +25,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
@@ -54,6 +55,7 @@ public class Card extends TimeStamp {
     @ColumnDefault("false")
     private boolean status;
 
+    @Setter
     private Long position;
 
     @Column(updatable = false)

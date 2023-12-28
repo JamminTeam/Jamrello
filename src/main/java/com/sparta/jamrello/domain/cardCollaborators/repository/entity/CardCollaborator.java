@@ -12,9 +12,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @Table(name = "card_collaborators")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CardCollaborator {
