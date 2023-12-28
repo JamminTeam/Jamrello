@@ -6,11 +6,9 @@ import static org.mockito.Mockito.when;
 
 import com.sparta.jamrello.domain.card.repository.CardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
-import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
-import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
+import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
-import com.sparta.jamrello.domain.member.repository.entity.MemberRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
