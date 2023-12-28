@@ -10,9 +10,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "card_collaborators")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CardCollaborator {
 
     @Id
@@ -26,4 +30,10 @@ public class CardCollaborator {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id")
     private Card card;
+
+    @Builder
+    public CardCollaborator(Member member, Card card) {
+        this.member = member;
+        this.card = card;
+    }
 }

@@ -1,6 +1,10 @@
 package com.sparta.jamrello.global.exception;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +14,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
     // 400 BAD_REQUEST
+    ALREADY_EXIST_COLLABORATOR(BAD_REQUEST, "이미 존재하는 작업자입니다."),
 
     // 401 UNAUTHORIZED
     REJECTED_EXECUSION(UNAUTHORIZED, "수정 권한이 없습니다"),
@@ -38,15 +43,15 @@ public enum ErrorCode {
 
     NOT_FOUND_COMMENT(NOT_FOUND, "해당 댓글을 찾을 수 없습니다"),
 
+    NOT_FOUND_COLLABORATOR(NOT_FOUND, "해당 작업자를 찾을 수 없습니다"),
+
     // 409 CONFLICT
     DUPLICATE_USERNAME(CONFLICT, "중복된 Username 입니다"),
 
     DUPLICATE_EMAIL(CONFLICT, "중복된 Email 입니다"),
 
-    DUPLICATE_USERNAME_AND_EMAIL(CONFLICT, "중복된 Username 혹은 Email 입니다.")
-
-    ;
+    DUPLICATE_USERNAME_AND_EMAIL(CONFLICT, "중복된 Username 혹은 Email 입니다.");
 
     private final HttpStatus status;
     private final String msg;
-    }
+}

@@ -7,7 +7,4 @@ public record CardResponseDto(
     String backgroundColor
 ) {
 
-    public CardResponseDto(String title) {
-        this(title, null, null, null);
-    }
 }

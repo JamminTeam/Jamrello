@@ -54,6 +54,8 @@ public class Card extends TimeStamp {
     @ColumnDefault("false")
     private boolean status;
 
+    private Long position;
+
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startDay;
@@ -83,5 +85,9 @@ public class Card extends TimeStamp {
         this.title = requestDto.title();
         this.description = requestDto.description();
         this.backgroundColor = requestDto.backgroundColor();
+    }
+
+    public void setCatalog(Catalog catalog) {
+        this.catalog = catalog;
     }
 }
