@@ -245,4 +245,44 @@ class CardServiceImplV1Test {
         // then
         assertEquals(ErrorCode.ALREADY_EXIST_COLLABORATOR, e.getErrorCode());
     }
+
+    @Test
+    @DisplayName("작업자 삭제 성공")
+    void deleteCollaboratorTest_success() {
+        // given
+        Member collaborator = new Member("col", "pass", "col", "col@email");
+        CardCollaborator cardCollaborator = new CardCollaborator(collaborator, card);
+        collaborator.setId(1L);
+
+        when(cardCollaboratorRepository.findByCardIdAndMemberId(anyLong(), anyLong()))
+            .thenReturn(Optional.of(cardCollaborator));
+
+        // when
+        ResponseEntity<BaseResponse<String>> response = cardService.deleteCollaborator(1L, 1L, 1L);
+
+        // then
+        verify(cardCollaboratorRepository, times(1))
+            .delete(any(CardCollaborator.class));
+        assertEquals(ResponseCode.DELETE_USER.getMessage(), response.getBody().getMsg());
+    }
+
+    @Test
+    @DisplayName("작업자 삭제 실패 - 존재하지않는 작업자")
+    void deleteCollaboratorTest_notFound() {
+        // given
+        Member collaborator = new Member("col", "pass", "col", "col@email");
+        CardCollaborator cardCollaborator = new CardCollaborator(collaborator, card);
+        collaborator.setId(1L);
+
+        when(cardCollaboratorRepository.findByCardIdAndMemberId(anyLong(), anyLong()))
+            .thenReturn(Optional.empty());
+
+        // when
+        BisException e = assertThrows(BisException.class, () -> {
+            cardService.deleteCollaborator(1L, 1L, 1L);
+        });
+
+        // then
+        assertEquals(ErrorCode.NOT_FOUND_COLLABORATOR, e.getErrorCode());
+    }
 }
