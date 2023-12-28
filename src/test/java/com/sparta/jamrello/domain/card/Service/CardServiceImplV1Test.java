@@ -1,0 +1,192 @@
+package com.sparta.jamrello.domain.card.Service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import com.sparta.jamrello.domain.board.entity.Board;
+import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
+import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
+import com.sparta.jamrello.domain.card.repository.CardRepository;
+import com.sparta.jamrello.domain.card.repository.entity.Card;
+import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
+import com.sparta.jamrello.domain.catalog.repository.entity.CatalogRepository;
+import com.sparta.jamrello.domain.member.repository.entity.Member;
+import com.sparta.jamrello.domain.member.repository.entity.MemberRepository;
+import com.sparta.jamrello.global.constant.ResponseCode;
+import com.sparta.jamrello.global.dto.BaseResponse;
+import com.sparta.jamrello.global.exception.BisException;
+import com.sparta.jamrello.global.exception.ErrorCode;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+
+@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
+class CardServiceImplV1Test {
+
+    @Mock
+    CardRepository cardRepository;
+
+    @Mock
+    CatalogRepository catalogRepository;
+
+    @Mock
+    MemberRepository memberRepository;
+
+    @InjectMocks
+    CardServiceImplV1 cardService;
+
+    Member member;
+    Catalog catalog;
+    Board board;
+    CardRequestDto cardRequestDto;
+    Card card;
+
+    @BeforeEach
+    void setUp() {
+        member = new Member("user1", "password", "user1", "user1@email.com");
+        member.setId(1L);
+        board = new Board();
+        catalog = new Catalog("제목", board);
+        cardRequestDto = new CardRequestDto("제목");
+        card = new Card(cardRequestDto.title(), member, catalog);
+    }
+
+    @Test
+    @DisplayName("카드 생성 성공")
+    void createCardTest_success() {
+        // given
+        when(catalogRepository.findById(anyLong())).thenReturn(Optional.of(catalog));
+        when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
+        when(cardRepository.save(any(Card.class))).thenReturn(card);
+
+        // when
+        ResponseEntity<BaseResponse<CardResponseDto>> response = cardService.createCard(1L, 1L,
+            cardRequestDto);
+
+        // then
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(ResponseCode.CREATED_CARD.getMessage(), response.getBody().getMsg());
+    }
+
+    @Test
+    @DisplayName("카드 생성 실패 - 카탈로그 없음")
+    void createCardTest_NotFoundCatalog() {
+        // given
+        when(catalogRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when
+        BisException e = assertThrows(BisException.class, () -> {
+            cardService.createCard(1L, 1L, cardRequestDto);
+        });
+
+        // then
+        assertEquals(ErrorCode.NOT_FOUND_CATALOG, e.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("카드 생성 실패 - 멤버 없음")
+    void createCardTest_NotFoundMember() {
+        // given
+        when(catalogRepository.findById(anyLong())).thenReturn(Optional.of(catalog));
+        when(memberRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when
+        BisException e = assertThrows(BisException.class, () -> {
+            cardService.createCard(1L, 1L, cardRequestDto);
+        });
+
+        // then
+        assertEquals(ErrorCode.NOT_FOUND_MEMBER, e.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("카드 조회 성공")
+    void getCardTest_success() {
+        // given
+        when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
+
+        // when
+        ResponseEntity<BaseResponse<CardResponseDto>> response = cardService.getCard(1L);
+
+        // then
+        assertEquals(ResponseCode.GET_CARD_CONTENT.getMessage(), response.getBody().getMsg());
+        assertEquals("제목", response.getBody().getData().title());
+    }
+
+    @Test
+    @DisplayName("카드 조회 실패 - 카드 없음")
+    void getCardTest_NotFoundCard() {
+        // given
+        when(cardRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // when
+        BisException e = assertThrows(BisException.class, () -> {
+            cardService.getCard(1L);
+        });
+
+        // then
+        assertEquals(ErrorCode.NOT_FOUND_CARD, e.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("카드 수정 성공")
+    void updateCardTest_success() {
+        // given
+        cardRequestDto = new CardRequestDto("제목 수정", "설명", "#FFFFFF");
+        when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
+
+        // when
+        ResponseEntity<BaseResponse<CardResponseDto>> response = cardService.updateCard(1L, 1L,
+            cardRequestDto);
+
+        // then
+        assertEquals(ResponseCode.UPDATE_CARD.getMessage(), response.getBody().getMsg());
+        assertEquals("제목 수정", response.getBody().getData().title());
+        assertEquals("설명", response.getBody().getData().description());
+    }
+
+    @Test
+    @DisplayName("카드 수정 실패 - 권한 없음")
+    void updateCardTest_rejected() {
+        // given
+        cardRequestDto = new CardRequestDto("제목 수정", "설명", "#FFFFFF");
+        when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
+
+        // when
+        BisException e = assertThrows(BisException.class, () -> {
+            cardService.updateCard(1L, 2L, cardRequestDto);
+        });
+
+        // then
+        assertEquals(ErrorCode.REJECTED_EXECUSION, e.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("카드 삭제 성공")
+    void deleteCardTest() {
+        // given
+        when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
+
+        // when
+        ResponseEntity<BaseResponse<String>> response = cardService.deleteCard(1L, 1L);
+
+        // then
+        verify(cardRepository, times(1)).delete(any(Card.class));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(ResponseCode.DELETE_CARD.getMessage(), response.getBody().getMsg());
+    }
+}
