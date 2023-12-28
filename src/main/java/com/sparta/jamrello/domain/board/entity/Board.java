@@ -34,9 +34,6 @@ public class Board extends TimeStamp {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private String username;
-
     @ColumnDefault("'#ffffff'")
     private String backgroundColor;
 
@@ -51,16 +48,14 @@ public class Board extends TimeStamp {
 
 
     @Builder
-    public Board(String title, String username, String backgroundColor) {
+    public Board(String title, String backgroundColor) {
         this.title = title;
-        this.username = username;
         this.backgroundColor = backgroundColor;
     }
 
     public static Board fromRequestDto(BoardRequestDto requestDto) {
         return Board.builder()
                 .title(requestDto.title())
-                .username(requestDto.username())
                 .backgroundColor(requestDto.backgroundColor())
                 .build();
     }

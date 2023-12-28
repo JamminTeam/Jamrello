@@ -1,6 +1,10 @@
 package com.sparta.jamrello.global.exception;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +14,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
     // 400 BAD_REQUEST
-    INVALID_VALUE(HttpStatus.BAD_REQUEST,"잘못된 입력값입니다."),
+    POSITION_OVER(BAD_REQUEST, "변경할 수 없는 위치입니다"),
+
+    INVALID_VALUE(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다."),
 
     // 401 UNAUTHORIZED
     REJECTED_EXECUSION(UNAUTHORIZED, "수정 권한이 없습니다"),
@@ -49,10 +55,8 @@ public enum ErrorCode {
     DUPLICATE_USERNAME_AND_EMAIL(CONFLICT, "중복된 Username 혹은 Email 입니다."),
 
     // 그외 예외
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
-
-    ;
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");;
 
     private final HttpStatus status;
     private final String msg;
-    }
+}
