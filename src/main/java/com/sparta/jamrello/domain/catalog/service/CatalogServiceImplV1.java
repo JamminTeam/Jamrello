@@ -152,10 +152,10 @@ public class CatalogServiceImplV1 implements CatalogService {
 
         if (changedPos > currentPos) {
             catalogRepository.decreasePositionBeforeUpdate(boardId, currentPos,
-                    changedPos); // 바꿀 위치가 현재 위치보다 크다면 ? between current+1 ~ changed 까지의 모든 것들 /2
+                    changedPos); // 바꿀 위치가 현재 위치보다 크다면 ? between current+1 ~ changed 까지의 모든 것들 -1
         } else {
             catalogRepository.increasePositionBeforeUpdate(boardId, currentPos,
-                    changedPos); // 바꿀 위치가 현재 위치보다 작다면 ? between current-1 ~ changed
+                    changedPos); // 바꿀 위치가 현재 위치보다 작다면 ? between current-1 ~ changed 들 +1
         }
 
         catalogRepository.updateCatalogPosition(catalogId, changedPos);
