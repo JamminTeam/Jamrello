@@ -28,11 +28,9 @@ public class CommentService {
     @Transactional
     public Comment createComment(Long memberId, Long cardId, CommentRequestDto commentRequestDto) {
 
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_MEMBER));
+        Member member = findMember(memberId);
 
-        Card card = cardRepository.findById(cardId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_CARD));
+        Card card = findCard(cardId);
 
         Comment comment = Comment.createCommentOf(commentRequestDto.content(), member, card);
         commentRepository.save(comment);
@@ -41,13 +39,14 @@ public class CommentService {
     }
 
     @Transactional
-    public Comment updateComment(Long commentId, Member member,
+    public Comment updateComment(Long commentId, Long memberId,
         CommentRequestDto commentRequestDto) {
 
-        Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT));
+        Member member = findMember(memberId);
 
-        if (isAuthorizedMember(member, comment)) {
+        Comment comment = findComment(commentId);
+
+        if (!isAuthorizedMember(member, comment)) {
             throw new BisException(ErrorCode.ACCESS_DENIED);
         }
 
@@ -57,12 +56,13 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, Member member) {
+    public void deleteComment(Long commentId, Long memberId) {
 
-        Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT));
+        Comment comment = findComment(commentId);
 
-        if (isAuthorizedMember(member, comment)) {
+        Member member = findMember(memberId);
+
+        if (!isAuthorizedMember(member, comment)) {
             throw new BisException(ErrorCode.ACCESS_DENIED);
         }
 
@@ -80,7 +80,8 @@ public class CommentService {
     }
 
     public List<CommentResponseDto> getComments(Pageable pageable) {
-        List<Comment> commentList = commentRepository.findAllCommentsWithPagination(pageable).getContent();
+        List<Comment> commentList = commentRepository.findAllCommentsWithPagination(pageable)
+            .getContent();
 
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         for (Comment comment : commentList) {
@@ -93,4 +94,20 @@ public class CommentService {
     private boolean isAuthorizedMember(Member member, Comment comment) {
         return comment.getMember().getUsername().equals(member.getUsername());
     }
+
+    private Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    private Card findCard(Long cardId) {
+        return cardRepository.findById(cardId)
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_CARD));
+    }
+
+    private Comment findComment(Long commentId) {
+        return commentRepository.findById(commentId)
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT));
+    }
+
 }

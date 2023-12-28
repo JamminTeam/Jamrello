@@ -5,6 +5,7 @@ import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.domain.comment.service.CommentService;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
+import com.sparta.jamrello.global.annotation.AuthUser;
 import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
 import java.util.List;
@@ -48,13 +49,11 @@ public class CommentController {
     @PatchMapping("/comments/{commentId}")
     public ResponseEntity<BaseResponse<CommentResponseDto>> updateComment(
         @RequestBody CommentRequestDto commentRequestDto,
-//        @AuthUser Member member
+        @AuthUser Member member,
         @PathVariable Long commentId) {
-//        Member member = member.getMember();
-        Member member = new Member("testUser", "password", "nickname", "email@email.com");
 
         CommentResponseDto commentResponseDto = Comment.toCommentResponse(member,
-            commentService.updateComment(commentId, member, commentRequestDto));
+            commentService.updateComment(commentId, member.getId(), commentRequestDto));
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(ResponseCode.UPDATE_COMMENT, commentResponseDto));
@@ -62,23 +61,19 @@ public class CommentController {
 
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<BaseResponse<CommentResponseDto>> deleteComment(
-//        @AuthUser Member member
+        @AuthUser Member member,
         @PathVariable Long commentId) {
 
-//        Member member = member.getMember();
-        Member member = new Member("testUser", "password", "nickname", "email@email.com");
-
-        commentService.deleteComment(commentId, member);
+        commentService.deleteComment(commentId, member.getId());
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(ResponseCode.DELETE_COMMENT, null));
     }
 
     @GetMapping("/comments/{commentId}")
     public ResponseEntity<BaseResponse<CommentResponseDto>> getComment(
-//        @AuthUser Member member
+        @AuthUser Member member,
         @PathVariable Long commentId) {
 
-        Member member = commentService.getMemberByCommentId(commentId);
         CommentResponseDto commentResponseDto = Comment.toCommentResponse(member, commentService.getComment(commentId));
 
         return ResponseEntity.status(HttpStatus.OK)

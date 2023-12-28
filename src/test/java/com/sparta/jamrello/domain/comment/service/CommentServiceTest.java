@@ -51,7 +51,6 @@ class CommentServiceTest {
 
     @BeforeEach
     void setUp() {
-
         member = memberRepository.save(Member.builder()
             .username("testUser")
             .password("password")
@@ -123,7 +122,7 @@ class CommentServiceTest {
         CommentRequestDto updatedCommentRequestDto = new CommentRequestDto("updated comment");
 
         // When
-        Comment updatedComment = commentService.updateComment(comment.getId(), member,
+        Comment updatedComment = commentService.updateComment(comment.getId(), member.getId(),
             updatedCommentRequestDto);
 
         // Then
@@ -138,7 +137,7 @@ class CommentServiceTest {
         Comment commentToDelete = comment;
 
         // When
-        commentService.deleteComment(commentToDelete.getId(), member);
+        commentService.deleteComment(commentToDelete.getId(), member.getId());
 
         // Then
         assertThrows(BisException.class, () -> commentService.getComment(commentToDelete.getId()));
@@ -163,12 +162,12 @@ class CommentServiceTest {
     void test6() {
         // Given
         Comment originalComment = comment;
-        Member unauthorizedMember = Member.createMember("badUser", "password", "badnickname",
-            "bad@bad.com"); // 다른 사용자 정보
+        Member unauthorizedMember = memberRepository.save(Member.createMember("badUser", "password", "badnickname",
+            "bad@bad.com")); // 다른 사용자 정보
 
         // When & Then
         assertThrows(BisException.class,
-            () -> commentService.updateComment(originalComment.getId(), unauthorizedMember,
+            () -> commentService.updateComment(originalComment.getId(), unauthorizedMember.getId(),
                 commentRequestDto));
     }
 
