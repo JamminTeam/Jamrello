@@ -1,8 +1,9 @@
-package com.sparta.jamrello.global.security;
+package com.sparta.jamrello.global.security.jwt;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.jamrello.domain.member.dto.LoginRequestDto;
+import com.sparta.jamrello.global.security.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +23,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/user/login");
+        setFilterProcessesUrl("/api/members/login");
     }
 
     @Override
@@ -48,25 +49,24 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request,
-            HttpServletResponse response, FilterChain chain, Authentication authResult)
-            throws IOException, ServletException {
+        HttpServletResponse response, FilterChain chain, Authentication authResult)
+        throws IOException, ServletException {
         log.info("로그인 성공 및 JWT 생성");
-        String nickname = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-//        UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+        String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
 
-        String accessToken = jwtUtil.createAccessToken(nickname);
+        String accessToken = jwtUtil.createAccessToken(username);
         String refreshToken = "";
 
-//        try {
-//            //  Http 로그인 URL 요청시 토큰저장소 조회 **
-//            RefreshToken refreshTokenIns = jwtUtil.getTokenDBByNickname(nickname);
-//            refreshToken = refreshTokenIns.getRefreshToken();
-//
-//        } catch (NullPointerException e) {
-//            refreshToken = jwtUtil.createRefreshToken(nickname, role);
-//            // RefreshToken DB에 저장
-//            jwtUtil.saveRefreshJwtToDB(refreshToken, nickname);
-//        }
+        try {
+            //  Http 로그인 URL 요청시 토큰저장소 조회 **
+            RefreshToken refreshTokenIns = jwtUtil.getTokenDBByusername(username);
+            refreshToken = refreshTokenIns.getRefreshToken();
+
+        } catch (NullPointerException e) {
+            refreshToken = jwtUtil.createRefreshToken(username);
+            // RefreshToken DB에 저장
+            jwtUtil.saveRefreshJwtToDB(refreshToken, username);
+        }
 
         // RefreshToken 쿠키에 저장
         jwtUtil.addJwtToCookie(refreshToken, response);
