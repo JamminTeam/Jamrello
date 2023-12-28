@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.sparta.jamrello.domain.board.entity.Board;
+import com.sparta.jamrello.domain.card.dto.request.CardCatalogRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.card.repository.CardRepository;
@@ -285,5 +286,25 @@ class CardServiceImplV1Test {
 
         // then
         assertEquals(ErrorCode.NOT_FOUND_COLLABORATOR, e.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("카드 카탈로그 이동 성공")
+    void changeCardCatalogTest() {
+        // given
+        Catalog catalog1 = new Catalog("new catalog", board);
+        catalog1.setId(2L);
+        CardCatalogRequestDto cardCatalogRequestDto = new CardCatalogRequestDto(2L);
+
+        when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
+        when(catalogRepository.findById(anyLong())).thenReturn(Optional.of(catalog1));
+
+        // when
+        ResponseEntity<BaseResponse<String>> response = cardService.changeCardCatalog(1L, 1L,
+            cardCatalogRequestDto);
+
+        // then
+        assertEquals(ResponseCode.MOVE_CARD_POSITION.getMessage(), response.getBody().getMsg());
+        assertEquals(catalog1.getId(), card.getCatalog().getId());
     }
 }
