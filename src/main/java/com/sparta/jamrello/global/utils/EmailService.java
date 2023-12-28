@@ -1,5 +1,6 @@
 package com.sparta.jamrello.global.utils;
 
+import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;
 import com.sparta.jamrello.global.exception.ExceptionResponseDto;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +30,7 @@ public class EmailService {
     } catch (RuntimeException e) {
       log.debug("MailService.sendEmail exception occur toEmail: {}, " +
           "title: {}, text: {}", toEmail, title, text);
-      throw new ExceptionResponseDto(ErrorCode.INTERNAL_SERVER_ERROR);
+      throw new BisException(ErrorCode.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -57,7 +58,7 @@ public class EmailService {
       return builder.toString();
     } catch (NoSuchAlgorithmException e) {
       log.debug("EmailService.createCode() exception occur");
-      throw new ExceptionResponseDto(ErrorCode.INTERNAL_SERVER_ERROR);
+      throw new BisException(ErrorCode.INTERNAL_SERVER_ERROR);
     }
   }
 
