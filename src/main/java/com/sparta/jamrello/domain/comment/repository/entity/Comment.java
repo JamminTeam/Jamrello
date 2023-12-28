@@ -1,5 +1,6 @@
 package com.sparta.jamrello.domain.comment.repository.entity;
 
+import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
 import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
@@ -43,6 +44,10 @@ public class Comment extends TimeStamp {
         this.content = content;
     }
 
+    public void updateComment(CommentRequestDto commentRequestDto) {
+        this.content = commentRequestDto.content();
+    }
+
     public static Comment createCommentOf(String content, Member member, Card card) {
         return Comment.builder()
             .content(content)
@@ -51,8 +56,8 @@ public class Comment extends TimeStamp {
             .build();
     }
 
-    public static CommentResponseDto toCreateCommentResponse(String content) {
-        return new CommentResponseDto(content);
+    public static CommentResponseDto toCommentResponse(Member member, Comment comment) {
+        return new CommentResponseDto(member, comment.getContent(), comment.getCreatedAt());
     }
 
 

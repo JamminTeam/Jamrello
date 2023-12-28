@@ -15,10 +15,8 @@ class CommentTest {
         Card card = Card.builder()
             .title("Test Card")
             .description("Test Description")
-            // 필요한 경우 다른 필드 설정
             .build();
 
-        // Comment 객체 생성
         Comment comment = Comment.builder()
             .member(member)
             .card(card)
