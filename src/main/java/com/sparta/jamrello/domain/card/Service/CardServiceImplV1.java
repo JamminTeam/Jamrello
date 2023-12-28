@@ -42,6 +42,7 @@ public class CardServiceImplV1 implements CardService {
         Card card = Card.builder()
             .title(requestDto.title()).member(member).catalog(catalog).build();
         cardRepository.save(card);
+        catalog.getCardList().add(card);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
             BaseResponse.of(ResponseCode.CREATED_CARD, new CardResponseDto(card.getTitle(),
@@ -54,7 +55,7 @@ public class CardServiceImplV1 implements CardService {
     public ResponseEntity<BaseResponse<List<CardResponseDto>>> getAllCards(Long catalogId) {
 
         Catalog catalog = findCatalog(catalogId);
-        List<Card> cardList = catalog.getCards();
+        List<Card> cardList = catalog.getCardList();
         List<CardResponseDto> cardResponseDtoList = cardList.stream()
             .map(card -> new CardResponseDto(
                 card.getTitle(),

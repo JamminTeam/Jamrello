@@ -87,6 +87,7 @@ class CardServiceImplV1Test {
         // then
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(ResponseCode.CREATED_CARD.getMessage(), response.getBody().getMsg());
+        assertEquals(card.getId(), catalog.getCardList().get(0).getId());
     }
 
     @Test
