@@ -13,6 +13,7 @@ import com.sparta.jamrello.global.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT));
 
-        if (isAuthorizedMember(member, comment)) {
+        if (!isAuthorizedMember(member, comment)) {
             throw new BisException(ErrorCode.ACCESS_DENIED);
         }
 
@@ -62,7 +63,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT));
 
-        if (isAuthorizedMember(member, comment)) {
+        if (!isAuthorizedMember(member, comment)) {
             throw new BisException(ErrorCode.ACCESS_DENIED);
         }
 
@@ -82,10 +83,10 @@ public class CommentService {
     public List<CommentResponseDto> getComments(Pageable pageable) {
         List<Comment> commentList = commentRepository.findAllCommentsWithPagination(pageable).getContent();
 
-        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-        for (Comment comment : commentList) {
-            commentResponseDtoList.add(Comment.toCommentResponse(comment.getMember(), comment));
-        }
+        List<CommentResponseDto> commentResponseDtoList = commentList.stream()
+            .map(comment -> Comment.toCommentResponse(comment.getMember(), comment))
+            .collect(Collectors.toList());
+
         return commentResponseDtoList;
     }
 
