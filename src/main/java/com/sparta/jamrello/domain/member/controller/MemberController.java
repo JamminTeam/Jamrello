@@ -3,6 +3,7 @@ package com.sparta.jamrello.domain.member.controller;
 import com.sparta.jamrello.domain.member.dto.EmailRequestDto;
 import com.sparta.jamrello.domain.member.dto.MemberResponseDto;
 import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
+import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.domain.member.service.MemberServiceImpl;
 import com.sparta.jamrello.global.constant.ResponseCode;
@@ -20,6 +21,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -79,7 +81,7 @@ public class MemberController {
   }
 
   @GetMapping("/{memberId}")
-  public ResponseEntity<BaseResponse> getUser (
+  public ResponseEntity<BaseResponse> getMember (
       @PathVariable("memberId") Long memberId,
       @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
@@ -88,6 +90,34 @@ public class MemberController {
         BaseResponse.of(ResponseCode.GET_MY_PROFILE, memberResponseDto)
     );
   }
+
+  @PutMapping("/{memberId}")
+  public ResponseEntity<BaseResponse> updateMember (
+      @PathVariable("memberId") Long memberId,
+      @RequestBody UpdateMemberRequestDto updateMemberRequestDto,
+      @AuthenticationPrincipal UserDetailsImpl userDetails,
+      BindingResult bindingResult
+  ) {
+    // Validation 예외처리
+    List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+    if (fieldErrors.size() > 0) {
+      for (FieldError fieldError : bindingResult.getFieldErrors()) {
+        log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
+      }
+      return ResponseEntity.status(ErrorCode.INVALID_VALUE.getStatus()).body(
+          BaseResponse.of(
+              ErrorCode.INVALID_VALUE.getMsg(),
+              ErrorCode.INVALID_VALUE.getStatus().value(),
+              ""
+          ));
+    }
+
+    MemberResponseDto memberResponseDto = memberService.updateMember(memberId, updateMemberRequestDto, userDetails);
+    return ResponseEntity.status(ResponseCode.UPDATE_MY_PROFILE.getHttpStatus()).body(
+        BaseResponse.of(ResponseCode.UPDATE_MY_PROFILE, memberResponseDto)
+    );
+  }
+
 
 
 

@@ -3,6 +3,7 @@ package com.sparta.jamrello.domain.member.service;
 import com.sparta.jamrello.domain.member.dto.EmailRequestDto;
 import com.sparta.jamrello.domain.member.dto.MemberResponseDto;
 import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
+import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.security.UserDetailsImpl;
@@ -12,6 +13,7 @@ import java.time.Duration;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -79,6 +81,23 @@ public class MemberServiceImpl implements MemberService{
       throw new IllegalArgumentException("자신의 정보만 조회 할 수 있습니다.");
     }
 
+    return MemberResponseDto.buildMemberResponseDto(member);
+  }
+
+  @Override
+  @Transactional
+  public MemberResponseDto updateMember(
+      Long memberId,
+      UpdateMemberRequestDto updateMemberRequestDto,
+      UserDetailsImpl userDetails
+  ) {
+    Member member = findUserInDBById(memberId);
+
+    if (!member.getUsername().equals(userDetails.getMember().getUsername())) {
+      throw new IllegalArgumentException("자신의 정보만 수정 할 수 있습니다.");
+    }
+
+    member.updateMember(updateMemberRequestDto);
     return MemberResponseDto.buildMemberResponseDto(member);
   }
 
