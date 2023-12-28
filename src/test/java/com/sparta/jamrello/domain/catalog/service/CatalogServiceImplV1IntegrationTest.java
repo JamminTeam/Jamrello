@@ -20,6 +20,7 @@ import com.sparta.jamrello.domain.memberBoard.entity.MemberBoardRoleEnum;
 import com.sparta.jamrello.domain.memberBoard.repository.MemberBoardRepository;
 import com.sparta.jamrello.global.exception.BisException;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -59,21 +60,19 @@ class CatalogServiceImplV1IntegrationTest {
         catalogRepository.deleteAll();
         boardRepository.deleteAll();
         memberBoardRepository.deleteAll();
-
         catalogService = new CatalogServiceImplV1(memberBoardRepository, boardRepository,
-                memberRepository, catalogRepository);
-        member = Member.builder()
-                .username("username")
-                .password("password")
-                .nickname("nickname")
-                .email("email@email.com")
-                .build();
-        member = memberRepository.save(member);
-        board = Board.builder()
-                .title("title")
-                .backgroundColor("#ffffff")
-                .build();
-        board = boardRepository.save(board);
+                catalogRepository);
+        member = memberRepository.save(Member.builder()
+                                             .username("username")
+                                             .password("password")
+                                             .nickname("nickname")
+                                             .email("email@email.com")
+                                             .build());
+
+        board = boardRepository.save(Board.builder()
+                                          .title("title")
+                                          .backgroundColor("#ffffff")
+                                          .build());
     }
 
     @Nested
@@ -179,14 +178,14 @@ class CatalogServiceImplV1IntegrationTest {
             Long catalogId = catalog.getId();
             CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(titleForUpdate);
             // When
-            CatalogResponseDto result = catalogService.updateCatalogTitle(boardId, memberId,
+            CatalogResponseDto actual = catalogService.updateCatalogTitle(boardId, memberId,
                     catalogId, requestDtoForUpdate);
             // Then
-            assertNotNull(result);
-            assertEquals(titleForUpdate, result.title());
-            assertEquals(catalogId, result.id());
-            assertEquals(createdResponseDto.position(), result.position());
-            assertEquals(createdResponseDto.createdAt(), result.createdAt());
+            assertNotNull(actual);
+            assertEquals(titleForUpdate, actual.title());
+            assertEquals(catalogId, actual.id());
+            assertEquals(createdResponseDto.position(), actual.position());
+            assertEquals(createdResponseDto.createdAt(), actual.createdAt());
         }
 
         @Test
@@ -220,14 +219,14 @@ class CatalogServiceImplV1IntegrationTest {
             memberBoardRepository.save(memberBoardSignUp);
 
             // When
-            CatalogResponseDto result = catalogService.updateCatalogTitle(boardId, memberSignUpId,
+            CatalogResponseDto actual = catalogService.updateCatalogTitle(boardId, memberSignUpId,
                     catalogId, requestDtoForUpdate);
             // Then
-            assertNotNull(result);
-            assertEquals(titleForUpdate, result.title());
-            assertEquals(catalogId, result.id());
-            assertEquals(createdResponseDto.position(), result.position());
-            assertEquals(createdResponseDto.createdAt(), result.createdAt());
+            assertNotNull(actual);
+            assertEquals(titleForUpdate, actual.title());
+            assertEquals(catalogId, actual.id());
+            assertEquals(createdResponseDto.position(), actual.position());
+            assertEquals(createdResponseDto.createdAt(), actual.createdAt());
         }
 
         @Test
@@ -358,10 +357,10 @@ class CatalogServiceImplV1IntegrationTest {
                     requestDto);
 
             Member notInvitedMember = Member.builder()
-                    .username("username1")
-                    .email("email1@email.com")
+                    .username("othername")
+                    .email("other@email.com")
                     .password("password")
-                    .nickname("nickname1")
+                    .nickname("othernick")
                     .build();
             memberRepository.save(notInvitedMember);
             MemberBoard notInvitedMemberBoard = new MemberBoard(notInvitedMember, board,
@@ -388,10 +387,10 @@ class CatalogServiceImplV1IntegrationTest {
                     requestDto);
 
             Member notInvitedMember = Member.builder()
-                    .username("username1")
-                    .email("email1@email.com")
+                    .username("othername")
+                    .email("other@email.com")
                     .password("password")
-                    .nickname("nickname1")
+                    .nickname("othernick")
                     .build();
             memberRepository.save(notInvitedMember);
             Long notInvitedMemberId = notInvitedMember.getId();
@@ -420,9 +419,9 @@ class CatalogServiceImplV1IntegrationTest {
                     requestDto);
             // When
             catalogService.deleteCatalog(boardId, memberId, responseDto.id());
-            Optional<Catalog> result = catalogRepository.findById(responseDto.id());
+            Optional<Catalog> actual = catalogRepository.findById(responseDto.id());
             // Then
-            assertFalse(result.isPresent());
+            assertTrue(actual.isEmpty());
         }
 
         @Test
@@ -438,10 +437,10 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
                     requestDto);
             Member notInvitedMember = Member.builder()
-                    .username("username1")
+                    .username("othername")
                     .password("password")
-                    .nickname("nickname1")
-                    .email("email1@email.com")
+                    .nickname("othernick")
+                    .email("other@email.com")
                     .build();
             Member savedMember = memberRepository.save(notInvitedMember);
             MemberBoard notInvitedMemberBoard = new MemberBoard(savedMember, board,
@@ -467,10 +466,10 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
                     requestDto);
             Member notInvitedMember = Member.builder()
-                    .username("username1")
+                    .username("othername")
                     .password("password")
-                    .nickname("nickname1")
-                    .email("email1@email.com")
+                    .nickname("othernick")
+                    .email("other@email.com")
                     .build();
             Member savedMember = memberRepository.save(notInvitedMember);
             // When - Then
@@ -635,10 +634,10 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogResponseDto responseDto3 = catalogService.createCatalog(boardId, memberId,
                     requestDto);
             Member notInvitedMember = Member.builder()
-                    .username("username1")
+                    .username("othername")
                     .password("password")
-                    .nickname("nickname1")
-                    .email("email1@email.com")
+                    .nickname("othernick")
+                    .email("other@email.com")
                     .build();
             Member savedMember = memberRepository.save(notInvitedMember);
             MemberBoard notInvitedMemberBoard = new MemberBoard(savedMember, board,
@@ -670,10 +669,10 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogResponseDto responseDto3 = catalogService.createCatalog(boardId, memberId,
                     requestDto);
             Member notInvitedMember = Member.builder()
-                    .username("username1")
+                    .username("othername")
                     .password("password")
-                    .nickname("nickname1")
-                    .email("email1@email.com")
+                    .nickname("othernick")
+                    .email("other@email.com")
                     .build();
             Member savedMember = memberRepository.save(notInvitedMember);
 

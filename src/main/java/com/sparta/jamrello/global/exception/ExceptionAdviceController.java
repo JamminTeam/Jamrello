@@ -1,5 +1,7 @@
 package com.sparta.jamrello.global.exception;
 
+import static org.springframework.http.HttpStatus.*;
+
 import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -27,25 +29,23 @@ public class ExceptionAdviceController {
     }
 
 
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<ExceptionResponseDto> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-//        BindingResult bindingResult = ex.getBindingResult();
-//        StringBuilder builder = new StringBuilder();
-//        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-//            builder.append(fieldError.getDefaultMessage());
-//        }
-//      return ResponseEntity.status(ex.getStatusCode()).body(
-//            new ExceptionResponseDto(
-//                (HttpStatus) ex.getStatusCode(), builder.toString())
-//        );
-//    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionResponseDto> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException e) {
+        BindingResult bindingResult = e.getBindingResult();
+        String msg = bindingResult.getFieldErrors().get(0).getDefaultMessage();
 
+        return ResponseEntity.status(BAD_REQUEST).body(
+                new ExceptionResponseDto(BAD_REQUEST, msg)
+        );
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionResponseDto> illegalArgumentExceptionHandler(IllegalArgumentException ex) {
+    public ResponseEntity<ExceptionResponseDto> illegalArgumentExceptionHandler(
+            IllegalArgumentException ex) {
         log.error(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN.value()).body(
-            new ExceptionResponseDto(HttpStatus.FORBIDDEN, ex.getMessage())
+        return ResponseEntity.status(FORBIDDEN.value()).body(
+                new ExceptionResponseDto(FORBIDDEN, ex.getMessage())
         );
     }
 

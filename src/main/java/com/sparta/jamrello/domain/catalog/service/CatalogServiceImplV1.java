@@ -2,7 +2,6 @@ package com.sparta.jamrello.domain.catalog.service;
 
 import static com.sparta.jamrello.global.exception.ErrorCode.NOT_FOUND_BOARD;
 import static com.sparta.jamrello.global.exception.ErrorCode.NOT_FOUND_CATALOG;
-import static com.sparta.jamrello.global.exception.ErrorCode.NOT_FOUND_MEMBER;
 import static com.sparta.jamrello.global.exception.ErrorCode.POSITION_OVER;
 import static com.sparta.jamrello.global.exception.ErrorCode.YOUR_NOT_INVITED_BOARD;
 
@@ -13,8 +12,6 @@ import com.sparta.jamrello.domain.catalog.dto.CatalogRequestDto;
 import com.sparta.jamrello.domain.catalog.dto.CatalogResponseDto;
 import com.sparta.jamrello.domain.catalog.repository.CatalogRepository;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
-import com.sparta.jamrello.domain.member.repository.MemberRepository;
-import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
 import com.sparta.jamrello.domain.memberBoard.entity.MemberBoardRoleEnum;
 import com.sparta.jamrello.domain.memberBoard.repository.MemberBoardRepository;
@@ -30,7 +27,6 @@ public class CatalogServiceImplV1 implements CatalogService {
 
     private final MemberBoardRepository memberBoardRepository;
     private final BoardRepository boardRepository;
-    private final MemberRepository memberRepository;
     private final CatalogRepository catalogRepository;
 
 
@@ -43,10 +39,9 @@ public class CatalogServiceImplV1 implements CatalogService {
         Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
                 memberId, boardId);
 
-        if (!memberBoard.isPresent()) {
+        if (memberBoard.isEmpty()) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
-
         if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
@@ -68,10 +63,9 @@ public class CatalogServiceImplV1 implements CatalogService {
         Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
                 memberId, boardId);
 
-        if (!memberBoard.isPresent()) {
+        if (memberBoard.isEmpty()) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
-
         if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
@@ -92,10 +86,10 @@ public class CatalogServiceImplV1 implements CatalogService {
 
         Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
                 memberId, boardId);
-        if (!memberBoard.isPresent()) {
+
+        if (memberBoard.isEmpty()) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
-
         if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
@@ -114,13 +108,14 @@ public class CatalogServiceImplV1 implements CatalogService {
 
         Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
                 memberId, boardId);
-        if (!memberBoard.isPresent()) {
+
+        if (memberBoard.isEmpty()) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
-
         if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
+
         Catalog catalog = findCatalog(catalogId);
         Long currentPos = catalog.getPosition();
 
@@ -142,12 +137,14 @@ public class CatalogServiceImplV1 implements CatalogService {
 
         Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
                 memberId, boardId);
-        if (!memberBoard.isPresent()) {
+
+        if (memberBoard.isEmpty()) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
         if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
+
         Catalog catalog = findCatalog(catalogId);
 
         Long currentPos = catalog.getPosition();
@@ -174,18 +171,6 @@ public class CatalogServiceImplV1 implements CatalogService {
         if (!boardRepository.existsById(boardId)) {
             throw new BisException(NOT_FOUND_BOARD);
         }
-    }
-
-    private Board findBoard(Long boardId) {
-        return boardRepository.findById(boardId).orElseThrow(
-                () -> new BisException(NOT_FOUND_BOARD)
-        );
-    }
-
-    private Member findMember(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new BisException(NOT_FOUND_MEMBER)
-        );
     }
 
     private Catalog findCatalog(Long catalogId) {

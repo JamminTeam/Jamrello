@@ -11,6 +11,7 @@ import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.annotation.AuthUser;
 import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,7 +32,7 @@ public class CatalogController {
     @PostMapping
     public ResponseEntity<BaseResponse<CatalogResponseDto>> createCatalog(
             @PathVariable Long boardId, @AuthUser Member member,
-            @RequestBody CatalogRequestDto requestDto) {
+            @RequestBody @Valid CatalogRequestDto requestDto) {
 
         CatalogResponseDto responseDto = catalogService.createCatalog(boardId, member.getId(),
                 requestDto);
@@ -43,7 +44,7 @@ public class CatalogController {
     @PatchMapping("/{catalogId}")
     public ResponseEntity<BaseResponse<CatalogResponseDto>> updateCatalogTitle(
             @PathVariable Long boardId, @PathVariable Long catalogId, @AuthUser Member member,
-            @RequestBody CatalogRequestDto requestDto) {
+            @RequestBody @Valid CatalogRequestDto requestDto) {
 
         CatalogResponseDto responseDto = catalogService.updateCatalogTitle(boardId, member.getId(),
                 catalogId, requestDto);

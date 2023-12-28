@@ -42,19 +42,18 @@ class CatalogRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        member = Member.builder()
+        member = memberRepository.save(Member.builder()
                 .username("username")
                 .password("password")
                 .nickname("nickname")
                 .email("email@email.com")
-                .build();
-        memberRepository.save(member);
+                .build());
 
-        board = Board.builder()
+
+        board = boardRepository.save(Board.builder()
                 .title("title")
                 .backgroundColor("#ffffff")
-                .build();
-        boardRepository.save(board);
+                .build());
     }
 
     @Nested
