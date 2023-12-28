@@ -20,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(profiles = "test")
 @SpringBootTest
-class CommentServiceTest {
+class CommentServiceImplV1Test {
 
     @Autowired
     private CommentRepository commentRepository;
@@ -32,7 +32,7 @@ class CommentServiceTest {
     private CardRepository cardRepository;
 
     @Autowired
-    private CommentService commentService;
+    private CommentServiceImplV1 commentServiceImplV1;
 
     private CommentRequestDto commentRequestDto;
     private Member member;
@@ -71,7 +71,7 @@ class CommentServiceTest {
         given(commentRepository.save(any(Comment.class))).willAnswer(invocation -> invocation.getArgument(0));
 
         // When
-        Comment result = commentService.createComment(1L, 1L, commentRequestDto);
+        Comment result = commentServiceImplV1.createComment(1L, 1L, commentRequestDto);
 
         // Then
         assertNotNull(result);

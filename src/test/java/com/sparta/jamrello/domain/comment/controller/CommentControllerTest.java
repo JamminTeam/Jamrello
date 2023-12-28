@@ -9,7 +9,7 @@ import com.sparta.jamrello.JamrelloApplication;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
-import com.sparta.jamrello.domain.comment.service.CommentService;
+import com.sparta.jamrello.domain.comment.service.CommentServiceImplV1;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.security.UserDetailsImpl;
 import java.nio.charset.StandardCharsets;
@@ -37,7 +37,7 @@ class CommentControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CommentService commentService;
+    private CommentServiceImplV1 commentServiceImplV1;
 
     private Member testMember;
     private Card card;
@@ -71,7 +71,7 @@ class CommentControllerTest {
         CommentRequestDto commentRequestDto = new CommentRequestDto("test comment");
         Comment comment = Comment.createCommentOf(commentRequestDto.content(), testMember, card);
 
-        given(commentService.createComment(testMember.getId(), card.getId(), commentRequestDto))
+        given(commentServiceImplV1.createComment(testMember.getId(), card.getId(), commentRequestDto))
             .willReturn(comment);
 
         // When

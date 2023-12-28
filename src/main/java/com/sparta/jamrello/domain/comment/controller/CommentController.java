@@ -3,13 +3,12 @@ package com.sparta.jamrello.domain.comment.controller;
 import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
 import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
-import com.sparta.jamrello.domain.comment.service.CommentService;
+import com.sparta.jamrello.domain.comment.service.CommentServiceImplV1;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class CommentController {
 
-    private final CommentService commentService;
+    private final CommentServiceImplV1 commentServiceImplV1;
 
     @PostMapping("/cards/{cardId}/comment")
     public ResponseEntity<BaseResponse<CommentResponseDto>> createComment(
@@ -39,7 +38,7 @@ public class CommentController {
         Member member = new Member("testUser", "password", "nickname", "email@email.com");
 
         CommentResponseDto commentResponseDto = Comment.toCommentResponse(member,
-            commentService.createComment(member.getId(), cardId, commentRequestDto));
+            commentServiceImplV1.createComment(member.getId(), cardId, commentRequestDto));
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(BaseResponse.of(ResponseCode.CREATED_COMMENT, commentResponseDto));
@@ -54,7 +53,7 @@ public class CommentController {
         Member member = new Member("testUser", "password", "nickname", "email@email.com");
 
         CommentResponseDto commentResponseDto = Comment.toCommentResponse(member,
-            commentService.updateComment(commentId, member, commentRequestDto));
+            commentServiceImplV1.updateComment(commentId, member, commentRequestDto));
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(ResponseCode.UPDATE_COMMENT, commentResponseDto));
@@ -68,7 +67,7 @@ public class CommentController {
 //        Member member = member.getMember();
         Member member = new Member("testUser", "password", "nickname", "email@email.com");
 
-        commentService.deleteComment(commentId, member);
+        commentServiceImplV1.deleteComment(commentId, member);
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(ResponseCode.DELETE_COMMENT, null));
     }
@@ -78,8 +77,8 @@ public class CommentController {
 //        @AuthUser Member member
         @PathVariable Long commentId) {
 
-        Member member = commentService.getMemberByCommentId(commentId);
-        CommentResponseDto commentResponseDto = Comment.toCommentResponse(member, commentService.getComment(commentId));
+        Member member = commentServiceImplV1.getMemberByCommentId(commentId);
+        CommentResponseDto commentResponseDto = Comment.toCommentResponse(member, commentServiceImplV1.getComment(commentId));
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(ResponseCode.GET_COMMENT_CONTENT, commentResponseDto));
@@ -89,7 +88,7 @@ public class CommentController {
     public ResponseEntity<BaseResponse<List<CommentResponseDto>>> getCommentList(
         Pageable pageable
     ) {
-        List<CommentResponseDto> comments = commentService.getComments(pageable);
+        List<CommentResponseDto> comments = commentServiceImplV1.getComments(pageable);
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(ResponseCode.GET_COMMENT_CONTENT, comments));
     }
