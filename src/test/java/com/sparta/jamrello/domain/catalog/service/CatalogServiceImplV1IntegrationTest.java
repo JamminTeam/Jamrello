@@ -20,7 +20,6 @@ import com.sparta.jamrello.domain.memberBoard.entity.MemberBoardRoleEnum;
 import com.sparta.jamrello.domain.memberBoard.repository.MemberBoardRepository;
 import com.sparta.jamrello.global.exception.BisException;
 import java.util.Optional;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -178,7 +177,7 @@ class CatalogServiceImplV1IntegrationTest {
             Long catalogId = catalog.getId();
             CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(titleForUpdate);
             // When
-            CatalogResponseDto actual = catalogService.updateCatalogTitle(boardId, memberId,
+            CatalogResponseDto actual = catalogService.updateCatalogTitle(memberId,
                     catalogId, requestDtoForUpdate);
             // Then
             assertNotNull(actual);
@@ -219,7 +218,7 @@ class CatalogServiceImplV1IntegrationTest {
             memberBoardRepository.save(memberBoardSignUp);
 
             // When
-            CatalogResponseDto actual = catalogService.updateCatalogTitle(boardId, memberSignUpId,
+            CatalogResponseDto actual = catalogService.updateCatalogTitle(memberSignUpId,
                     catalogId, requestDtoForUpdate);
             // Then
             assertNotNull(actual);
@@ -259,7 +258,7 @@ class CatalogServiceImplV1IntegrationTest {
             memberBoardRepository.save(memberBoardNotSignUp);
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.updateCatalogTitle(boardId, memberNotSignUpId,
+                    () -> catalogService.updateCatalogTitle(memberNotSignUpId,
                             catalogId, requestDtoForUpdate));
         }
 
@@ -291,7 +290,7 @@ class CatalogServiceImplV1IntegrationTest {
 
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.updateCatalogTitle(boardId, memberNotSignUpId,
+                    () -> catalogService.updateCatalogTitle(memberNotSignUpId,
                             catalogId, requestDtoForUpdate));
         }
     }
@@ -314,7 +313,7 @@ class CatalogServiceImplV1IntegrationTest {
                     requestDto);
 
             // When
-            catalogService.updateCatalogStatus(boardId, memberId, responseDto.id());
+            catalogService.updateCatalogStatus(memberId, responseDto.id());
             Catalog afterCatalog = catalogRepository.findById(responseDto.id()).get();
 
             // Then
@@ -335,8 +334,8 @@ class CatalogServiceImplV1IntegrationTest {
                     requestDto);
 
             // When
-            catalogService.updateCatalogStatus(boardId, memberId, responseDto.id());
-            catalogService.updateCatalogStatus(boardId, memberId, responseDto.id());
+            catalogService.updateCatalogStatus(memberId, responseDto.id());
+            catalogService.updateCatalogStatus(memberId, responseDto.id());
             Catalog afterCatalog = catalogRepository.findById(responseDto.id()).get();
 
             // Then
@@ -369,7 +368,7 @@ class CatalogServiceImplV1IntegrationTest {
             Long notInvitedMemberId = notInvitedMember.getId();
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.updateCatalogStatus(boardId, notInvitedMemberId,
+                    () -> catalogService.updateCatalogStatus(notInvitedMemberId,
                             responseDto.id()));
         }
 
@@ -396,7 +395,7 @@ class CatalogServiceImplV1IntegrationTest {
             Long notInvitedMemberId = notInvitedMember.getId();
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.updateCatalogStatus(boardId, notInvitedMemberId,
+                    () -> catalogService.updateCatalogStatus(notInvitedMemberId,
                             responseDto.id()));
         }
     }
@@ -418,7 +417,7 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
                     requestDto);
             // When
-            catalogService.deleteCatalog(boardId, memberId, responseDto.id());
+            catalogService.deleteCatalog(memberId, responseDto.id());
             Optional<Catalog> actual = catalogRepository.findById(responseDto.id());
             // Then
             assertTrue(actual.isEmpty());
@@ -449,7 +448,7 @@ class CatalogServiceImplV1IntegrationTest {
             // When - Then
 
             assertThrows(BisException.class,
-                    () -> catalogService.deleteCatalog(boardId, savedMember.getId(),
+                    () -> catalogService.deleteCatalog(savedMember.getId(),
                             responseDto.id()));
         }
 
@@ -474,7 +473,7 @@ class CatalogServiceImplV1IntegrationTest {
             Member savedMember = memberRepository.save(notInvitedMember);
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.deleteCatalog(boardId, savedMember.getId(),
+                    () -> catalogService.deleteCatalog(savedMember.getId(),
                             responseDto.id()));
         }
     }
@@ -502,7 +501,7 @@ class CatalogServiceImplV1IntegrationTest {
 
             CatalogPositionRequestDto positionRequestDto = new CatalogPositionRequestDto(2L);
             // When
-            catalogService.updateCatalogPos(boardId, memberId, responseDto1.id(),
+            catalogService.updateCatalogPos(memberId, responseDto1.id(),
                     positionRequestDto);
             // EntityManager를 clear 하기 때문에 한 번 더 컨택스트 환경에 등록
             Catalog catalog1 = catalogRepository.findById(responseDto1.id()).get();
@@ -533,7 +532,7 @@ class CatalogServiceImplV1IntegrationTest {
 
             CatalogPositionRequestDto positionRequestDto = new CatalogPositionRequestDto(2L);
             // When
-            catalogService.updateCatalogPos(boardId, memberId, responseDto3.id(),
+            catalogService.updateCatalogPos(memberId, responseDto3.id(),
                     positionRequestDto);
             // EntityManager를 clear 하기 때문에 한 번 더 컨택스트 환경에 등록
             Catalog catalog1 = catalogRepository.findById(responseDto1.id()).get();
@@ -565,7 +564,7 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogPositionRequestDto positionRequestDto = new CatalogPositionRequestDto(4L);
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.updateCatalogPos(boardId, memberId, responseDto1.id(),
+                    () -> catalogService.updateCatalogPos(memberId, responseDto1.id(),
                             positionRequestDto));
         }
 
@@ -589,7 +588,7 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogPositionRequestDto positionRequestDto = new CatalogPositionRequestDto(0L);
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.updateCatalogPos(boardId, memberId, responseDto1.id(),
+                    () -> catalogService.updateCatalogPos(memberId, responseDto1.id(),
                             positionRequestDto));
         }
 
@@ -613,7 +612,7 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogPositionRequestDto positionRequestDto = new CatalogPositionRequestDto(-1L);
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.updateCatalogPos(boardId, memberId, responseDto1.id(),
+                    () -> catalogService.updateCatalogPos(memberId, responseDto1.id(),
                             positionRequestDto));
         }
 
@@ -647,7 +646,7 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogPositionRequestDto positionRequestDto = new CatalogPositionRequestDto(-1L);
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.updateCatalogPos(boardId, savedMember.getId(),
+                    () -> catalogService.updateCatalogPos(savedMember.getId(),
                             responseDto1.id(),
                             positionRequestDto));
         }
@@ -679,7 +678,7 @@ class CatalogServiceImplV1IntegrationTest {
             CatalogPositionRequestDto positionRequestDto = new CatalogPositionRequestDto(-1L);
             // When - Then
             assertThrows(BisException.class,
-                    () -> catalogService.updateCatalogPos(boardId, savedMember.getId(),
+                    () -> catalogService.updateCatalogPos(savedMember.getId(),
                             responseDto1.id(),
                             positionRequestDto));
         }

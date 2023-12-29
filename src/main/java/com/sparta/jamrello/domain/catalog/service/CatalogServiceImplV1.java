@@ -55,10 +55,11 @@ public class CatalogServiceImplV1 implements CatalogService {
     }
 
     @Override
-    public CatalogResponseDto updateCatalogTitle(Long boardId, Long memberId, Long catalogId,
+    public CatalogResponseDto updateCatalogTitle(Long memberId, Long catalogId,
             CatalogRequestDto requestDto) {
 
-        existsBoard(boardId);
+        Catalog catalog = findCatalog(catalogId);
+        Long boardId = catalog.getBoard().getId();
 
         Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
                 memberId, boardId);
@@ -70,7 +71,6 @@ public class CatalogServiceImplV1 implements CatalogService {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
 
-        Catalog catalog = findCatalog(catalogId);
         catalog.updateCatalogTitle(requestDto);
         Catalog savedCatalog = catalogRepository.save(catalog);
 
@@ -80,7 +80,9 @@ public class CatalogServiceImplV1 implements CatalogService {
 
     @Override
     @Transactional
-    public void updateCatalogStatus(Long boardId, Long memberId, Long catalogId) {
+    public void updateCatalogStatus(Long memberId, Long catalogId) {
+        Catalog catalog = findCatalog(catalogId);
+        Long boardId = catalog.getBoard().getId();
 
         existsBoard(boardId);
 
@@ -94,7 +96,6 @@ public class CatalogServiceImplV1 implements CatalogService {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
 
-        Catalog catalog = findCatalog(catalogId);
         catalog.changeStatus();
 
         catalogRepository.save(catalog);
@@ -102,8 +103,12 @@ public class CatalogServiceImplV1 implements CatalogService {
 
     @Override
     @Transactional
-    public void deleteCatalog(Long boardId, Long memberId, Long catalogId) {
+    public void deleteCatalog(Long memberId, Long catalogId) {
 
+        Catalog catalog = findCatalog(catalogId);
+        Long currentPos = catalog.getPosition();
+
+        Long boardId = catalog.getBoard().getId();
         existsBoard(boardId);
 
         Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
@@ -115,9 +120,6 @@ public class CatalogServiceImplV1 implements CatalogService {
         if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
-
-        Catalog catalog = findCatalog(catalogId);
-        Long currentPos = catalog.getPosition();
 
         catalogRepository.decreasePositionBeforeDelete(boardId, currentPos);
 
@@ -126,29 +128,27 @@ public class CatalogServiceImplV1 implements CatalogService {
 
     @Override
     @Transactional
-    public void updateCatalogPos(Long boardId, Long memberId, Long catalogId,
+    public void updateCatalogPos(Long memberId, Long catalogId,
             CatalogPositionRequestDto requestDto) {
 
-        Board board = findBoardWithCatalog(boardId);
+        Catalog catalog = findCatalog(catalogId);
+        Long boardId = catalog.getBoard().getId();
+        Long currentPos = catalog.getPosition();
+        Long changedPos = (requestDto.pos());
 
-        if (requestDto.pos() > board.getCatalogList().size() || requestDto.pos() < 1) {
+        Board board = findBoardWithCatalog(boardId);
+        if (changedPos > board.getCatalogList().size() || changedPos < 1) {
             throw new BisException(POSITION_OVER);
         }
 
         Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
                 memberId, boardId);
-
         if (memberBoard.isEmpty()) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
         if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
             throw new BisException(YOUR_NOT_INVITED_BOARD);
         }
-
-        Catalog catalog = findCatalog(catalogId);
-
-        Long currentPos = catalog.getPosition();
-        Long changedPos = (requestDto.pos());
 
         if (changedPos > currentPos) {
             catalogRepository.decreasePositionBeforeUpdate(boardId, currentPos,

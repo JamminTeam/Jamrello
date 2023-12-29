@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/boards/{boardId}/catalog")
+@RequestMapping("/api")
 public class CatalogController {
 
     private final CatalogService catalogService;
 
-    @PostMapping
-    public ResponseEntity<BaseResponse<CatalogResponseDto>> createCatalog(
-            @PathVariable Long boardId, @AuthUser Member member,
+    @PostMapping("/boards/{boardId}/catalog")
+    public ResponseEntity<BaseResponse<CatalogResponseDto>> createCatalog(@PathVariable Long boardId,
+            @AuthUser Member member,
             @RequestBody @Valid CatalogRequestDto requestDto) {
 
         CatalogResponseDto responseDto = catalogService.createCatalog(boardId, member.getId(),
@@ -41,39 +41,39 @@ public class CatalogController {
                 .body(BaseResponse.of(ResponseCode.CREATED_CATALOG, responseDto));
     }
 
-    @PatchMapping("/{catalogId}")
+    @PatchMapping("/catalog/{catalogId}")
     public ResponseEntity<BaseResponse<CatalogResponseDto>> updateCatalogTitle(
-            @PathVariable Long boardId, @PathVariable Long catalogId, @AuthUser Member member,
+            @PathVariable Long catalogId, @AuthUser Member member,
             @RequestBody @Valid CatalogRequestDto requestDto) {
 
-        CatalogResponseDto responseDto = catalogService.updateCatalogTitle(boardId, member.getId(),
+        CatalogResponseDto responseDto = catalogService.updateCatalogTitle(member.getId(),
                 catalogId, requestDto);
 
         return ResponseEntity.status(OK)
                 .body(BaseResponse.of(ResponseCode.UPDATE_CATALOG, responseDto));
     }
 
-    @PatchMapping("/{catalogId}/delete")
-    public ResponseEntity<BaseResponse<String>> updateCatalogStatus(@PathVariable Long boardId,
+    @PatchMapping("/catalog/{catalogId}/delete")
+    public ResponseEntity<BaseResponse<String>> updateCatalogStatus(
             @PathVariable Long catalogId, @AuthUser Member member) {
-        catalogService.updateCatalogStatus(boardId, member.getId(), catalogId);
+        catalogService.updateCatalogStatus(member.getId(), catalogId);
 
         return ResponseEntity.status(OK).body(BaseResponse.of(ResponseCode.KEEP_CATALOG, ""));
     }
 
-    @DeleteMapping("/{catalogId}/delete")
-    public ResponseEntity<BaseResponse<String>> deleteCatalog(@PathVariable Long boardId,
+    @DeleteMapping("/catalog/{catalogId}/delete")
+    public ResponseEntity<BaseResponse<String>> deleteCatalog(
             @PathVariable Long catalogId, @AuthUser Member member) {
-        catalogService.deleteCatalog(boardId, member.getId(), catalogId);
+        catalogService.deleteCatalog(member.getId(), catalogId);
 
         return ResponseEntity.status(OK).body(BaseResponse.of(ResponseCode.DELETE_CATALOG, ""));
     }
 
-    @PatchMapping("/{catalogId}/pos")
-    public ResponseEntity<BaseResponse<String>> updateCatalogPos(@PathVariable Long boardId,
+    @PatchMapping("/catalog/{catalogId}/pos")
+    public ResponseEntity<BaseResponse<String>> updateCatalogPos(
             @PathVariable Long catalogId, @RequestBody CatalogPositionRequestDto requestDto,
             @AuthUser Member member) {
-        catalogService.updateCatalogPos(boardId, member.getId(), catalogId, requestDto);
+        catalogService.updateCatalogPos(member.getId(), catalogId, requestDto);
 
         return ResponseEntity.status(OK)
                 .body(BaseResponse.of(ResponseCode.MOVE_CATALOG_POSITION, ""));

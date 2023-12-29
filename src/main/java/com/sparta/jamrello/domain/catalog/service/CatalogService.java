@@ -8,13 +8,13 @@ public interface CatalogService {
 
     CatalogResponseDto createCatalog(Long boardId, Long memberId, CatalogRequestDto requestDto);
 
-    CatalogResponseDto updateCatalogTitle(Long boardId, Long memberId, Long catalogId,
+    CatalogResponseDto updateCatalogTitle(Long memberId, Long catalogId,
             CatalogRequestDto requestDto);
 
-    void updateCatalogStatus(Long boardId, Long memberId, Long catalogId);
+    void updateCatalogStatus(Long memberId, Long catalogId);
 
-    void deleteCatalog(Long boardId, Long memberId, Long catalogId);
+    void deleteCatalog(Long memberId, Long catalogId);
 
-    void updateCatalogPos(Long boardId, Long memberId, Long catalogId,
+    void updateCatalogPos(Long memberId, Long catalogId,
             CatalogPositionRequestDto requestDto);
 }
