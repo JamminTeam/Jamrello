@@ -41,11 +41,11 @@ public class CardServiceImplV1 implements CardService {
         Card card = Card.builder()
             .title(requestDto.title()).member(member).catalog(catalog).build();
 
+        card.setPosition((long) (catalog.getCardList().size() + 1));
         cardRepository.save(card);
         catalog.getCardList().add(card);
-        card.setPosition((long) (catalog.getCardList().size() + 1));
 
-        return new CardResponseDto(card.getTitle(), null, null, null);
+        return new CardResponseDto(card.getId(), card.getTitle(), null, null, null);
     }
 
     @Override
@@ -59,6 +59,7 @@ public class CardServiceImplV1 implements CardService {
 
         return cardList.stream()
             .map(card -> new CardResponseDto(
+                card.getId(),
                 card.getTitle(),
                 card.getMember().getUsername(),
                 card.getDescription(),
@@ -70,7 +71,7 @@ public class CardServiceImplV1 implements CardService {
     @Transactional(readOnly = true)
     public CardResponseDto getCard(Long cardId) {
         Card card = findCard(cardId);
-        return new CardResponseDto(card.getTitle(), null, null, null);
+        return new CardResponseDto(card.getId(), card.getTitle(), null, null, null);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class CardServiceImplV1 implements CardService {
         card.update(requestDto);
 
         return new CardResponseDto(
-            card.getTitle(), card.getMember().getUsername(),
+            card.getId(), card.getTitle(), card.getMember().getUsername(),
             card.getDescription(), card.getBackgroundColor()
         );
     }
@@ -122,7 +123,8 @@ public class CardServiceImplV1 implements CardService {
     public void deleteCollaborator(Long cardId, Long collaboratorId, Long memberId) {
 
         CardCollaborator cardCollaborator = cardCollaboratorRepository.findByCardIdAndMemberId(
-            cardId, memberId).orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COLLABORATOR));
+                cardId, collaboratorId)
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COLLABORATOR));
         cardCollaboratorRepository.delete(cardCollaborator);
     }
 
