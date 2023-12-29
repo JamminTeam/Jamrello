@@ -1,6 +1,6 @@
-package com.sparta.jamrello.domain.memberBoard.repository;
+package com.sparta.jamrello.domain.memberboard.repository;
 
-import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
+import com.sparta.jamrello.domain.memberboard.entity.MemberBoard;
 import java.util.Optional;
 
 public interface MemberBoardQueryRepository {
