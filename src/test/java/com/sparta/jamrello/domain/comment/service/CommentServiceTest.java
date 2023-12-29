@@ -16,6 +16,7 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.BDDMockito.*;
@@ -30,6 +31,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(profiles = "test")
 @SpringBootTest
+@DisplayName("댓글 서비스 통합 테스트")
 class CommentServiceTest {
 
     @Autowired
@@ -78,7 +80,7 @@ class CommentServiceTest {
 
     @Test
     @DisplayName("댓글 생성 테스트")
-    void test1() {
+    void createCommentTest() {
         // Given
         member = memberRepository.save(Member.builder()
             .username("newtestUser")
@@ -102,35 +104,6 @@ class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("댓글 단건 조회 테스트")
-    void test4() {
-        // Given
-        Comment expectedComment = comment;
-
-        // When
-        Comment foundComment = commentService.getComment(expectedComment.getId());
-
-        // Then
-        assertNotNull(foundComment);
-        assertEquals(expectedComment.getId(), foundComment.getId());
-    }
-
-    @Test
-    @DisplayName("댓글 수정 테스트")
-    void test2() {
-        // Given
-        CommentRequestDto updatedCommentRequestDto = new CommentRequestDto("updated comment");
-
-        // When
-        Comment updatedComment = commentService.updateComment(comment.getId(), member.getId(),
-            updatedCommentRequestDto);
-
-        // Then
-        assertNotNull(updatedComment);
-        assertEquals(updatedCommentRequestDto.content(), updatedComment.getContent());
-    }
-
-    @Test
     @DisplayName("댓글 삭제 테스트")
     void test3() {
         // Given
@@ -144,36 +117,41 @@ class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 회원이나 카드 예외")
-    void test5() {
+    @DisplayName("존재하지 않는 회원 예외")
+    void findMember_NOT_FOUND_MEMBER() {
         // Given
         Long invalidMemberId = 999L;
-        Long invalidCardId = 999L;
 
         // When & Then
         assertThrows(BisException.class,
             () -> commentService.createComment(invalidMemberId, card.getId(), commentRequestDto));
+
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 카드 예외")
+    void findCard_NOT_FOUND_CARD() {
+        // Given
+        Long invalidCardId = 999L;
+
+        // When & Then
+        assertThrows(BisException.class,
+            () -> commentService.createComment(member.getId(), invalidCardId, commentRequestDto));
+    }
+    @Test
+    @DisplayName("존재하지 않는 댓글 예외")
+    void findComment_NOT_FOUND_COMMENT() {
+        // Given
+        Long invalidCardId = 999L;
+
+        // When & Then
         assertThrows(BisException.class,
             () -> commentService.createComment(member.getId(), invalidCardId, commentRequestDto));
     }
 
     @Test
-    @DisplayName("허가되지 않는 유저의 수정 시도")
-    void test6() {
-        // Given
-        Comment originalComment = comment;
-        Member unauthorizedMember = memberRepository.save(Member.createMember("badUser", "password", "badnickname",
-            "bad@bad.com")); // 다른 사용자 정보
-
-        // When & Then
-        assertThrows(BisException.class,
-            () -> commentService.updateComment(originalComment.getId(), unauthorizedMember.getId(),
-                commentRequestDto));
-    }
-
-    @Test
-    @DisplayName("commentId로 멤버 찾기")
-    void test7() {
+    @DisplayName("commentId로 멤버 찾기 테스트")
+    void findMemberByCommentIdTest() {
         // Given
         Long commentId = comment.getId();
 
@@ -184,23 +162,79 @@ class CommentServiceTest {
         assertEquals(member.getId(), foundMember.getId());
     }
 
-    @Test
-    @DisplayName("댓글 목록 페이징 적용 Test")
-    void test8() {
-        // Given
-        for (int i = 0; i < 20; i++) {
-            comment = commentRepository.save(
-                Comment.createCommentOf(commentRequestDto.content(), member, card));
+    @Nested
+    @DisplayName("댓글 조회 테스트")
+    class GetComment {
+
+        @Test
+        @DisplayName("댓글 단건 조회 테스트")
+        void getCommentTest() {
+            // Given
+            Comment expectedComment = comment;
+
+            // When
+            Comment foundComment = commentService.getComment(expectedComment.getId());
+
+            // Then
+            assertNotNull(foundComment);
+            assertEquals(expectedComment.getId(), foundComment.getId());
         }
-        int pageSize = 10;
-        Pageable pageable = PageRequest.of(0, pageSize);
 
-        // When
-        List<CommentResponseDto> commentResponseDtoList = commentService.getComments(pageable);
+        @Test
+        @DisplayName("댓글 목록 페이징 적용 Test")
+        void getCommentListWithPagenation() {
+            // Given
+            for (int i = 0; i < 20; i++) {
+                comment = commentRepository.save(
+                    Comment.createCommentOf(commentRequestDto.content(), member, card));
+            }
+            int pageSize = 10;
+            Pageable pageable = PageRequest.of(0, pageSize);
 
-        // Then
-        assertNotNull(commentResponseDtoList);
-        assertEquals(pageSize, commentResponseDtoList.size());
+            // When
+            List<CommentResponseDto> commentResponseDtoList = commentService.getComments(pageable);
+
+            // Then
+            assertNotNull(commentResponseDtoList);
+            assertEquals(pageSize, commentResponseDtoList.size());
+        }
+    }
+
+    @Nested
+    @DisplayName("댓글 수정 테스트")
+    class WhenUpdateComment {
+
+        @Test
+        @DisplayName("댓글 수정 테스트")
+        void updateComment_Success() {
+            // Given
+            CommentRequestDto updatedCommentRequestDto = new CommentRequestDto("updated comment");
+
+            // When
+            Comment updatedComment = commentService.updateComment(comment.getId(), member.getId(),
+                updatedCommentRequestDto);
+
+            // Then
+            assertNotNull(updatedComment);
+            assertEquals(updatedCommentRequestDto.content(), updatedComment.getContent());
+        }
+
+        @Test
+        @DisplayName("허가되지 않는 유저의 수정 시도")
+        void updatedComment_UnAuhorizedMember() {
+            // Given
+            Comment originalComment = comment;
+            Member unauthorizedMember = memberRepository.save(
+                Member.createMember("badUser", "password", "badnickname",
+                    "bad@bad.com")); // 다른 사용자 정보
+
+            // When & Then
+            assertThrows(BisException.class,
+                () -> commentService.updateComment(originalComment.getId(),
+                    unauthorizedMember.getId(),
+                    commentRequestDto));
+        }
+
     }
 
 
