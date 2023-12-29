@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberBoardRepository extends JpaRepository<MemberBoard, Long>,
-        MemberBoardQueryRepository {
+    com.sparta.jamrello.domain.memberboard.repository.MemberBoardQueryRepository {
 
     Optional<MemberBoard> findByMemberAndBoard(Member member, Board board);
 }

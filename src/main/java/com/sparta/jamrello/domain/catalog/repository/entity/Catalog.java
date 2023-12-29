@@ -1,7 +1,6 @@
 package com.sparta.jamrello.domain.catalog.repository.entity;
 
 import com.sparta.jamrello.domain.board.entity.Board;
-import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.catalog.dto.CatalogRequestDto;
 import com.sparta.jamrello.domain.catalog.dto.CatalogResponseDto;
 import com.sparta.jamrello.global.time.TimeStamp;
@@ -23,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "catalogs")
