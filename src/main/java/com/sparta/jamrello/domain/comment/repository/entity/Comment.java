@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.format.DateTimeFormatter;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,6 +49,19 @@ public class Comment extends TimeStamp {
         this.content = content;
     }
 
+    public static Comment createCommentOf(String content, Member member, Card card) {
+        return Comment.builder()
+            .content(content)
+            .member(member)
+            .card(card)
+            .build();
+    }
+
+    public static CommentResponseDto toCommentResponse(Comment comment) {
+        return new CommentResponseDto(comment.getMember().getNickname(), comment.getContent(),
+            comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+    }
+
     public void updateComment(CommentRequestDto commentRequestDto) {
         this.content = commentRequestDto.content();
     }
@@ -58,18 +72,6 @@ public class Comment extends TimeStamp {
 
     public void removeImageUrl(String fileName) {
         this.commentImageUrl = null;
-    }
-
-    public static Comment createCommentOf(String content, Member member, Card card) {
-        return Comment.builder()
-            .content(content)
-            .member(member)
-            .card(card)
-            .build();
-    }
-
-    public static CommentResponseDto toCommentResponse(Comment comment) {
-        return new CommentResponseDto(comment.getContent(), comment.getCreatedAt());
     }
 
 

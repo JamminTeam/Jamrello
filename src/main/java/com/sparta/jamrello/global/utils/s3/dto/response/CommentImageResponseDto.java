@@ -1,6 +1,6 @@
 package com.sparta.jamrello.global.utils.s3.dto.response;
 
-public record CommentImageResponseDto (
+public record CommentImageResponseDto(
     String commentImageUrl
 ) {
 

@@ -8,7 +8,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
 
-    CommentResponseDto createComment(Long memberId, Long cardId, CommentRequestDto commentRequestDto);
+    CommentResponseDto createComment(Long memberId, Long cardId,
+        CommentRequestDto commentRequestDto);
 
     CommentResponseDto updateComment(Long commentId, Long memberId,
         CommentRequestDto commentRequestDto);

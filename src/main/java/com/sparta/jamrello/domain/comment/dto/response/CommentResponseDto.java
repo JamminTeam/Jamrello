@@ -4,8 +4,9 @@ import com.sparta.jamrello.domain.member.repository.entity.Member;
 import java.time.LocalDateTime;
 
 public record CommentResponseDto(
+    String nickname,
     String content,
-    LocalDateTime createdAt
+    String createdAt
 ) {
 
 }
