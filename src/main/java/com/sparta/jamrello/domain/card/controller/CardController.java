@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/boards/{boardId}/catalogs/{catalogId}/cards")
+@RequestMapping("/api/catalogs/{catalogId}/cards")
 @RequiredArgsConstructor
 public class CardController {
 
@@ -30,7 +30,6 @@ public class CardController {
 
     @PostMapping
     public ResponseEntity<BaseResponse<CardResponseDto>> createCard(
-        @PathVariable Long boardId,
         @PathVariable Long catalogId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,   // @AuthUser 추후 수정
         @RequestBody CardRequestDto requestDto) {
@@ -39,7 +38,6 @@ public class CardController {
 
     @GetMapping
     public ResponseEntity<BaseResponse<List<CardResponseDto>>> getAllCards(
-        @PathVariable Long boardId,
         @PathVariable Long catalogId
     ) {
         return cardService.getAllCards(catalogId);
@@ -47,7 +45,6 @@ public class CardController {
 
     @GetMapping("/{cardId}")
     public ResponseEntity<BaseResponse<CardResponseDto>> getCard(
-        @PathVariable Long boardId,
         @PathVariable Long catalogId,
         @PathVariable Long cardId
     ) {
@@ -56,7 +53,6 @@ public class CardController {
 
     @PatchMapping("/{cardId}")
     public ResponseEntity<BaseResponse<CardResponseDto>> updateCard(
-        @PathVariable Long boardId,
         @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,   // @AuthUser 추후 수정
@@ -66,7 +62,6 @@ public class CardController {
 
     @DeleteMapping("/{cardId}")
     public ResponseEntity<BaseResponse<String>> deleteCard(
-        @PathVariable Long boardId,
         @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails   // @AuthUser 추후 수정
@@ -76,7 +71,6 @@ public class CardController {
 
     @PostMapping("/{cardId}/collaborators")
     public ResponseEntity<BaseResponse<String>> addCollaborator(
-        @PathVariable Long boardId,
         @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -87,7 +81,6 @@ public class CardController {
 
     @DeleteMapping("/{cardId}/collaborators/{collaboratorId}")
     public ResponseEntity<BaseResponse<String>> deleteCollaborator(
-        @PathVariable Long boardId,
         @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @PathVariable Long collaboratorId,
@@ -99,7 +92,6 @@ public class CardController {
 
     @PatchMapping("/{cardId}/move")
     public ResponseEntity<BaseResponse<String>> changeCardCatalog(
-        @PathVariable Long boardId,
         @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -110,7 +102,6 @@ public class CardController {
 
     @PatchMapping("/{cardId}/pos")
     public ResponseEntity<BaseResponse<String>> updateCardPos(
-        @PathVariable Long boardId,
         @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,
