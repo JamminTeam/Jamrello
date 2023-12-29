@@ -1,4 +1,4 @@
-package com.sparta.jamrello.domain.memberBoard.entity;
+package com.sparta.jamrello.domain.memberboard.entity;
 
 import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
@@ -13,11 +13,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "member_boards")
 @NoArgsConstructor
+@Getter
 public class MemberBoard {
 
   @Id
@@ -34,16 +36,16 @@ public class MemberBoard {
 
   @Column(nullable = false)
   @Enumerated(value = EnumType.STRING)
-  private MemberBoardRoleEnum role;
+  private com.sparta.jamrello.domain.memberboard.entity.MemberBoardRoleEnum role;
 
   @Builder
-  public MemberBoard(Member member, Board board, MemberBoardRoleEnum memberBoardRoleEnum) {
+  public MemberBoard(Member member, Board board, com.sparta.jamrello.domain.memberboard.entity.MemberBoardRoleEnum memberBoardRoleEnum) {
     this.member = member;
     this.board = board;
     this.role = memberBoardRoleEnum;
   }
 
-  public static MemberBoard createMemberBoard(Member member, Board board, MemberBoardRoleEnum memberBoardRoleEnum) {
+  public static MemberBoard createMemberBoard(Member member, Board board, com.sparta.jamrello.domain.memberboard.entity.MemberBoardRoleEnum memberBoardRoleEnum) {
     return MemberBoard.builder()
         .member(member)
         .board(board)
@@ -51,7 +53,7 @@ public class MemberBoard {
         .build();
   }
 
-  public void updateRole(MemberBoardRoleEnum role) {
+  public void updateRole(com.sparta.jamrello.domain.memberboard.entity.MemberBoardRoleEnum role) {
     this.role = role;
   }
 }

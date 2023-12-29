@@ -4,7 +4,7 @@ import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.board.repository.BoardRepository;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
-import com.sparta.jamrello.domain.memberBoard.repository.MemberBoardRepository;
+import com.sparta.jamrello.domain.memberboard.repository.MemberBoardRepository;
 import com.sparta.jamrello.global.utils.s3.dto.response.BoardImageResponseDto;
 import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;

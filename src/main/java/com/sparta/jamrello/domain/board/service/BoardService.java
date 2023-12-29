@@ -5,7 +5,6 @@ import com.sparta.jamrello.domain.board.dto.request.InviteMemberDto;
 import com.sparta.jamrello.domain.board.dto.response.BoardListResponseDto;
 import com.sparta.jamrello.domain.board.dto.response.BoardResponseDto;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
-import com.sparta.jamrello.domain.memberBoard.entity.MemberBoardRoleEnum;
 import java.util.List;
 
 public interface BoardService {

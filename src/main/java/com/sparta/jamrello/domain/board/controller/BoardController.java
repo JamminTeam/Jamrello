@@ -5,9 +5,7 @@ import com.sparta.jamrello.domain.board.dto.request.InviteMemberDto;
 import com.sparta.jamrello.domain.board.dto.response.BoardListResponseDto;
 import com.sparta.jamrello.domain.board.dto.response.BoardResponseDto;
 import com.sparta.jamrello.domain.board.service.BoardService;
-import com.sparta.jamrello.domain.board.service.BoardServiceImplV1;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
-import com.sparta.jamrello.domain.memberBoard.entity.MemberBoardRoleEnum;
 import com.sparta.jamrello.global.annotation.AuthUser;
 import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
@@ -15,7 +13,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
