@@ -54,7 +54,7 @@ public class CardServiceImplV1IntegrationTest {
         member = new Member("user1", "password", "user1", "user1@email.com");
         board = new Board("제목", "#000000");
         catalog = new Catalog("제목", board);
-        cardRequestDto = new CardRequestDto("제목");
+        cardRequestDto = new CardRequestDto("제목", null, null);
         card = new Card(cardRequestDto.title(), member, catalog);
 
         memberRepository.save(member);

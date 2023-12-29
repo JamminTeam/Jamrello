@@ -6,7 +6,4 @@ public record CardRequestDto(
     String backgroundColor
 ) {
 
-    public CardRequestDto(String title) {
-        this(title, null, null);
-    }
 }

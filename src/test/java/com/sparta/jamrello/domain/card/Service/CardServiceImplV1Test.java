@@ -65,7 +65,7 @@ class CardServiceImplV1Test {
         member.setId(1L);
         board = new Board();
         catalog = new Catalog("제목", board);
-        cardRequestDto = new CardRequestDto("제목");
+        cardRequestDto = new CardRequestDto("제목", null, null);
         card = new Card(cardRequestDto.title(), member, catalog);
     }
 
