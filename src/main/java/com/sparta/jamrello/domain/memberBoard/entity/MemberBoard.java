@@ -12,9 +12,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "member_boards")
+@NoArgsConstructor
 public class MemberBoard {
 
     @Id
@@ -33,10 +36,19 @@ public class MemberBoard {
     @Enumerated(value = EnumType.STRING)
     private MemberBoardRoleEnum role;
 
+    @Builder
     public MemberBoard(Member member, Board board, MemberBoardRoleEnum memberBoardRoleEnum) {
         this.member = member;
         this.board = board;
         this.role = memberBoardRoleEnum;
+    }
+
+    public static MemberBoard createMemberBoard(Member member, Board board, MemberBoardRoleEnum memberBoardRoleEnum) {
+        return MemberBoard.builder()
+            .member(member)
+            .board(board)
+            .memberBoardRoleEnum(memberBoardRoleEnum)
+            .build();
     }
 
     public void updateRole(MemberBoardRoleEnum role) {
