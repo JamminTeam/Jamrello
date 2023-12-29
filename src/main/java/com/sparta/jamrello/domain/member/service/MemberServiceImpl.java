@@ -1,17 +1,21 @@
 package com.sparta.jamrello.domain.member.service;
 
+import com.sparta.jamrello.domain.member.dto.DeleteMemberRequestDto;
 import com.sparta.jamrello.domain.member.dto.EmailRequestDto;
 import com.sparta.jamrello.domain.member.dto.MemberResponseDto;
 import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
+import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.security.UserDetailsImpl;
+import com.sparta.jamrello.global.security.jwt.RefreshTokenRepository;
 import com.sparta.jamrello.global.utils.EmailService;
 import com.sparta.jamrello.global.utils.RedisService;
 import java.time.Duration;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +26,8 @@ public class MemberServiceImpl implements MemberService{
   private final MemberRepository memberRepository;
 
   private final PasswordEncoder passwordEncoder;
+
+  private final RefreshTokenRepository refreshTokenRepository;
 
   private final EmailService emailService;
 
@@ -72,14 +78,53 @@ public class MemberServiceImpl implements MemberService{
   }
 
   @Override
-  public MemberResponseDto getProfile(Long memberId, UserDetailsImpl userDetails) {
+  public MemberResponseDto getProfile(Long memberId, Member loginMember) {
     Member member = findUserInDBById(memberId);
 
-    if (!member.getUsername().equals(userDetails.getMember().getUsername())) {
+    if (!member.getUsername().equals(loginMember.getUsername())) {
       throw new IllegalArgumentException("자신의 정보만 조회 할 수 있습니다.");
     }
 
     return MemberResponseDto.buildMemberResponseDto(member);
+  }
+
+  @Override
+  @Transactional
+  public MemberResponseDto updateMember(
+      Long memberId,
+      UpdateMemberRequestDto updateMemberRequestDto,
+      Member loginMember
+  ) {
+    Member member = findUserInDBById(memberId);
+
+    if (!member.getUsername().equals(loginMember.getUsername())) {
+      throw new IllegalArgumentException("자신의 정보만 수정 할 수 있습니다.");
+    }
+    String encodePassword = passwordEncoder.encode(updateMemberRequestDto.password());
+
+    member.updateMember(updateMemberRequestDto, encodePassword);
+    return MemberResponseDto.buildMemberResponseDto(member);
+  }
+
+  @Override
+  @Transactional
+  public void deleteMember(
+      Long memberId,
+      DeleteMemberRequestDto deleteMemberRequestDto,
+      Member loginMember
+  ) {
+    Member member = findUserInDBById(memberId);
+
+    if (!member.getUsername().equals(loginMember.getUsername())) {
+      throw new IllegalArgumentException("본인이 탈퇴 할 수 있습니다.");
+    }
+
+    if (!passwordEncoder.matches(deleteMemberRequestDto.password(), member.getPassword())) {
+      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+    }
+
+    memberRepository.delete(member);
+    refreshTokenRepository.deleteByKeyUsername(member.getUsername());
   }
 
   public void sameMemberInDBByUsername(String username) {
@@ -107,10 +152,10 @@ public class MemberServiceImpl implements MemberService{
   }
 
   private void emailVerification(String email, String authCode) {
+    //관리자용 테스트 인증번호 추후에 테스트완료 후 삭제 예정
     if (authCode.equals("777777")) {
       return;
     }
-
     String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
     if (!(redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode))) {
       throw new IllegalArgumentException("인증번호가 틀렸습니다. 다시 입력해주세요.");

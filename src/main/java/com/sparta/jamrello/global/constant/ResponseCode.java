@@ -22,11 +22,11 @@ public enum ResponseCode {
   UPDATE_BOARD(200, "보드 수정 완료"),
   DELETE_BOARD(200, "보드 삭제 완료"),
   INVITE_MEMBER(200, "멤버 초대 성공"),
-  GET_BOARD(200, "보드 가져오기"),
+  GET_BOARD(200, "보드 수정 완료"),
   UPDATE_IMAMGE(200, "배경이미지 수정 완료"),
   DELETE_IMAMGE(200, "배경이미지 삭제 완료"),
 
-  /* COLUMN */
+  /* CATALOG */
   UPDATE_CATALOG(200, "카탈로그 수정 완료"),
   KEEP_CATALOG(200, "카탈로그 보관 완료"),
   DELETE_CATALOG(200, "카탈로그 삭제 완료"),
@@ -37,8 +37,8 @@ public enum ResponseCode {
   DELETE_CARD(200, "카드 삭제 완료"),
   GET_CARD_CONTENT(200, "카드 조회 성공"),
   MOVE_CARD_POSITION(200, "카드 순서 이동 완료"),
-  INVITE_USER(200, "유저 추가"),
-  DELETE_USER(200, "유저 삭제"),
+  ADD_USER(200, "멤버 추가"),
+  DELETE_USER(200, "멤버 삭제 성공"),
   SETUP_DURATION(200, "기간 설정 완료"),
 
   /* COMMENT */

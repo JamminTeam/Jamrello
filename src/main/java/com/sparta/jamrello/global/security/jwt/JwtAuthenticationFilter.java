@@ -77,7 +77,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setStatus(200);
         response.setCharacterEncoding("utf-8");
         PrintWriter writer = response.getWriter();
-        writer.println("200 : Ok");
+        writer.println(" 200 : Ok");
         writer.println("로그인 성공!");
     }
 
@@ -87,10 +87,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throws IOException, ServletException {
         log.info("로그인 실패");
 
-        response.setStatus(403);
+        response.setStatus(400);
         response.setCharacterEncoding("utf-8");
         PrintWriter writer = response.getWriter();
-        writer.println(" 403 : Forbidden");
+        writer.println(" 400 : Bad Request");
         writer.println("닉네임 또는 패스워드를 확인해주세요.");
 
     }
