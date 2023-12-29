@@ -37,8 +37,7 @@ public class BoardController {
   public ResponseEntity<BaseResponse<BoardResponseDto>> createBoard(
       @RequestBody BoardRequestDto requestDto, @AuthUser Member authMember) {
 
-    BoardResponseDto responseDto = boardService.createBoard(requestDto, authMember,
-        MemberBoardRoleEnum.ADMIN);
+    BoardResponseDto responseDto = boardService.createBoard(requestDto, authMember);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(BaseResponse.of(ResponseCode.CREATED_BOARD, responseDto));

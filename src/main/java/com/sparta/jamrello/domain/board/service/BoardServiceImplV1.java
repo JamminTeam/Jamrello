@@ -31,12 +31,11 @@ public class BoardServiceImplV1 implements BoardService {
   private final MemberBoardRepository memberBoardRepository;
 
   @Override
-  public BoardResponseDto createBoard(BoardRequestDto requestDto, Member authMember,
-      MemberBoardRoleEnum admin) {
+  public BoardResponseDto createBoard(BoardRequestDto requestDto, Member authMember) {
     Board board = Board.fromRequestDto(requestDto);
     boardRepository.save(board);
 
-    MemberBoard memberBoard = MemberBoard.createMemberBoard(authMember, board, admin);
+    MemberBoard memberBoard = MemberBoard.createMemberBoard(authMember, board, MemberBoardRoleEnum.ADMIN);
     memberBoardRepository.save(memberBoard);
 
     return new BoardResponseDto(board.getTitle(), board.getBackgroundColor());
@@ -44,9 +43,9 @@ public class BoardServiceImplV1 implements BoardService {
 
   @Transactional
   @Override
-  public BoardResponseDto updateBoard(Long boardId, BoardRequestDto requestDto, Long authMember) {
+  public BoardResponseDto updateBoard(Long boardId, BoardRequestDto requestDto, Long authMemberId) {
     Board board = findByBoardId(boardId);
-    Member member = findByMemberId(authMember);
+    Member member = findByMemberId(authMemberId);
     checkPermissionfromMemberAndBoard(member, board);
 
 
@@ -57,9 +56,9 @@ public class BoardServiceImplV1 implements BoardService {
 
   @Transactional
   @Override
-  public void deleteBoard(Long boardId, Long authMember) {
+  public void deleteBoard(Long boardId, Long authMemberId) {
     Board board = findByBoardId(boardId);
-    Member member = findByMemberId(authMember);
+    Member member = findByMemberId(authMemberId);
     MemberBoard memberBoard = checkPermissionfromMemberAndBoard(member, board);
 
     memberBoardRepository.delete(memberBoard);
@@ -96,7 +95,7 @@ public class BoardServiceImplV1 implements BoardService {
   @Override
   public List<BoardListResponseDto> getBoard(Long boardId) {
     Board board = findByBoardId(boardId);
-    Board getBoard = boardRepository.findById(boardId).orElseThrow(
+    Board getBoard = boardRepository.findByIdWithCatalogListAndCardList(boardId).orElseThrow(
         () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
     );
 
@@ -128,8 +127,8 @@ public class BoardServiceImplV1 implements BoardService {
   }
 
   // 인증된 유저가 실제로 존재하는지 확인
-  private Member findByMemberId(Long authMember) {
-    Member member = memberRepository.findById(authMember).orElseThrow(
+  private Member findByMemberId(Long authMemberId) {
+    Member member = memberRepository.findById(authMemberId).orElseThrow(
         () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
     );
 

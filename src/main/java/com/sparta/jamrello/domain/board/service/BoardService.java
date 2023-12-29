@@ -15,11 +15,9 @@ public interface BoardService {
    *
    * @param requestDto 사용자가 입력한 데이터
    * @param authMember
-   * @param admin
    * @return BoardResponseDto
    */
-  BoardResponseDto createBoard(BoardRequestDto requestDto, Member authMember,
-      MemberBoardRoleEnum admin);
+  BoardResponseDto createBoard(BoardRequestDto requestDto, Member authMember);
 
 
   /**
