@@ -1,4 +1,4 @@
-package com.sparta.jamrello.domain.memberBoard.entity;
+package com.sparta.jamrello.domain.memberboard.entity;
 
 public enum MemberBoardRoleEnum {
     ADMIN(Role.ADMIN),

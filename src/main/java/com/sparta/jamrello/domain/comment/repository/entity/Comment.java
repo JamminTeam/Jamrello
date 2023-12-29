@@ -3,7 +3,7 @@ package com.sparta.jamrello.domain.comment.repository.entity;
 import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
 import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
-import com.sparta.jamrello.domain.member.entity.Member;
+import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.time.TimeStamp;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

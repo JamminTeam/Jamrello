@@ -1,6 +1,6 @@
 package com.sparta.jamrello.global.security;
 
-import com.sparta.jamrello.domain.member.entity.Member;
+import com.sparta.jamrello.domain.member.repository.entity.Member;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
