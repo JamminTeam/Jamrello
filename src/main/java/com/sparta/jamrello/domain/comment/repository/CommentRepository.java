@@ -1,6 +1,5 @@
 package com.sparta.jamrello.domain.comment.repository;
 
-import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import java.util.Optional;
