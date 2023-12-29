@@ -23,50 +23,51 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api")
 public class ImageUploadController {
 
-  private final ImageUploadService imageUploadService;
+    private final ImageUploadService imageUploadService;
 
-  @PutMapping("/boards/{boardId}/image")
-  public ResponseEntity<BaseResponse<BoardImageResponseDto>> uploadBoardBackgroundImage(
-      @PathVariable Long boardId,
-      @RequestParam(value = "file") MultipartFile file, @AuthUser Member authMember
-  ) {
-    BoardImageResponseDto responseDto = imageUploadService.uploadBoardFile(file, boardId
-        , authMember.getId());
+    @PutMapping("/boards/{boardId}/image")
+    public ResponseEntity<BaseResponse<BoardImageResponseDto>> uploadBoardBackgroundImage(
+        @PathVariable Long boardId,
+        @RequestParam(value = "file") MultipartFile file, @AuthUser Member authMember
+    ) {
+        BoardImageResponseDto responseDto = imageUploadService.uploadBoardFile(file, boardId
+            , authMember.getId());
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(BaseResponse.of(ResponseCode.UPDATE_IMAMGE, responseDto));
-  }
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(BaseResponse.of(ResponseCode.UPDATE_IMAMGE, responseDto));
+    }
 
-  @DeleteMapping("/boards/{boardId}/image")
-  public ResponseEntity<BaseResponse<String>> deleteBoardBackgroundImage(@PathVariable Long boardId,
-      @AuthUser Member authMember) {
+    @DeleteMapping("/boards/{boardId}/image")
+    public ResponseEntity<BaseResponse<String>> deleteBoardBackgroundImage(
+        @PathVariable Long boardId,
+        @AuthUser Member authMember) {
 
-    imageUploadService.deleteBoardBackgroundImage(boardId, authMember.getId());
+        imageUploadService.deleteBoardBackgroundImage(boardId, authMember.getId());
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(BaseResponse.of(ResponseCode.DELETE_IMAMGE, ""));
-  }
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(BaseResponse.of(ResponseCode.DELETE_IMAMGE, ""));
+    }
 
-  @PutMapping("/comments/{commentId}/image")
-  public ResponseEntity<BaseResponse<CommentImageResponseDto>> uploadCommentImage(
-      @PathVariable Long commentId,
-      @RequestParam(value = "file") MultipartFile file, @AuthUser Member authMember
-  ) {
-    CommentImageResponseDto responseDto = imageUploadService.uploadCommentFile(file, commentId,
-        authMember.getId());
+    @PutMapping("/comments/{commentId}/image")
+    public ResponseEntity<BaseResponse<CommentImageResponseDto>> uploadCommentImage(
+        @PathVariable Long commentId,
+        @RequestParam(value = "file") MultipartFile file, @AuthUser Member authMember
+    ) {
+        CommentImageResponseDto responseDto = imageUploadService.uploadCommentFile(file, commentId,
+            authMember.getId());
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(BaseResponse.of(ResponseCode.UPDATE_COMMENT_IMAMGE, responseDto));
-  }
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(BaseResponse.of(ResponseCode.UPDATE_COMMENT_IMAMGE, responseDto));
+    }
 
-  @DeleteMapping("/comments/{commentId}/image")
-  public ResponseEntity<BaseResponse<String>> deleteCommentImage(
-      @PathVariable Long commentId,
-      @AuthUser Member authMember) {
+    @DeleteMapping("/comments/{commentId}/image")
+    public ResponseEntity<BaseResponse<String>> deleteCommentImage(
+        @PathVariable Long commentId,
+        @AuthUser Member authMember) {
 
-    imageUploadService.deleteCommentImage(commentId, authMember.getId());
+        imageUploadService.deleteCommentImage(commentId, authMember.getId());
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(BaseResponse.of(ResponseCode.DELETE_IMAMGE, null));
-  }
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(BaseResponse.of(ResponseCode.DELETE_IMAMGE, null));
+    }
 }
