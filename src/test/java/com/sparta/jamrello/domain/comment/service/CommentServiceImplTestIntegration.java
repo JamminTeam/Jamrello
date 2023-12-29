@@ -24,10 +24,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
+import org.junit.jupiter.api.DisplayName;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
 @ActiveProfiles(profiles = "test")
 @SpringBootTest
 @DisplayName("댓글 서비스 통합 테스트")
-class CommentServiceTest {
+public class CommentServiceImplTestIntegration {
 
     @Autowired
     private CommentRepository commentRepository;
