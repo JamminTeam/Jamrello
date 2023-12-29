@@ -1,4 +1,4 @@
-package com.sparta.jamrello.domain.memberBoard.entity;
+package com.sparta.jamrello.domain.memberboard.entity;
 
 import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
@@ -12,8 +12,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@Getter
 @Table(name = "member_boards")
 public class MemberBoard {
 
