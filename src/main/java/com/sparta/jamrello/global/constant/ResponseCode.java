@@ -27,9 +27,10 @@ public enum ResponseCode {
   DELETE_IMAMGE(200, "배경이미지 삭제 완료"),
 
   /* COLUMN */
-  UPDATE_COLUMN(200, "컬럼 수정 완료"),
-  DELETE_COLUMN(200, "컬럼 삭제 완료"),
-  MOVE_COLUMN_POSITION(200, "컬럼 순서 이동 완료"),
+  UPDATE_CATALOG(200, "카탈로그 수정 완료"),
+  KEEP_CATALOG(200, "카탈로그 보관 완료"),
+  DELETE_CATALOG(200, "카탈로그 삭제 완료"),
+  MOVE_CATALOG_POSITION(200, "카탈로그 순서 이동 완료"),
 
   /* CARD */
   UPDATE_CARD(200, "카드 수정 완료"),
@@ -40,10 +41,15 @@ public enum ResponseCode {
   DELETE_USER(200, "유저 삭제"),
   SETUP_DURATION(200, "기간 설정 완료"),
 
+  /* COMMENT */
+  UPDATE_COMMENT(200, "댓글 수정 완료"),
+  DELETE_COMMENT(200, "댓글 삭제 완료"),
+  GET_COMMENT_CONTENT(200, "댓글 조회 성공"),
+
   /* 201 CREATED */
   SIGNUP(201, "회원가입 성공"),
   CREATED_BOARD(201, "보드 생성 성공"),
-  CREATED_COLUMN(201, "컬럼 생성 성공"),
+  CREATED_CATALOG(201, "카탈로그 생성 성공"),
   CREATED_CARD(201, "카드 생성 성공"),
   CREATED_COMMENT(201, "댓글 생성 성공");
 
