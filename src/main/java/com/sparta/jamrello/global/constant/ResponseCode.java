@@ -19,9 +19,12 @@ public enum ResponseCode {
     WITHDRWA_MEMBER(200, "회원탈퇴 완료"),
 
     /* BOARD */
-    UPDATE_BOARD(200, "보드 수정 완료"),
-    DELETE_BOARD(200, "보드 삭제 완료"),
-    INVITE_MEMBER(200, "멤버 초대 성공"),
+  UPDATE_BOARD(200, "보드 수정 완료"),
+  DELETE_BOARD(200, "보드 삭제 완료"),
+  INVITE_MEMBER(200, "멤버 초대 성공"),
+  GET_BOARD(200, "보드 수정 완료"),
+  UPDATE_IMAMGE(200, "배경이미지 수정 완료"),
+  DELETE_IMAMGE(200, "배경이미지 삭제 완료"),
 
     /* COLUMN */
     UPDATE_COLUMN(200, "컬럼 수정 완료"),

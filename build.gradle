@@ -64,6 +64,9 @@ dependencies {
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	// 임시
+	implementation 'org.springframework.security:spring-security-crypto'
 }
 
 tasks.named('test') {
