@@ -1,10 +1,11 @@
 package com.sparta.jamrello.global.exception;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,24 +22,21 @@ public class ExceptionAdviceController {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionResponseDto> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+    public ResponseEntity<ExceptionResponseDto> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException e) {
         BindingResult bindingResult = e.getBindingResult();
-        StringBuilder builder = new StringBuilder();
-
-        for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            builder.append(fieldError.getDefaultMessage());
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-            new ExceptionResponseDto(
-                HttpStatus.BAD_REQUEST , builder.toString())
+        String msg = bindingResult.getFieldErrors().get(0).getDefaultMessage();
+        return ResponseEntity.status(BAD_REQUEST).body(
+                new ExceptionResponseDto(BAD_REQUEST, msg)
         );
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionResponseDto> illegalArgumentExceptionHandler(IllegalArgumentException ex) {
+    public ResponseEntity<ExceptionResponseDto> illegalArgumentExceptionHandler(
+            IllegalArgumentException ex) {
         log.error(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN.value()).body(
-            new ExceptionResponseDto(HttpStatus.FORBIDDEN, ex.getMessage())
+        return ResponseEntity.status(FORBIDDEN.value()).body(
+                new ExceptionResponseDto(FORBIDDEN, ex.getMessage())
         );
     }
 

@@ -1,6 +1,6 @@
 package com.sparta.jamrello.domain.catalog.repository.entity;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.sparta.jamrello.domain.board.dto.request.BoardRequestDto;
 import com.sparta.jamrello.domain.board.entity.Board;
@@ -24,7 +24,7 @@ class CatalogTest {
 
     @BeforeEach
     void setUp() {
-        BoardRequestDto boardRequestDto = new BoardRequestDto("title", "username", null);
+        BoardRequestDto boardRequestDto = new BoardRequestDto("title", "#ffffff");
         board = Board.fromRequestDto(boardRequestDto);
         em.persist(board);
     }
@@ -35,14 +35,15 @@ class CatalogTest {
         // Given
         String title = "제목";
         CatalogRequestDto requestDto = new CatalogRequestDto(title);
-
-        Catalog catalog = Catalog.createCatalog(board, requestDto);
+        Long position = 2L;
+        Catalog catalog = Catalog.createCatalog(board, requestDto, position);
         // When
         Catalog result = em.persistAndFlush(catalog);
         // Then
         assertThat(result).isEqualTo(catalog);
         assertThat(result.getBoard()).isEqualTo(board);
         assertThat(result.getTitle()).isEqualTo(catalog.getTitle());
+        assertThat(result.getPosition()).isEqualTo(catalog.getPosition());
         assertThat(result.isStatus()).isFalse();
     }
 
