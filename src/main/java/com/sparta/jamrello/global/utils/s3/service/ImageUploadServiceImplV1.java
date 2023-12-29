@@ -1,6 +1,6 @@
 package com.sparta.jamrello.global.utils.s3.service;
 
-import com.sparta.jamrello.domain.board.entity.Boards;
+import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.board.repository.BoardRepository;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
@@ -30,15 +30,9 @@ public class ImageUploadServiceImplV1 implements ImageUploadService{
   @Transactional
   public BoardImageResponseDto uploadFile(MultipartFile file, Long boardId,
       Long authMember) {
-    Boards requestBoard = boardRepository.findById(boardId).orElseThrow(
-        () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
-    );
-    Member member = memberRepository.findById(authMember).orElseThrow(
-        () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
-    );
-    memberBoardRepository.findByMemberAndBoard(member, requestBoard).orElseThrow(
-        () -> new BisException(ErrorCode.YOUR_NOT_INVITED_BOARD)
-    );
+    Board requestBoard = findByBoardId(boardId);
+    Member member = findByAuthMemberId(authMember);
+    findByMemberIdAndBoardId(member, requestBoard);
 
     String fileName = Long.toString(boardId);
     String fileUrl = s3Uploader.uploadFile(file, fileName);
@@ -52,15 +46,9 @@ public class ImageUploadServiceImplV1 implements ImageUploadService{
 
   @Transactional
   public void deleteBackgroundImage(Long boardId, Long authMember) {
-    Boards requestBoard = boardRepository.findById(boardId).orElseThrow(
-        () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
-    );
-    Member member = memberRepository.findById(authMember).orElseThrow(
-        () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
-    );
-    memberBoardRepository.findByMemberAndBoard(member, requestBoard).orElseThrow(
-        () -> new BisException(ErrorCode.YOUR_NOT_INVITED_BOARD)
-    );
+    Board requestBoard = findByBoardId(boardId);
+    Member member = findByAuthMemberId(authMember);
+    findByMemberIdAndBoardId(member, requestBoard);
 
     String fileName = Long.toString(boardId);
     s3Uploader.deleteFile(fileName);
@@ -69,4 +57,24 @@ public class ImageUploadServiceImplV1 implements ImageUploadService{
     boardRepository.save(requestBoard);
   }
 
+
+  private Board findByBoardId(Long boardId) {
+    Board requestBoard = boardRepository.findById(boardId).orElseThrow(
+        () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
+    );
+    return requestBoard;
+  }
+
+  private Member findByAuthMemberId(Long authMember) {
+    Member member = memberRepository.findById(authMember).orElseThrow(
+        () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
+    );
+    return member;
+  }
+
+  private void findByMemberIdAndBoardId(Member member, Board requestBoard) {
+    memberBoardRepository.findByMemberAndBoard(member, requestBoard).orElseThrow(
+        () -> new BisException(ErrorCode.YOUR_NOT_INVITED_BOARD)
+    );
+  }
 }
