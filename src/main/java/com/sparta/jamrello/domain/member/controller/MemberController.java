@@ -56,7 +56,7 @@ public class MemberController {
   }
 
   @PostMapping("/signup")
-  public ResponseEntity<BaseResponse> signupMember (
+  public ResponseEntity<BaseResponse<String>> signupMember (
       @Valid @RequestBody SignupRequestDto signupRequestDto,
       BindingResult bindingResult
   ) {
