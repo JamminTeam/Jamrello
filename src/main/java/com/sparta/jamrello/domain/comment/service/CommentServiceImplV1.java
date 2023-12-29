@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CommentServiceImplV1 implements CommentService{
+public class CommentServiceImplV1 implements CommentService {
 
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
@@ -28,11 +28,8 @@ public class CommentServiceImplV1 implements CommentService{
     @Override
     public Comment createComment(Long memberId, Long cardId, CommentRequestDto commentRequestDto) {
 
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_MEMBER));
-
-        Card card = cardRepository.findById(cardId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_CARD));
+        Member member = findMember(memberId);
+        Card card = findCard(cardId);
 
         Comment comment = Comment.createCommentOf(commentRequestDto.content(), member, card);
         commentRepository.save(comment);
@@ -42,11 +39,11 @@ public class CommentServiceImplV1 implements CommentService{
 
     @Override
     @Transactional
-    public Comment updateComment(Long commentId, Member member,
+    public Comment updateComment(Long commentId, Long memberId,
         CommentRequestDto commentRequestDto) {
 
-        Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT));
+        Member member = findMember(memberId);
+        Comment comment = findComment(commentId);
 
         if (!isAuthorizedMember(member, comment)) {
             throw new BisException(ErrorCode.ACCESS_DENIED);
@@ -59,10 +56,10 @@ public class CommentServiceImplV1 implements CommentService{
 
     @Override
     @Transactional
-    public void deleteComment(Long commentId, Member member) {
+    public void deleteComment(Long commentId, Long memberId) {
 
-        Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT));
+        Member member = findMember(memberId);
+        Comment comment = findComment(commentId);
 
         if (!isAuthorizedMember(member, comment)) {
             throw new BisException(ErrorCode.ACCESS_DENIED);
@@ -85,7 +82,8 @@ public class CommentServiceImplV1 implements CommentService{
 
     @Override
     public List<CommentResponseDto> getComments(Pageable pageable) {
-        List<Comment> commentList = commentRepository.findAllCommentsWithPagination(pageable).getContent();
+        List<Comment> commentList = commentRepository.findAllCommentsWithPagination(pageable)
+            .getContent();
 
         List<CommentResponseDto> commentResponseDtoList = commentList.stream()
             .map(comment -> Comment.toCommentResponse(comment.getMember(), comment))
@@ -97,5 +95,20 @@ public class CommentServiceImplV1 implements CommentService{
 
     private boolean isAuthorizedMember(Member member, Comment comment) {
         return comment.getMember().getUsername().equals(member.getUsername());
+    }
+
+    private Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    private Comment findComment(Long commentId) {
+        return commentRepository.findById(commentId)
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT));
+    }
+
+    private Card findCard(Long cardId) {
+        return cardRepository.findById(cardId)
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_CARD));
     }
 }

@@ -11,10 +11,10 @@ public interface CommentService {
 
     Comment createComment(Long memberId, Long cardId, CommentRequestDto commentRequestDto);
 
-    Comment updateComment(Long commentId, Member member,
+    Comment updateComment(Long commentId, Long memberId,
         CommentRequestDto commentRequestDto);
 
-    void deleteComment(Long commentId, Member member);
+    void deleteComment(Long commentId, Long memberId);
 
     Comment getComment(Long commentId);
 
