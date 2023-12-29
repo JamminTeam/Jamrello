@@ -1,4 +1,4 @@
-package com.sparta.jamrello.domain.memberBoard.entity;
+package com.sparta.jamrello.domain.memberboard.entity;
 
 import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
