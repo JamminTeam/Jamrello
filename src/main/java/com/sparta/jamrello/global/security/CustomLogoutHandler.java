@@ -8,14 +8,16 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.Duration;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j(topic = "logout 핸들러")
 @Service
 public class CustomLogoutHandler implements LogoutHandler {
   private final RefreshTokenRepository refreshTokenRepository;
@@ -24,8 +26,7 @@ public class CustomLogoutHandler implements LogoutHandler {
 
   private final JwtUtil jwtUtil;
 
-  public CustomLogoutHandler(RefreshTokenRepository refreshTokenRepository,
-      RedisService redisService, JwtUtil jwtUtil) {
+  public CustomLogoutHandler(RefreshTokenRepository refreshTokenRepository, RedisService redisService, JwtUtil jwtUtil) {
     this.refreshTokenRepository = refreshTokenRepository;
     this.redisService = redisService;
     this.jwtUtil = jwtUtil;
@@ -38,6 +39,19 @@ public class CustomLogoutHandler implements LogoutHandler {
   public void logout(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) {
     String accessToken = jwtUtil.getJwtFromHeader(request);
+    if (!jwtUtil.validateToken(accessToken)) {
+      try {
+        log.error("유효하지않은 AccesToken");
+        response.setStatus(401);
+        response.setCharacterEncoding("utf-8");
+        PrintWriter writer = response.getWriter();
+        writer.println(" 401 : UNAUTHORIZED");
+        writer.println("유효하지 않은 토큰입니다.");
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      return;
+    }
     Claims member = jwtUtil.getUserInfoFromToken(accessToken);
     String username = member.getSubject();
 

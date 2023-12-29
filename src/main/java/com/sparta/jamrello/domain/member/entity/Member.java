@@ -1,4 +1,4 @@
-package com.sparta.jamrello.domain.member.repository.entity;
+package com.sparta.jamrello.domain.member.entity;
 
 import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;

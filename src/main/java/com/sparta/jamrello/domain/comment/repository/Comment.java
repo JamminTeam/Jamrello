@@ -1,6 +1,6 @@
 package com.sparta.jamrello.domain.comment.repository;
 
-import com.sparta.jamrello.domain.member.repository.entity.Member;
+import com.sparta.jamrello.domain.member.entity.Member;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.global.time.TimeStamp;
 import jakarta.persistence.Entity;

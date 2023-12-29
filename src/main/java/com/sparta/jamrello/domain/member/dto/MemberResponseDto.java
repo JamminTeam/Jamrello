@@ -1,6 +1,6 @@
 package com.sparta.jamrello.domain.member.dto;
 
-import com.sparta.jamrello.domain.member.repository.entity.Member;
+import com.sparta.jamrello.domain.member.entity.Member;
 import lombok.Builder;
 
 

@@ -1,7 +1,7 @@
 package com.sparta.jamrello.domain.cardCollaborators.repository.entity;
 
 import com.sparta.jamrello.domain.card.repository.entity.Card;
-import com.sparta.jamrello.domain.member.repository.entity.Member;
+import com.sparta.jamrello.domain.member.entity.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
