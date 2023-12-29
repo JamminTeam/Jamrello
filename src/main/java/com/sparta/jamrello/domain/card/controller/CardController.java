@@ -24,13 +24,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/catalogs/{catalogId}/cards")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CardController {
 
     private final CardServiceImplV1 cardService;
 
-    @PostMapping
+    @PostMapping("/catalogs/{catalogId}/cards")
     public ResponseEntity<BaseResponse<CardResponseDto>> createCard(
         @PathVariable Long catalogId,
         @AuthUser Member member,
@@ -43,7 +43,7 @@ public class CardController {
         );
     }
 
-    @GetMapping
+    @GetMapping("/catalogs/{catalogId}/cards")
     public ResponseEntity<BaseResponse<List<CardResponseDto>>> getAllCards(
         @PathVariable Long catalogId
     ) {
@@ -54,9 +54,8 @@ public class CardController {
         );
     }
 
-    @GetMapping("/{cardId}")
+    @GetMapping("cards/{cardId}")
     public ResponseEntity<BaseResponse<CardResponseDto>> getCard(
-        @PathVariable Long catalogId,
         @PathVariable Long cardId
     ) {
         CardResponseDto responseDto = cardService.getCard(cardId);
@@ -66,11 +65,10 @@ public class CardController {
         );
     }
 
-    @PatchMapping("/{cardId}")
+    @PatchMapping("cards/{cardId}")
     public ResponseEntity<BaseResponse<CardResponseDto>> updateCard(
-        @PathVariable Long catalogId,
         @PathVariable Long cardId,
-        @AuthUser Member member,   // @AuthUser 추후 수정
+        @AuthUser Member member,
         @RequestBody CardRequestDto requestDto) {
 
         CardResponseDto responseDto = cardService.updateCard(cardId, member.getId(), requestDto);
@@ -80,11 +78,10 @@ public class CardController {
         );
     }
 
-    @DeleteMapping("/{cardId}")
+    @DeleteMapping("cards/{cardId}")
     public ResponseEntity<BaseResponse<String>> deleteCard(
-        @PathVariable Long catalogId,
         @PathVariable Long cardId,
-        @AuthUser Member member   // @AuthUser 추후 수정
+        @AuthUser Member member
     ) {
         cardService.deleteCard(cardId, member.getId());
 
@@ -93,9 +90,8 @@ public class CardController {
         );
     }
 
-    @PostMapping("/{cardId}/collaborators")
+    @PostMapping("cards/{cardId}/collaborators")
     public ResponseEntity<BaseResponse<String>> addCollaborator(
-        @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @AuthUser Member member,
         @RequestBody CardCollaboratorRequestDto requestDto
@@ -107,9 +103,8 @@ public class CardController {
         );
     }
 
-    @DeleteMapping("/{cardId}/collaborators/{collaboratorId}")
+    @DeleteMapping("cards/{cardId}/collaborators/{collaboratorId}")
     public ResponseEntity<BaseResponse<String>> deleteCollaborator(
-        @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @PathVariable Long collaboratorId,
         @AuthUser Member member
@@ -121,9 +116,8 @@ public class CardController {
         );
     }
 
-    @PatchMapping("/{cardId}/move")
+    @PatchMapping("cards/{cardId}/move")
     public ResponseEntity<BaseResponse<String>> changeCardCatalog(
-        @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @AuthUser Member member,
         @RequestBody CardCatalogRequestDto requestDto
@@ -135,14 +129,13 @@ public class CardController {
         );
     }
 
-    @PatchMapping("/{cardId}/pos")
+    @PatchMapping("cards/{cardId}/pos")
     public ResponseEntity<BaseResponse<String>> updateCardPos(
-        @PathVariable Long catalogId,
         @PathVariable Long cardId,
         @AuthUser Member member,
         @RequestBody CardPositionRequestDto requestDto
     ) {
-        cardService.updateCardPos(catalogId, cardId, member.getId(), requestDto);
+        cardService.updateCardPos(cardId, member.getId(), requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(
             BaseResponse.of(ResponseCode.MOVE_CARD_POSITION, "")

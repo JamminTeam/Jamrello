@@ -78,7 +78,7 @@ public class CardServiceImplV1IntegrationTest {
         catalog.getCardList().add(card1);
 
         // when
-        cardService.updateCardPos(1L, 1L, 1L, cardPositionRequestDto);
+        cardService.updateCardPos(1L, 1L, cardPositionRequestDto);
 
         Card response1 = cardRepository.findById(1L).get();
         Card response2 = cardRepository.findById(2L).get();

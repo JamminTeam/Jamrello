@@ -137,25 +137,23 @@ public class CardServiceImplV1 implements CardService {
 
     @Override
     @Transactional
-    public void updateCardPos(Long catalogId, Long cardId, Long memberId,
-        CardPositionRequestDto requestDto) {
+    public void updateCardPos(Long cardId, Long memberId, CardPositionRequestDto requestDto) {
 
-        Catalog catalog = findCatalog(catalogId);
+        Card card = findCard(cardId);
+        Catalog catalog = card.getCatalog();
+        checkMember(memberId, card);
 
         if (requestDto.pos() > catalog.getCardList().size() || requestDto.pos() < 1) {
             throw new BisException(ErrorCode.POSITION_OVER);
         }
 
-        Card card = findCard(cardId);
-        checkMember(memberId, card);
-
         Long currentPos = card.getPosition();
         Long changePos = requestDto.pos();
 
         if (changePos > currentPos) {
-            cardRepository.decreasePositionBeforeUpdate(catalogId, currentPos, changePos);
+            cardRepository.decreasePositionBeforeUpdate(catalog.getId(), currentPos, changePos);
         } else {
-            cardRepository.increasePositionBeforeUpdate(catalogId, currentPos, changePos);
+            cardRepository.increasePositionBeforeUpdate(catalog.getId(), currentPos, changePos);
         }
 
         cardRepository.updateCardPosition(cardId, changePos);

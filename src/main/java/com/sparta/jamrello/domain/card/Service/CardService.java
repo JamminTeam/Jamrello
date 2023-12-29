@@ -26,6 +26,5 @@ public interface CardService {
 
     void changeCardCatalog(Long cardId, Long memberId, CardCatalogRequestDto requestDto);
 
-    void updateCardPos(Long catalogId, Long cardId, Long memberId,
-        CardPositionRequestDto requestDto);
+    void updateCardPos(Long cardId, Long memberId, CardPositionRequestDto requestDto);
 }
