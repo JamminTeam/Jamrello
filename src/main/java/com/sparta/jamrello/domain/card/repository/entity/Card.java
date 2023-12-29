@@ -64,7 +64,7 @@ public class Card extends TimeStamp {
     private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CardCollaborator> cardCollaborators = new ArrayList<>();
+    private List<CardCollaborator> cardCollaboratorList = new ArrayList<>();
 
     @Builder
     public Card(String title, String description) {

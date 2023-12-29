@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @Table(name = "refreshTokens")
+@NoArgsConstructor
 public class RefreshToken extends TimeStamp {
 
   @Id

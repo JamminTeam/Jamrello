@@ -10,7 +10,6 @@ import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +32,9 @@ public class CommentController {
     @PostMapping("/cards/{cardId}/comment")
     public ResponseEntity<BaseResponse<CommentResponseDto>> createComment(
         @RequestBody CommentRequestDto commentRequestDto,
-//        @AuthUser Member member
+        @AuthUser Member member,
         @PathVariable Long cardId) {
 
-//        Member member = member.getMember();
-        Member member = new Member("testUser", "password", "nickname", "email@email.com");
 
         CommentResponseDto commentResponseDto = Comment.toCommentResponse(member,
             commentService.createComment(member.getId(), cardId, commentRequestDto));
@@ -71,9 +68,9 @@ public class CommentController {
 
     @GetMapping("/comments/{commentId}")
     public ResponseEntity<BaseResponse<CommentResponseDto>> getComment(
-        @AuthUser Member member,
         @PathVariable Long commentId) {
 
+        Member member = commentService.getMemberByCommentId(commentId);
         CommentResponseDto commentResponseDto = Comment.toCommentResponse(member, commentService.getComment(commentId));
 
         return ResponseEntity.status(HttpStatus.OK)
