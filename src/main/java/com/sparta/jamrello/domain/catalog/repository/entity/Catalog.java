@@ -1,6 +1,6 @@
 package com.sparta.jamrello.domain.catalog.repository.entity;
 
-import com.sparta.jamrello.domain.board.entity.Board;
+import com.sparta.jamrello.domain.board.entity.Boards;
 import com.sparta.jamrello.domain.catalog.dto.CatalogRequestDto;
 import com.sparta.jamrello.global.time.TimeStamp;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
@@ -41,18 +41,18 @@ public class Catalog extends TimeStamp {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
-    private Board board;
+    private Boards board;
 
     @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Card> cards;
+    private List<Card> cardList;
 
     @Builder
-    public Catalog(String title, Board board) {
+    public Catalog(String title, Boards board) {
         this.title = title;
         this.board = board;
     }
 
-    public static Catalog createCatalog(Board board, CatalogRequestDto requestDto) {
+    public static Catalog createCatalog(Boards board, CatalogRequestDto requestDto) {
         return Catalog.builder()
                 .board(board)
                 .title(requestDto.title())
