@@ -36,15 +36,9 @@ public class CatalogServiceImplV1 implements CatalogService {
 
         Board board = findBoardWithCatalog(boardId);
 
-        Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
-                memberId, boardId);
+        Optional<MemberBoard> memberBoard = findMemberBoardByBoardIdAndMemberId(boardId, memberId);
 
-        if (memberBoard.isEmpty()) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
-        if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
+        checkMemberBoardAuth(memberBoard);
 
         Long position = (long) (board.getCatalogList().size() + 1);
         Catalog catalog = Catalog.createCatalog(board, requestDto, position);
@@ -61,15 +55,9 @@ public class CatalogServiceImplV1 implements CatalogService {
         Catalog catalog = findCatalog(catalogId);
         Long boardId = catalog.getBoard().getId();
 
-        Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
-                memberId, boardId);
+        Optional<MemberBoard> memberBoard = findMemberBoardByBoardIdAndMemberId(boardId, memberId);
 
-        if (memberBoard.isEmpty()) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
-        if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
+        checkMemberBoardAuth(memberBoard);
 
         catalog.updateCatalogTitle(requestDto);
         Catalog savedCatalog = catalogRepository.save(catalog);
@@ -86,15 +74,9 @@ public class CatalogServiceImplV1 implements CatalogService {
 
         existsBoard(boardId);
 
-        Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
-                memberId, boardId);
+        Optional<MemberBoard> memberBoard = findMemberBoardByBoardIdAndMemberId(boardId, memberId);
 
-        if (memberBoard.isEmpty()) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
-        if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
+        checkMemberBoardAuth(memberBoard);
 
         catalog.changeStatus();
 
@@ -111,15 +93,9 @@ public class CatalogServiceImplV1 implements CatalogService {
         Long boardId = catalog.getBoard().getId();
         existsBoard(boardId);
 
-        Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
-                memberId, boardId);
+        Optional<MemberBoard> memberBoard = findMemberBoardByBoardIdAndMemberId(boardId, memberId);
 
-        if (memberBoard.isEmpty()) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
-        if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
+        checkMemberBoardAuth(memberBoard);
 
         catalogRepository.decreasePositionBeforeDelete(boardId, currentPos);
 
@@ -141,14 +117,8 @@ public class CatalogServiceImplV1 implements CatalogService {
             throw new BisException(POSITION_OVER);
         }
 
-        Optional<MemberBoard> memberBoard = memberBoardRepository.findByMemberIdAndBoardId(
-                memberId, boardId);
-        if (memberBoard.isEmpty()) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
-        if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
-            throw new BisException(YOUR_NOT_INVITED_BOARD);
-        }
+        Optional<MemberBoard> memberBoard = findMemberBoardByBoardIdAndMemberId(boardId, memberId);
+        checkMemberBoardAuth(memberBoard);
 
         if (changedPos > currentPos) {
             catalogRepository.decreasePositionBeforeUpdate(boardId, currentPos,
@@ -177,5 +147,19 @@ public class CatalogServiceImplV1 implements CatalogService {
         return catalogRepository.findById(catalogId).orElseThrow(
                 () -> new BisException(NOT_FOUND_CATALOG)
         );
+    }
+
+    private void checkMemberBoardAuth(Optional<MemberBoard> memberBoard) {
+        if (memberBoard.isEmpty()) {
+            throw new BisException(YOUR_NOT_INVITED_BOARD);
+        }
+        if (memberBoard.get().getRole().equals(MemberBoardRoleEnum.NOT_INVITED_MEMBER)) {
+            throw new BisException(YOUR_NOT_INVITED_BOARD);
+        }
+    }
+
+    private Optional<MemberBoard> findMemberBoardByBoardIdAndMemberId(Long boardId, Long memberId) {
+        return memberBoardRepository.findByMemberIdAndBoardId(
+                memberId, boardId);
     }
 }
