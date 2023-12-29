@@ -45,7 +45,7 @@ public class CardServiceImplV1 implements CardService {
         cardRepository.save(card);
         catalog.getCardList().add(card);
 
-        return new CardResponseDto(card.getId(), card.getTitle(), null, null, null);
+        return card.createResponseDto(card);
     }
 
     @Override
@@ -58,20 +58,14 @@ public class CardServiceImplV1 implements CardService {
         cardList.sort(Comparator.comparing(Card::getPosition));
 
         return cardList.stream()
-            .map(card -> new CardResponseDto(
-                card.getId(),
-                card.getTitle(),
-                card.getMember().getUsername(),
-                card.getDescription(),
-                card.getBackgroundColor()
-            )).toList();
+            .map(card -> card.createResponseDto(card)).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public CardResponseDto getCard(Long cardId) {
         Card card = findCard(cardId);
-        return new CardResponseDto(card.getId(), card.getTitle(), null, null, null);
+        return card.createResponseDto(card);
     }
 
     @Override
@@ -82,10 +76,7 @@ public class CardServiceImplV1 implements CardService {
         checkMember(memberId, card);
         card.update(requestDto);
 
-        return new CardResponseDto(
-            card.getId(), card.getTitle(), card.getMember().getUsername(),
-            card.getDescription(), card.getBackgroundColor()
-        );
+        return card.createResponseDto(card);
     }
 
     @Override
@@ -134,7 +125,7 @@ public class CardServiceImplV1 implements CardService {
 
         Card card = findCard(cardId);
         Catalog catalog = findCatalog(requestDto.catalogId());
-        card.setCatalog(catalog);
+        card.updateCatalog(catalog);
     }
 
     @Override
