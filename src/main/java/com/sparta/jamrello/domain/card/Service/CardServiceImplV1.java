@@ -11,8 +11,8 @@ import com.sparta.jamrello.domain.cardCollaborators.repository.CardCollaboratorR
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
 import com.sparta.jamrello.domain.catalog.repository.entity.CatalogRepository;
+import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
-import com.sparta.jamrello.domain.member.repository.entity.MemberRepository;
 import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;
 import java.util.Comparator;
@@ -94,8 +94,6 @@ public class CardServiceImplV1 implements CardService {
         Card card = findCard(cardId);
         checkMember(memberId, card);
         cardRepository.delete(card);
-
-
     }
 
     @Override

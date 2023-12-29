@@ -16,10 +16,16 @@ public enum ErrorCode {
     // 400 BAD_REQUEST
     ALREADY_EXIST_COLLABORATOR(BAD_REQUEST, "이미 존재하는 작업자입니다."),
 
+    POSITION_OVER(BAD_REQUEST, "포지션 오버"),
+
+    INVALID_VALUE(BAD_REQUEST, "유효하지 않은 값"),
+
     // 401 UNAUTHORIZED
     REJECTED_EXECUSION(UNAUTHORIZED, "수정 권한이 없습니다"),
 
     ACCESS_DENIED(UNAUTHORIZED, "유효하지 못한 토큰입니다."),
+
+    LOGOUT_USER(UNAUTHORIZED, "로그아웃한 유저입니다. 다시 로그인해주세요."),
 
     EXPIRED_TOKEN(UNAUTHORIZED, "만료된 토큰입니다. 다시로그인하세요."),
 
@@ -50,7 +56,10 @@ public enum ErrorCode {
 
     DUPLICATE_EMAIL(CONFLICT, "중복된 Email 입니다"),
 
-    DUPLICATE_USERNAME_AND_EMAIL(CONFLICT, "중복된 Username 혹은 Email 입니다.");
+    DUPLICATE_USERNAME_AND_EMAIL(CONFLICT, "중복된 Username 혹은 Email 입니다."),
+
+    // 그외 예외
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");;
 
     private final HttpStatus status;
     private final String msg;

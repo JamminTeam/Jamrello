@@ -1,8 +1,8 @@
 package com.sparta.jamrello.domain.member.repository.entity;
 
+import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import com.sparta.jamrello.domain.comment.repository.Comment;
-import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
 import com.sparta.jamrello.global.time.TimeStamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,6 +17,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "members")
 public class Member extends TimeStamp {
 
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -55,6 +57,15 @@ public class Member extends TimeStamp {
         this.password = password;
         this.nickname = nickname;
         this.email = email;
+    }
+
+    public static Member createMember(String username, String password, String nickname, String email) {
+        return Member.builder()
+            .username(username)
+            .password(password)
+            .nickname(nickname)
+            .email(email)
+            .build();
     }
 
 }

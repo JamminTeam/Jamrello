@@ -6,6 +6,7 @@ import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
 import com.sparta.jamrello.domain.comment.repository.Comment;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.time.TimeStamp;
+import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
