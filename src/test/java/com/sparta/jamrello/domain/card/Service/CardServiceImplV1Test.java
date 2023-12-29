@@ -18,8 +18,8 @@ import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.cardCollaborators.dto.CardCollaboratorRequestDto;
 import com.sparta.jamrello.domain.cardCollaborators.repository.CardCollaboratorRepository;
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
+import com.sparta.jamrello.domain.catalog.repository.CatalogRepository;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
-import com.sparta.jamrello.domain.catalog.repository.entity.CatalogRepository;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.exception.BisException;
@@ -64,7 +64,7 @@ class CardServiceImplV1Test {
         member = new Member("user1", "password", "user1", "user1@email.com");
         member.setId(1L);
         board = new Board();
-        catalog = new Catalog("제목", board);
+        catalog = new Catalog("제목", 1L, board, true);
         cardRequestDto = new CardRequestDto("제목", null, null);
         card = new Card(cardRequestDto.title(), member, catalog);
     }
@@ -278,7 +278,8 @@ class CardServiceImplV1Test {
     @DisplayName("카드 카탈로그 이동 성공")
     void changeCardCatalogTest() {
         // given
-        Catalog catalog1 = new Catalog("new catalog", board);
+        Catalog catalog1 = new Catalog("new catalog", 1L, board, true);
+
         catalog1.setId(2L);
         CardCatalogRequestDto cardCatalogRequestDto = new CardCatalogRequestDto(2L);
 

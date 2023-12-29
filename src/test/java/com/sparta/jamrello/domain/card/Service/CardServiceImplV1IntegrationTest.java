@@ -9,8 +9,8 @@ import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.repository.CardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.cardCollaborators.repository.CardCollaboratorRepository;
+import com.sparta.jamrello.domain.catalog.repository.CatalogRepository;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
-import com.sparta.jamrello.domain.catalog.repository.entity.CatalogRepository;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +53,7 @@ public class CardServiceImplV1IntegrationTest {
     void setUp() {
         member = new Member("user1", "password", "user1", "user1@email.com");
         board = new Board("제목", "#000000");
-        catalog = new Catalog("제목", board);
+        catalog = new Catalog("제목", 1L, board, true);
         cardRequestDto = new CardRequestDto("제목", null, null);
         card = new Card(cardRequestDto.title(), member, catalog);
 

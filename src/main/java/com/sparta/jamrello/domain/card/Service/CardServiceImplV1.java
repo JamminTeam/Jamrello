@@ -9,8 +9,8 @@ import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.cardCollaborators.dto.CardCollaboratorRequestDto;
 import com.sparta.jamrello.domain.cardCollaborators.repository.CardCollaboratorRepository;
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
+import com.sparta.jamrello.domain.catalog.repository.CatalogRepository;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
-import com.sparta.jamrello.domain.catalog.repository.entity.CatalogRepository;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.exception.BisException;
@@ -40,10 +40,10 @@ public class CardServiceImplV1 implements CardService {
         Member member = findMember(memberId);
         Card card = Card.builder()
             .title(requestDto.title()).member(member).catalog(catalog).build();
-        card.setPosition((long) (catalog.getCardList().size() + 1));
 
         cardRepository.save(card);
         catalog.getCardList().add(card);
+        card.setPosition((long) (catalog.getCardList().size() + 1));
 
         return new CardResponseDto(card.getTitle(), null, null, null);
     }
