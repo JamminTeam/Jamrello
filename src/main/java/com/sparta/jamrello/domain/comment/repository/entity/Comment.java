@@ -1,10 +1,11 @@
 package com.sparta.jamrello.domain.comment.repository.entity;
 
-import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
-import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
+import com.sparta.jamrello.domain.comment.dto.request.CommentRequestDto;
+import com.sparta.jamrello.domain.comment.dto.response.CommentResponseDto;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.global.time.TimeStamp;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -37,6 +38,9 @@ public class Comment extends TimeStamp {
 
     private String content;
 
+    @Column(name = "comment_image")
+    private String commentImageUrl;
+
     @Builder
     public Comment(Member member, Card card, String content) {
         this.member = member;
@@ -48,6 +52,14 @@ public class Comment extends TimeStamp {
         this.content = commentRequestDto.content();
     }
 
+    public void updateImageUrl(String commentImageUrl) {
+        this.commentImageUrl = commentImageUrl;
+    }
+
+    public void removeImageUrl(String fileName) {
+        this.commentImageUrl = null;
+    }
+
     public static Comment createCommentOf(String content, Member member, Card card) {
         return Comment.builder()
             .content(content)
@@ -56,8 +68,8 @@ public class Comment extends TimeStamp {
             .build();
     }
 
-    public static CommentResponseDto toCommentResponse(Member member, Comment comment) {
-        return new CommentResponseDto(member, comment.getContent(), comment.getCreatedAt());
+    public static CommentResponseDto toCommentResponse(Comment comment) {
+        return new CommentResponseDto(comment.getContent(), comment.getCreatedAt());
     }
 
 
