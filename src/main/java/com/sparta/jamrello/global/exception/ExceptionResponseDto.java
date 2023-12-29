@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public class ExceptionResponseDto {
 
-    private final String msg;
     private final HttpStatus status;
+    private final String msg;
 
     public ExceptionResponseDto(ErrorCode e) {
         this.msg = e.getMsg();

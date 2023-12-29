@@ -1,10 +1,6 @@
 package com.sparta.jamrello.global.exception;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +12,9 @@ public enum ErrorCode {
     // 400 BAD_REQUEST
     ALREADY_EXIST_COLLABORATOR(BAD_REQUEST, "이미 존재하는 작업자입니다."),
 
-    POSITION_OVER(BAD_REQUEST, "포지션 오버"),
+    POSITION_OVER(BAD_REQUEST, "변경할 수 없는 위치입니다"),
 
-    INVALID_VALUE(BAD_REQUEST, "유효하지 않은 값"),
+    INVALID_VALUE(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다."),
 
     // 401 UNAUTHORIZED
     REJECTED_EXECUSION(UNAUTHORIZED, "수정 권한이 없습니다"),

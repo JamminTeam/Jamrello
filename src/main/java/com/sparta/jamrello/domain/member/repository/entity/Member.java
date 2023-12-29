@@ -1,8 +1,8 @@
 package com.sparta.jamrello.domain.member.repository.entity;
 
-import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
-import com.sparta.jamrello.domain.comment.repository.Comment;
 import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
+import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
+import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.global.time.TimeStamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -57,8 +57,7 @@ public class Member extends TimeStamp {
         this.email = email;
     }
 
-    public static Member createMember(String username, String password, String nickname,
-        String email) {
+    public static Member createMember(String username, String password, String nickname, String email) {
         return Member.builder()
             .username(username)
             .password(password)
