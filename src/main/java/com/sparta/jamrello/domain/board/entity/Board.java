@@ -14,7 +14,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +22,6 @@ import org.hibernate.annotations.ColumnDefault;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "boards")
 public class Board extends TimeStamp {
 
@@ -34,30 +32,48 @@ public class Board extends TimeStamp {
     @Column(nullable = false)
     private String title;
 
-    @ColumnDefault("'#ffffff'")
-    private String backgroundColor;
+  @Column(nullable = false)
+  private String backgroundColor;
 
-    @ColumnDefault("false")
-    private boolean status;
+  @Column(nullable=false)
+  private boolean status;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-    private List<Catalog> catalogList = new ArrayList<>();
+  @Column(name = "board_image")
+  private String boardImageUrl;
 
-    @OneToMany(mappedBy = "board")
-    private List<MemberBoard> memberBoardList = new ArrayList<>();
+  @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  private List<Catalog> catalogList = new ArrayList<>();
+
+  @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  private List<MemberBoard> memberBoardList = new ArrayList<>();
 
 
-    @Builder
-    public Board(String title, String backgroundColor) {
-        this.title = title;
-        this.backgroundColor = backgroundColor;
-    }
+  @Builder
+  public Board(String title, String backgroundColor) {
+    this.title = title;
+    this.backgroundColor = backgroundColor;
+  }
 
-    public static Board fromRequestDto(BoardRequestDto requestDto) {
-        return Board.builder()
-                .title(requestDto.title())
-                .backgroundColor(requestDto.backgroundColor())
-                .build();
-    }
+  public static Board fromRequestDto(BoardRequestDto requestDto) {
+    return Board.builder()
+        .title(requestDto.title())
+        .backgroundColor(requestDto.backgroundColor())
+        .build();
+  }
 
+
+  public void update(BoardRequestDto requestDto) {
+    this.title = requestDto.title();
+    this.backgroundColor = requestDto.backgroundColor();
+  }
+
+  public void updateBoardImageUrl(String fileUrl, String backgroundColor) {
+    this.boardImageUrl = fileUrl;
+    this.backgroundColor = backgroundColor;
+  }
+
+  public void removeBoardImageUrl() {
+    this.boardImageUrl = null;
+    this.backgroundColor = "#FFFFFF";
+  }
 }

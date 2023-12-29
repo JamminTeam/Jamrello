@@ -5,6 +5,7 @@ import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.catalog.dto.CatalogRequestDto;
 import com.sparta.jamrello.domain.catalog.dto.CatalogResponseDto;
 import com.sparta.jamrello.global.time.TimeStamp;
+import com.sparta.jamrello.domain.card.repository.entity.Card;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
