@@ -22,8 +22,6 @@ import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
 import com.sparta.jamrello.domain.catalog.repository.entity.CatalogRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.domain.member.repository.entity.MemberRepository;
-import com.sparta.jamrello.global.constant.ResponseCode;
-import com.sparta.jamrello.global.dto.BaseResponse;
 import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;
 import java.util.Optional;
@@ -34,8 +32,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
@@ -82,12 +78,9 @@ class CardServiceImplV1Test {
         when(cardRepository.save(any(Card.class))).thenReturn(card);
 
         // when
-        ResponseEntity<BaseResponse<CardResponseDto>> response = cardService.createCard(1L, 1L,
-            cardRequestDto);
+        CardResponseDto response = cardService.createCard(1L, 1L, cardRequestDto);
 
         // then
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(ResponseCode.CREATED_CARD.getMessage(), response.getBody().getMsg());
         assertEquals(card.getId(), catalog.getCardList().get(0).getId());
     }
 
@@ -129,11 +122,10 @@ class CardServiceImplV1Test {
         when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
 
         // when
-        ResponseEntity<BaseResponse<CardResponseDto>> response = cardService.getCard(1L);
+        CardResponseDto response = cardService.getCard(1L);
 
         // then
-        assertEquals(ResponseCode.GET_CARD_CONTENT.getMessage(), response.getBody().getMsg());
-        assertEquals("제목", response.getBody().getData().title());
+        assertEquals("제목", response.title());
     }
 
     @Test
@@ -159,13 +151,12 @@ class CardServiceImplV1Test {
         when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
 
         // when
-        ResponseEntity<BaseResponse<CardResponseDto>> response = cardService.updateCard(1L, 1L,
-            cardRequestDto);
+        CardResponseDto response = cardService.updateCard(1L, 1L, cardRequestDto);
 
         // then
-        assertEquals(ResponseCode.UPDATE_CARD.getMessage(), response.getBody().getMsg());
-        assertEquals("제목 수정", response.getBody().getData().title());
-        assertEquals("설명", response.getBody().getData().description());
+        assertEquals("제목 수정", response.title());
+        assertEquals("설명", response.description());
+        assertEquals("#FFFFFF", response.backgroundColor());
     }
 
     @Test
@@ -191,12 +182,10 @@ class CardServiceImplV1Test {
         when(cardRepository.findById(anyLong())).thenReturn(Optional.of(card));
 
         // when
-        ResponseEntity<BaseResponse<String>> response = cardService.deleteCard(1L, 1L);
+        cardService.deleteCard(1L, 1L);
 
         // then
         verify(cardRepository, times(1)).delete(any(Card.class));
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(ResponseCode.DELETE_CARD.getMessage(), response.getBody().getMsg());
     }
 
     @Test
@@ -216,11 +205,9 @@ class CardServiceImplV1Test {
             .thenReturn(cardCollaborator);
 
         // when
-        ResponseEntity<BaseResponse<String>> response = cardService.addCollaborator(1L, 1L,
-            colRequestDto);
+        cardService.addCollaborator(1L, 1L, colRequestDto);
 
         // then
-        assertEquals(ResponseCode.ADD_USER.getMessage(), response.getBody().getMsg());
         assertEquals(collaborator.getId(),
             card.getCardCollaboratorList().get(0).getMember().getId());
     }
@@ -260,12 +247,11 @@ class CardServiceImplV1Test {
             .thenReturn(Optional.of(cardCollaborator));
 
         // when
-        ResponseEntity<BaseResponse<String>> response = cardService.deleteCollaborator(1L, 1L, 1L);
+        cardService.deleteCollaborator(1L, 1L, 1L);
 
         // then
         verify(cardCollaboratorRepository, times(1))
             .delete(any(CardCollaborator.class));
-        assertEquals(ResponseCode.DELETE_USER.getMessage(), response.getBody().getMsg());
     }
 
     @Test
@@ -300,11 +286,9 @@ class CardServiceImplV1Test {
         when(catalogRepository.findById(anyLong())).thenReturn(Optional.of(catalog1));
 
         // when
-        ResponseEntity<BaseResponse<String>> response = cardService.changeCardCatalog(1L, 1L,
-            cardCatalogRequestDto);
+        cardService.changeCardCatalog(1L, 1L, cardCatalogRequestDto);
 
         // then
-        assertEquals(ResponseCode.MOVE_CARD_POSITION.getMessage(), response.getBody().getMsg());
         assertEquals(catalog1.getId(), card.getCatalog().getId());
     }
 }

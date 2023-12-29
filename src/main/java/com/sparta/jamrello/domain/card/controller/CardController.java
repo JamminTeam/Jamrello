@@ -6,10 +6,12 @@ import com.sparta.jamrello.domain.card.dto.request.CardPositionRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.cardCollaborators.dto.CardCollaboratorRequestDto;
+import com.sparta.jamrello.global.constant.ResponseCode;
 import com.sparta.jamrello.global.dto.BaseResponse;
 import com.sparta.jamrello.global.security.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,14 +35,24 @@ public class CardController {
         @PathVariable Long catalogId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,   // @AuthUser 추후 수정
         @RequestBody CardRequestDto requestDto) {
-        return cardService.createCard(catalogId, userDetails.getMember().getId(), requestDto);
+
+        CardResponseDto responseDto = cardService.createCard(catalogId,
+            userDetails.getMember().getId(), requestDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+            BaseResponse.of(ResponseCode.CREATED_CARD, responseDto)
+        );
     }
 
     @GetMapping
     public ResponseEntity<BaseResponse<List<CardResponseDto>>> getAllCards(
         @PathVariable Long catalogId
     ) {
-        return cardService.getAllCards(catalogId);
+        List<CardResponseDto> responseDtoList = cardService.getAllCards(catalogId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.GET_CARD_CONTENT, responseDtoList)
+        );
     }
 
     @GetMapping("/{cardId}")
@@ -48,7 +60,11 @@ public class CardController {
         @PathVariable Long catalogId,
         @PathVariable Long cardId
     ) {
-        return cardService.getCard(cardId);
+        CardResponseDto responseDto = cardService.getCard(cardId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.GET_CARD_CONTENT, responseDto)
+        );
     }
 
     @PatchMapping("/{cardId}")
@@ -57,7 +73,13 @@ public class CardController {
         @PathVariable Long cardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails,   // @AuthUser 추후 수정
         @RequestBody CardRequestDto requestDto) {
-        return cardService.updateCard(cardId, userDetails.getMember().getId(), requestDto);
+
+        CardResponseDto responseDto = cardService.updateCard(cardId,
+            userDetails.getMember().getId(), requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.UPDATE_CARD, responseDto)
+        );
     }
 
     @DeleteMapping("/{cardId}")
@@ -66,7 +88,11 @@ public class CardController {
         @PathVariable Long cardId,
         @AuthenticationPrincipal UserDetailsImpl userDetails   // @AuthUser 추후 수정
     ) {
-        return cardService.deleteCard(cardId, userDetails.getMember().getId());
+        cardService.deleteCard(cardId, userDetails.getMember().getId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.DELETE_CARD, "")
+        );
     }
 
     @PostMapping("/{cardId}/collaborators")
@@ -76,7 +102,11 @@ public class CardController {
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody CardCollaboratorRequestDto requestDto
     ) {
-        return cardService.addCollaborator(cardId, userDetails.getMember().getId(), requestDto);
+        cardService.addCollaborator(cardId, userDetails.getMember().getId(), requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.ADD_USER, "")
+        );
     }
 
     @DeleteMapping("/{cardId}/collaborators/{collaboratorId}")
@@ -86,8 +116,11 @@ public class CardController {
         @PathVariable Long collaboratorId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return cardService.deleteCollaborator(cardId, collaboratorId,
-            userDetails.getMember().getId());
+        cardService.deleteCollaborator(cardId, collaboratorId, userDetails.getMember().getId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.DELETE_USER, "")
+        );
     }
 
     @PatchMapping("/{cardId}/move")
@@ -97,7 +130,11 @@ public class CardController {
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody CardCatalogRequestDto requestDto
     ) {
-        return cardService.changeCardCatalog(cardId, userDetails.getMember().getId(), requestDto);
+        cardService.changeCardCatalog(cardId, userDetails.getMember().getId(), requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.MOVE_CARD_POSITION, "")
+        );
     }
 
     @PatchMapping("/{cardId}/pos")
@@ -107,7 +144,10 @@ public class CardController {
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody CardPositionRequestDto requestDto
     ) {
-        return cardService.updateCardPos(catalogId, cardId, userDetails.getMember().getId(),
-            requestDto);
+        cardService.updateCardPos(catalogId, cardId, userDetails.getMember().getId(), requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.MOVE_CARD_POSITION, "")
+        );
     }
 }
