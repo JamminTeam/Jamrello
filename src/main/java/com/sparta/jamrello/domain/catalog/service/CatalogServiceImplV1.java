@@ -12,9 +12,9 @@ import com.sparta.jamrello.domain.catalog.dto.CatalogRequestDto;
 import com.sparta.jamrello.domain.catalog.dto.CatalogResponseDto;
 import com.sparta.jamrello.domain.catalog.repository.CatalogRepository;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
-import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
-import com.sparta.jamrello.domain.memberBoard.entity.MemberBoardRoleEnum;
-import com.sparta.jamrello.domain.memberBoard.repository.MemberBoardRepository;
+import com.sparta.jamrello.domain.memberboard.entity.MemberBoard;
+import com.sparta.jamrello.domain.memberboard.entity.MemberBoardRoleEnum;
+import com.sparta.jamrello.domain.memberboard.repository.MemberBoardRepository;
 import com.sparta.jamrello.global.exception.BisException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class CatalogServiceImplV1 implements CatalogService {
 
     @Override
     public CatalogResponseDto createCatalog(Long boardId, Long memberId,
-            CatalogRequestDto requestDto) {
+        CatalogRequestDto requestDto) {
 
         Board board = findBoardWithCatalog(boardId);
 
@@ -50,7 +50,7 @@ public class CatalogServiceImplV1 implements CatalogService {
 
     @Override
     public CatalogResponseDto updateCatalogTitle(Long memberId, Long catalogId,
-            CatalogRequestDto requestDto) {
+        CatalogRequestDto requestDto) {
 
         Catalog catalog = findCatalog(catalogId);
         Long boardId = catalog.getBoard().getId();
@@ -105,7 +105,7 @@ public class CatalogServiceImplV1 implements CatalogService {
     @Override
     @Transactional
     public void updateCatalogPos(Long memberId, Long catalogId,
-            CatalogPositionRequestDto requestDto) {
+        CatalogPositionRequestDto requestDto) {
 
         Catalog catalog = findCatalog(catalogId);
         Long boardId = catalog.getBoard().getId();
@@ -122,10 +122,10 @@ public class CatalogServiceImplV1 implements CatalogService {
 
         if (changedPos > currentPos) {
             catalogRepository.decreasePositionBeforeUpdate(boardId, currentPos,
-                    changedPos); // 바꿀 위치가 현재 위치보다 크다면 ? between current+1 ~ changed 까지의 모든 것들 -1
+                changedPos); // 바꿀 위치가 현재 위치보다 크다면 ? between current+1 ~ changed 까지의 모든 것들 -1
         } else {
             catalogRepository.increasePositionBeforeUpdate(boardId, currentPos,
-                    changedPos); // 바꿀 위치가 현재 위치보다 작다면 ? between current-1 ~ changed 들 +1
+                changedPos); // 바꿀 위치가 현재 위치보다 작다면 ? between current-1 ~ changed 들 +1
         }
 
         catalogRepository.updateCatalogPosition(catalogId, changedPos);
@@ -133,7 +133,7 @@ public class CatalogServiceImplV1 implements CatalogService {
 
     private Board findBoardWithCatalog(Long boardId) {
         return boardRepository.findBoardWithCatalog(boardId).orElseThrow(
-                () -> new BisException(NOT_FOUND_BOARD)
+            () -> new BisException(NOT_FOUND_BOARD)
         );
     }
 
@@ -145,7 +145,7 @@ public class CatalogServiceImplV1 implements CatalogService {
 
     private Catalog findCatalog(Long catalogId) {
         return catalogRepository.findById(catalogId).orElseThrow(
-                () -> new BisException(NOT_FOUND_CATALOG)
+            () -> new BisException(NOT_FOUND_CATALOG)
         );
     }
 
@@ -160,6 +160,6 @@ public class CatalogServiceImplV1 implements CatalogService {
 
     private Optional<MemberBoard> findMemberBoardByBoardIdAndMemberId(Long boardId, Long memberId) {
         return memberBoardRepository.findByMemberIdAndBoardId(
-                memberId, boardId);
+            memberId, boardId);
     }
 }

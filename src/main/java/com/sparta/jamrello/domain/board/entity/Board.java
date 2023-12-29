@@ -2,7 +2,7 @@ package com.sparta.jamrello.domain.board.entity;
 
 import com.sparta.jamrello.domain.board.dto.request.BoardRequestDto;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
-import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
+import com.sparta.jamrello.domain.memberboard.entity.MemberBoard;
 import com.sparta.jamrello.global.time.TimeStamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,7 +17,6 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter

@@ -1,6 +1,9 @@
 package com.sparta.jamrello.domain.comment.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.given;
 
 import com.sparta.jamrello.domain.card.repository.CardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
@@ -9,11 +12,10 @@ import com.sparta.jamrello.domain.comment.repository.CommentRepository;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.mockito.BDDMockito.*;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -50,10 +52,10 @@ class CommentServiceImplV1Test {
         );
         card = cardRepository.save(Card.builder()
             .title("Test Card")
-            .description("Test Description")
             .build());
         commentRequestDto = new CommentRequestDto("test comment");
-        comment = commentRepository.save(Comment.createCommentOf(commentRequestDto.content(), member, card));
+        comment = commentRepository.save(
+            Comment.createCommentOf(commentRequestDto.content(), member, card));
     }
 
     @AfterEach
@@ -68,7 +70,8 @@ class CommentServiceImplV1Test {
         // Given
         given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
         given(cardRepository.findById(anyLong())).willReturn(Optional.of(card));
-        given(commentRepository.save(any(Comment.class))).willAnswer(invocation -> invocation.getArgument(0));
+        given(commentRepository.save(any(Comment.class))).willAnswer(
+            invocation -> invocation.getArgument(0));
 
         // When
         Comment result = commentServiceImplV1.createComment(1L, 1L, commentRequestDto);

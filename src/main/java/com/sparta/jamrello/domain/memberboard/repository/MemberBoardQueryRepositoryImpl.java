@@ -1,9 +1,9 @@
-package com.sparta.jamrello.domain.memberBoard.repository;
+package com.sparta.jamrello.domain.memberboard.repository;
 
-import static com.sparta.jamrello.domain.memberBoard.entity.QMemberBoard.memberBoard;
+import static com.sparta.jamrello.domain.memberboard.entity.QMemberBoard.memberBoard;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.jamrello.domain.memberBoard.entity.MemberBoard;
+import com.sparta.jamrello.domain.memberboard.entity.MemberBoard;
 import jakarta.persistence.EntityManager;
 import java.util.Optional;
 
