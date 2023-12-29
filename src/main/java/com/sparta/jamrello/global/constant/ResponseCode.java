@@ -41,6 +41,11 @@ public enum ResponseCode {
     DELETE_USER(200, "유저 삭제"),
     SETUP_DURATION(200, "기간 설정 완료"),
 
+    /* COMMENT */
+    UPDATE_COMMENT(200, "댓글 수정 완료"),
+    DELETE_COMMENT(200, "댓글 삭제 완료"),
+    GET_COMMENT_CONTENT(200, "댓글 조회 성공"),
+    
     /* 201 CREATED */
     SIGNUP(201, "회원가입 성공"),
     CREATED_BOARD(201, "보드 생성 성공"),
