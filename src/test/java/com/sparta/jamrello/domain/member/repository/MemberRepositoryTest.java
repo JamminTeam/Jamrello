@@ -1,8 +1,9 @@
 package com.sparta.jamrello.domain.member.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
 import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.entity.Member;
 import java.util.Optional;
