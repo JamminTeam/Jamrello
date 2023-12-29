@@ -5,7 +5,6 @@ import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.catalog.dto.CatalogRequestDto;
 import com.sparta.jamrello.domain.catalog.dto.CatalogResponseDto;
 import com.sparta.jamrello.global.time.TimeStamp;
-import com.sparta.jamrello.domain.card.repository.entity.Card;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,11 +59,11 @@ public class Catalog extends TimeStamp {
 
     public static Catalog createCatalog(Board board, CatalogRequestDto requestDto, Long position) {
         return Catalog.builder()
-                .board(board)
-                .title(requestDto.title())
-                .position(position)
-                .status(false)
-                .build();
+            .board(board)
+            .title(requestDto.title())
+            .position(position)
+            .status(false)
+            .build();
     }
 
     public void addCatalogInBoard() {
@@ -73,10 +72,10 @@ public class Catalog extends TimeStamp {
 
     public static CatalogResponseDto createCatalogResponseDto(Catalog catalog) {
         return new CatalogResponseDto(
-                catalog.getId(),
-                catalog.title,
-                catalog.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                catalog.position
+            catalog.getId(),
+            catalog.title,
+            catalog.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            catalog.position
         );
     }
 
