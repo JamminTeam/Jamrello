@@ -17,37 +17,36 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class S3Uploader {
 
-  private final AmazonS3Client amazonS3Client;
+    private final AmazonS3Client amazonS3Client;
 
-  @Value("${cloud.aws.s3.bucket}")
-  private String bucket;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
-  @Value("${cloud.aws.region.static}")
-  private String region;
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
-  public String uploadFile(MultipartFile file, String fileName) {
-    File fileObj = convertMultiPartFileToFile(file);
-    amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, fileObj));
-    fileObj.delete();
+    public String uploadFile(MultipartFile file, String fileName) {
+        File fileObj = convertMultiPartFileToFile(file);
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, fileObj));
+        fileObj.delete();
 
-    String fileUrl = amazonS3Client.getUrl(bucket, fileName).toString();
+        String fileUrl = amazonS3Client.getUrl(bucket, fileName).toString();
 
-    return fileUrl;
-  }
-
-  private File convertMultiPartFileToFile(MultipartFile file) {
-    File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-    try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
-      fos.write(file.getBytes());
-    } catch (IOException e) {
-      log.error("Fail to convert file : ", e);
+        return fileUrl;
     }
-    return convertedFile;
-  }
 
-  public void deleteFile(String fileName) {
-    amazonS3Client.deleteObject(bucket, fileName);
-  }
+    private File convertMultiPartFileToFile(MultipartFile file) {
+        File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
+        try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
+            fos.write(file.getBytes());
+        } catch (IOException e) {
+            log.error("Fail to convert file : ", e);
+        }
+        return convertedFile;
+    }
 
+    public void deleteFile(String fileName) {
+        amazonS3Client.deleteObject(bucket, fileName);
+    }
 
 }

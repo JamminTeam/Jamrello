@@ -45,6 +45,10 @@ public enum ResponseCode {
   UPDATE_COMMENT(200, "댓글 수정 완료"),
   DELETE_COMMENT(200, "댓글 삭제 완료"),
   GET_COMMENT_CONTENT(200, "댓글 조회 성공"),
+  UPDATE_COMMENT_IMAMGE(200, "댓글 이미지 수정 완료"),
+  DELETE_COMMENT_IMAMGE(200, "댓글 이미지 삭제 완료"),
+
+
 
   /* 201 CREATED */
   SIGNUP(201, "회원가입 성공"),

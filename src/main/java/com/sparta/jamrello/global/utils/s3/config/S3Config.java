@@ -9,29 +9,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
+
 @Configuration
 @RequiredArgsConstructor
 public class S3Config {
 
-  @Value("${cloud.aws.credentials.accessKey}")
-  private String accessKey;
+    @Value("${cloud.aws.credentials.accessKey}")
+    private String accessKey;
 
-  @Value("${cloud.aws.credentials.secretKey}")
-  private String secretKey;
+    @Value("${cloud.aws.credentials.secretKey}")
+    private String secretKey;
 
-  @Value("${cloud.aws.region.static}")
-  private String region;
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
-  @Bean
-  public AmazonS3Client amazonS3Client() {
-    AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+    @Bean
+    public AmazonS3Client amazonS3Client() {
+        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 
-    return (AmazonS3Client) AmazonS3ClientBuilder
-        .standard()
-        .withCredentials(new AWSStaticCredentialsProvider(credentials))
-        .withRegion(region)
-        .build();
-  }
+        return (AmazonS3Client) AmazonS3ClientBuilder
+            .standard()
+            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+            .withRegion(region)
+            .build();
+    }
 
 
 }
