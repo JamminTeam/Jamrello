@@ -42,7 +42,7 @@ public class CardServiceImplV1 implements CardService {
         Card card = Card.builder()
             .title(requestDto.title()).member(member).catalog(catalog).build();
 
-        card.setPosition((long) (catalog.getCardList().size() + 1));
+        card.updatePosition((long) (catalog.getCardList().size() + 1));
         cardRepository.save(card);
         catalog.getCardList().add(card);
 

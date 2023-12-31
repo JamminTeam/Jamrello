@@ -58,15 +58,10 @@ public class Card extends TimeStamp {
 
     private boolean status;
 
-    @Setter
     private Long position;
 
-    @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startDay;
 
-    @Column(updatable = true)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime dueDay;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -88,7 +83,11 @@ public class Card extends TimeStamp {
         this.backgroundColor = "#ffffff";
         this.status = false;
         this.startDay = LocalDateTime.now();
-        this.dueDay = LocalDateTime.now();
+        this.dueDay = LocalDateTime.now().plusDays(1);
+    }
+
+    public void updatePosition(Long position) {
+        this.position = position;
     }
 
     public void update(CardRequestDto requestDto) {
