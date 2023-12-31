@@ -99,7 +99,7 @@ public class CardController {
         cardService.addCollaborator(cardId, member.getId(), requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(
-            BaseResponse.of(ResponseCode.INVITE_USER, "")
+            BaseResponse.of(ResponseCode.INVITE_MEMBER, "")
         );
     }
 

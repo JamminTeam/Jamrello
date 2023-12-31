@@ -54,7 +54,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 }
 
                 if (!jwtUtil.checkTokenAboutLogout(accessTokenValue)) {
-                    log.error("로그아웃한 유저입니다. 다시 로그인 해주세요");
+                    log.error("로그아웃한 멤버입니다. 다시 로그인 해주세요");
                     setResponse(res, ErrorCode.LOGOUT_USER);
                     return;
                 }

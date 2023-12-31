@@ -1,7 +1,7 @@
 package com.sparta.jamrello.domain.card.dto.response;
 
 import com.sparta.jamrello.domain.cardCollaborators.dto.CardCollaboratorResponseDto;
-import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
+import com.sparta.jamrello.domain.comment.dto.response.CommentResponseDto;
 import java.util.List;
 
 public record CardResponseDto(

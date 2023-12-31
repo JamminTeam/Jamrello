@@ -2,6 +2,7 @@ package com.sparta.jamrello.domain.member.repository.entity;
 
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
+import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.memberboard.entity.MemberBoard;
 import com.sparta.jamrello.global.time.TimeStamp;
 import jakarta.persistence.CascadeType;
@@ -66,5 +67,14 @@ public class Member extends TimeStamp {
             .email(email)
             .build();
     }
+
+
+    public void updateMember(UpdateMemberRequestDto updateMemberRequestDto,
+        String password) {
+        this.password = password;
+        this.nickname = updateMemberRequestDto.nickname();
+        this.email = updateMemberRequestDto.email();
+    }
+
 
 }
