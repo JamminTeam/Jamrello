@@ -7,7 +7,8 @@ import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
 import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
-import com.sparta.jamrello.global.security.UserDetailsImpl;
+import com.sparta.jamrello.global.exception.BisException;
+import com.sparta.jamrello.global.exception.ErrorCode;
 import com.sparta.jamrello.global.security.jwt.RefreshTokenRepository;
 import com.sparta.jamrello.global.utils.EmailService;
 import com.sparta.jamrello.global.utils.RedisService;
@@ -32,10 +33,6 @@ public class MemberServiceImpl implements MemberService{
   private final EmailService emailService;
 
   private final RedisService redisService;
-
-//  // 만료시간 5분
-//  @Value("${spring.mail.auth-code-expiration-millis}")
-//  private Long authCodeExpirationMillis;
 
   @Override
   public void sendCodeToEmail(EmailRequestDto emailRequestDto) {
@@ -82,7 +79,7 @@ public class MemberServiceImpl implements MemberService{
     Member member = findUserInDBById(memberId);
 
     if (!member.getUsername().equals(loginMember.getUsername())) {
-      throw new IllegalArgumentException("자신의 정보만 조회 할 수 있습니다.");
+      new BisException(ErrorCode.YOUR_NOT_COME_IN);
     }
 
     return MemberResponseDto.buildMemberResponseDto(member);
@@ -98,11 +95,10 @@ public class MemberServiceImpl implements MemberService{
     Member member = findUserInDBById(memberId);
 
     if (!member.getUsername().equals(loginMember.getUsername())) {
-      throw new IllegalArgumentException("자신의 정보만 수정 할 수 있습니다.");
+      new BisException(ErrorCode.REJECTED_EXECUSION);
     }
-    String encodePassword = passwordEncoder.encode(updateMemberRequestDto.password());
 
-    member.updateMember(updateMemberRequestDto, encodePassword);
+    member.updateMember(updateMemberRequestDto, passwordEncoder.encode(updateMemberRequestDto.password()));
     return MemberResponseDto.buildMemberResponseDto(member);
   }
 
@@ -116,11 +112,11 @@ public class MemberServiceImpl implements MemberService{
     Member member = findUserInDBById(memberId);
 
     if (!member.getUsername().equals(loginMember.getUsername())) {
-      throw new IllegalArgumentException("본인이 탈퇴 할 수 있습니다.");
+      new BisException(ErrorCode.YOUR_NOT_COME_IN);
     }
 
     if (!passwordEncoder.matches(deleteMemberRequestDto.password(), member.getPassword())) {
-      throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+      new BisException(ErrorCode.NOT_MATCH_PASSWORD);
     }
 
     memberRepository.delete(member);
@@ -129,36 +125,38 @@ public class MemberServiceImpl implements MemberService{
 
   public void sameMemberInDBByUsername(String username) {
     if (memberRepository.existsUserByUsername(username)) {
-      throw new IllegalArgumentException("이미 가입한 유저입니다.");
+      new BisException(ErrorCode.DUPLICATE_MEMBER);
     }
   }
   public void sameMemberInDBByNickname(String nickname) {
     if (memberRepository.existsUserByNickname(nickname)) {
-      throw new IllegalArgumentException("중복된 닉네임입니다.");
+      new BisException(ErrorCode.DUPLICATE_USERNAME);
     }
   }
 
   public Member findUserInDBById(Long id) {
     Member member = memberRepository.findById(id).orElseThrow(() ->
-        new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+       new BisException(ErrorCode.NOT_FOUND_MEMBER)
     );
     return member;
   }
 
   public void sameMemberInDBByEmail(String email) {
     if (memberRepository.existsUserByEmail(email)) {
-      throw new IllegalArgumentException("이미 가입된 이메일이 존재합니다.");
+      new BisException(ErrorCode.DUPLICATE_EMAIL);
     }
   }
 
   private void emailVerification(String email, String authCode) {
+
     //관리자용 테스트 인증번호 추후에 테스트완료 후 삭제 예정
     if (authCode.equals("777777")) {
       return;
     }
+
     String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
     if (!(redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode))) {
-      throw new IllegalArgumentException("인증번호가 틀렸습니다. 다시 입력해주세요.");
+      new BisException(ErrorCode.NOT_MATCH_AUTHCODE);
     } else {
       redisService.deleteValues(redisAuthCode);
     }

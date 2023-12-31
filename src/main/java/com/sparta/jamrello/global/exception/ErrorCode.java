@@ -16,7 +16,11 @@ public enum ErrorCode {
     // 400 BAD_REQUEST
     POSITION_OVER(BAD_REQUEST, "변경할 수 없는 위치입니다"),
 
-    INVALID_VALUE(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다."),
+    INVALID_VALUE(BAD_REQUEST, "잘못된 입력값입니다."),
+
+    NOT_MATCH_PASSWORD(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
+
+    NOT_MATCH_AUTHCODE(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
 
     // 401 UNAUTHORIZED
     REJECTED_EXECUSION(UNAUTHORIZED, "수정 권한이 없습니다"),
@@ -48,6 +52,8 @@ public enum ErrorCode {
     NOT_FOUND_COMMENT(NOT_FOUND, "해당 댓글을 찾을 수 없습니다"),
 
     // 409 CONFLICT
+    DUPLICATE_MEMBER(CONFLICT, "이미 가입한 멤버 입니다."),
+
     DUPLICATE_USERNAME(CONFLICT, "중복된 Username 입니다"),
 
     DUPLICATE_EMAIL(CONFLICT, "중복된 Email 입니다"),
