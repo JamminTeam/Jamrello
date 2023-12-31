@@ -5,7 +5,7 @@ import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.cardCollaborators.dto.CardCollaboratorResponseDto;
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
-import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
+import com.sparta.jamrello.domain.comment.dto.response.CommentResponseDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.time.TimeStamp;
@@ -79,8 +79,9 @@ public class Card extends TimeStamp {
     private Member member;
 
     @Builder
-    public Card(String title, Member member, Catalog catalog) {
+    public Card(String title, String description,Member member, Catalog catalog) {
         this.title = title;
+        this.description = description;
         this.member = member;
         this.catalog = catalog;
         this.backgroundColor = "#ffffff";
