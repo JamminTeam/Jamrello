@@ -2,8 +2,8 @@ package com.sparta.jamrello.domain.comment.service;
 
 import com.sparta.jamrello.domain.card.repository.CardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
-import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
-import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
+import com.sparta.jamrello.domain.comment.dto.request.CommentRequestDto;
+import com.sparta.jamrello.domain.comment.dto.response.CommentResponseDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.domain.comment.repository.CommentRepository;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
@@ -26,7 +26,9 @@ public class CommentServiceImplV1 implements CommentService {
     private final CardRepository cardRepository;
 
     @Override
-    public Comment createComment(Long memberId, Long cardId, CommentRequestDto commentRequestDto) {
+    @Transactional
+    public CommentResponseDto createComment(Long memberId, Long cardId,
+        CommentRequestDto commentRequestDto) {
 
         Member member = findMember(memberId);
         Card card = findCard(cardId);
@@ -34,12 +36,12 @@ public class CommentServiceImplV1 implements CommentService {
         Comment comment = Comment.createCommentOf(commentRequestDto.content(), member, card);
         commentRepository.save(comment);
 
-        return comment;
+        return Comment.toCommentResponse(comment);
     }
 
     @Override
     @Transactional
-    public Comment updateComment(Long commentId, Long memberId,
+    public CommentResponseDto updateComment(Long commentId, Long memberId,
         CommentRequestDto commentRequestDto) {
 
         Member member = findMember(memberId);
@@ -51,7 +53,7 @@ public class CommentServiceImplV1 implements CommentService {
 
         comment.updateComment(commentRequestDto);
         commentRepository.save(comment);
-        return comment;
+        return Comment.toCommentResponse(comment);
     }
 
     @Override
@@ -69,9 +71,9 @@ public class CommentServiceImplV1 implements CommentService {
     }
 
     @Override
-    public Comment getComment(Long commentId) {
-        return commentRepository.findById(commentId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT));
+    public CommentResponseDto getComment(Long commentId) {
+        return Comment.toCommentResponse(commentRepository.findById(commentId)
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COMMENT)));
     }
 
     @Override
@@ -85,11 +87,9 @@ public class CommentServiceImplV1 implements CommentService {
         List<Comment> commentList = commentRepository.findAllCommentsWithPagination(pageable)
             .getContent();
 
-        List<CommentResponseDto> commentResponseDtoList = commentList.stream()
-            .map(comment -> Comment.toCommentResponse(comment.getMember(), comment))
+        return commentList.stream()
+            .map(Comment::toCommentResponse)
             .collect(Collectors.toList());
-
-        return commentResponseDtoList;
     }
 
 

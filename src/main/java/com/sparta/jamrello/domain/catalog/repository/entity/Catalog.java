@@ -1,10 +1,10 @@
 package com.sparta.jamrello.domain.catalog.repository.entity;
 
 import com.sparta.jamrello.domain.board.entity.Board;
+import com.sparta.jamrello.domain.card.repository.entity.Card;
 import com.sparta.jamrello.domain.catalog.dto.CatalogRequestDto;
 import com.sparta.jamrello.domain.catalog.dto.CatalogResponseDto;
 import com.sparta.jamrello.global.time.TimeStamp;
-import com.sparta.jamrello.domain.card.repository.entity.Card;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,12 +17,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "catalogs")
@@ -48,7 +48,7 @@ public class Catalog extends TimeStamp {
     private Board board;
 
     @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Card> cardList;
+    private List<Card> cardList = new ArrayList<>();
 
     @Builder
     public Catalog(String title, Long position, Board board, boolean status) {
@@ -60,11 +60,11 @@ public class Catalog extends TimeStamp {
 
     public static Catalog createCatalog(Board board, CatalogRequestDto requestDto, Long position) {
         return Catalog.builder()
-                .board(board)
-                .title(requestDto.title())
-                .position(position)
-                .status(false)
-                .build();
+            .board(board)
+            .title(requestDto.title())
+            .position(position)
+            .status(false)
+            .build();
     }
 
     public void addCatalogInBoard() {
@@ -73,10 +73,10 @@ public class Catalog extends TimeStamp {
 
     public static CatalogResponseDto createCatalogResponseDto(Catalog catalog) {
         return new CatalogResponseDto(
-                catalog.getId(),
-                catalog.title,
-                catalog.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                catalog.position
+            catalog.getId(),
+            catalog.title,
+            catalog.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+            catalog.position
         );
     }
 
