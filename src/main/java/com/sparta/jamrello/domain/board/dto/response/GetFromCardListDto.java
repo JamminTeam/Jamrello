@@ -1,6 +1,6 @@
 package com.sparta.jamrello.domain.board.dto.response;
 
-public record getFromCardListDto(
+public record GetFromCardListDto(
     String title,
     String imageUrl,
     String backgroundColor,
