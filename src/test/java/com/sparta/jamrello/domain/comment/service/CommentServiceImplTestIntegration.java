@@ -59,7 +59,7 @@ public class CommentServiceImplTestIntegration {
 
         card = cardRepository.save(Card.builder()
             .title("Test Card")
-            .description("Test Description")
+//            .description("Test Description")
             .build());
         commentRequestDto = new CommentRequestDto("test comment");
         comment = commentRepository.save(

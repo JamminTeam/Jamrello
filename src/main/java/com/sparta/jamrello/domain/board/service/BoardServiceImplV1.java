@@ -2,9 +2,9 @@ package com.sparta.jamrello.domain.board.service;
 
 import com.sparta.jamrello.domain.board.dto.request.BoardRequestDto;
 import com.sparta.jamrello.domain.board.dto.request.InviteMemberDto;
-import com.sparta.jamrello.domain.board.dto.response.BoardListResponseDto;
+import com.sparta.jamrello.domain.board.dto.response.CatalogListResponseDto;
 import com.sparta.jamrello.domain.board.dto.response.BoardResponseDto;
-import com.sparta.jamrello.domain.board.dto.response.getFromCardListDto;
+import com.sparta.jamrello.domain.board.dto.response.GetFromCardListDto;
 import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.board.repository.BoardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
@@ -40,6 +40,7 @@ public class BoardServiceImplV1 implements BoardService {
 
     return new BoardResponseDto(board.getTitle(), board.getBackgroundColor());
   }
+
 
   @Transactional
   @Override
@@ -93,27 +94,28 @@ public class BoardServiceImplV1 implements BoardService {
 
   @Transactional(readOnly = true)
   @Override
-  public List<BoardListResponseDto> getBoard(Long boardId) {
-    Board board = findByBoardId(boardId);
+  public List<CatalogListResponseDto> getBoard(Long boardId) {
+//    Board board = findByBoardId(boardId);
     Board getBoard = boardRepository.findByIdWithCatalogListAndCardList(boardId).orElseThrow(
         () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
     );
 
-    List<Catalog> catalogList = board.getCatalogList();
+    List<Catalog> catalogList = getBoard.getCatalogList();
 
-    List<BoardListResponseDto> responseDtoList = catalogList.stream()
+    List<CatalogListResponseDto> responseDtoList = catalogList.stream()
         .map(catalog -> {
           List<Card> cardList = catalog.getCardList();
-          List<getFromCardListDto> getCardList = cardList.stream()
-              .map(card -> new getFromCardListDto(
+          List<GetFromCardListDto> getCardList = cardList.stream()
+              .map(card -> new GetFromCardListDto(
                   card.getTitle(),
                   card.getImageUrl(),
                   card.getBackgroundColor(),
                   card.getCommentList().size(),
                   card.getCardCollaboratorList().size()
               )).toList();
-          return new BoardListResponseDto(catalog.getId(), catalog.getTitle(), getCardList);
-        })
+          return new CatalogListResponseDto(catalog.getId(), catalog.getTitle(), getCardList);
+        }
+        )
         .toList();
     return responseDtoList;
   }

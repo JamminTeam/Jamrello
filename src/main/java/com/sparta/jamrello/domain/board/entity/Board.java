@@ -48,15 +48,17 @@ public class Board extends TimeStamp {
 
 
   @Builder
-  public Board(String title, String backgroundColor) {
+  public Board(String title, String backgroundColor, boolean status) {
     this.title = title;
     this.backgroundColor = backgroundColor;
+    this.status = status;
   }
 
   public static Board fromRequestDto(BoardRequestDto requestDto) {
     return Board.builder()
         .title(requestDto.title())
         .backgroundColor(requestDto.backgroundColor())
+        .status(false)
         .build();
   }
 
