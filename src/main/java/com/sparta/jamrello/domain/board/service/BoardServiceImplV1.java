@@ -95,12 +95,12 @@ public class BoardServiceImplV1 implements BoardService {
   @Transactional(readOnly = true)
   @Override
   public List<CatalogListResponseDto> getBoard(Long boardId) {
-//    Board board = findByBoardId(boardId);
-    Board getBoard = boardRepository.findByIdWithCatalogListAndCardList(boardId).orElseThrow(
-        () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
-    );
+    Board board = findByBoardId(boardId);
+//    Board getBoard = boardRepository.findByIdWithCatalogListAndCardList(boardId).orElseThrow(
+//        () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
+//    );
 
-    List<Catalog> catalogList = getBoard.getCatalogList();
+    List<Catalog> catalogList = board.getCatalogList();
 
     List<CatalogListResponseDto> responseDtoList = catalogList.stream()
         .map(catalog -> {
