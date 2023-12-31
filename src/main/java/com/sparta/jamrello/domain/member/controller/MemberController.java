@@ -6,6 +6,7 @@ import com.sparta.jamrello.domain.member.dto.MemberResponseDto;
 import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
 import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
+import com.sparta.jamrello.domain.member.service.MemberService;
 import com.sparta.jamrello.domain.member.service.MemberServiceImpl;
 import com.sparta.jamrello.global.annotation.AuthUser;
 import com.sparta.jamrello.global.constant.ResponseCode;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/members")
 public class MemberController {
 
-  private final MemberServiceImpl memberService;
+  private final MemberService memberService;
 
   @PostMapping("/email")
   public ResponseEntity<BaseResponse> authenticationEmail (
