@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.board.repository.BoardRepository;
+import com.sparta.jamrello.domain.card.dto.request.CardDuedateRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardPositionRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
@@ -20,6 +21,8 @@ import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -75,6 +78,47 @@ public class CardServiceImplV1IntegrationTest {
         catalogRepository.deleteAll();
         boardRepository.deleteAll();
         memberRepository.deleteAll();
+    }
+
+    @Test
+    @DisplayName("카드 삭제 성공")
+    void deleteCardTest_success() {
+        // given
+        CardResponseDto card = cardService.createCard(catalog.getId(), member.getId(),
+            cardRequestDto);
+
+        // when
+        cardService.deleteCard(card.id(), member.getId());
+        Card deletedCard = cardRepository.findById(card.id()).orElse(null);
+
+        // then
+        assertNull(deletedCard);
+    }
+
+    @Test
+    @DisplayName("카드 순서 이동 성공")
+    @Transactional
+    void updateCardPosTest_success() {
+        // given
+        CardPositionRequestDto cardPositionRequestDto = new CardPositionRequestDto(2L);
+        CardResponseDto card1 = cardService.createCard(catalog.getId(), member.getId(),
+            cardRequestDto);
+        CardResponseDto card2 = cardService.createCard(catalog.getId(), member.getId(),
+            cardRequestDto);
+        CardResponseDto card3 = cardService.createCard(catalog.getId(), member.getId(),
+            cardRequestDto);
+
+        // when
+        cardService.updateCardPos(card1.id(), member.getId(), cardPositionRequestDto);
+
+        Card response1 = cardRepository.findById(card1.id()).get();
+        Card response2 = cardRepository.findById(card2.id()).get();
+        Card response3 = cardRepository.findById(card3.id()).get();
+
+        // then
+        assertEquals(2L, response1.getPosition());
+        assertEquals(1L, response2.getPosition());
+        assertEquals(3L, response3.getPosition());
     }
 
     @Nested
@@ -174,6 +218,26 @@ public class CardServiceImplV1IntegrationTest {
         }
 
         @Test
+        @DisplayName("카드 기한 수정 성공")
+        void updateCardDueDayTest_success() {
+            // given
+            CardResponseDto card = cardService.createCard(catalog.getId(), member.getId(),
+                cardRequestDto);
+            LocalDateTime now = LocalDateTime.now();
+            CardDuedateRequestDto updateDueDayRequestDto = new CardDuedateRequestDto(
+                now, now);
+
+            // when
+            CardResponseDto response = cardService.updateCardDueDay(card.id(), member.getId(),
+                updateDueDayRequestDto);
+
+            // then
+            assertEquals(
+                now.format((DateTimeFormatter.ofPattern("yyyy-MM-dd"))),
+                response.startDay());
+        }
+
+        @Test
         @DisplayName("카드 수정 실패 - 권한 없음")
         void updateCardTest_rejected() {
             // given
@@ -189,21 +253,6 @@ public class CardServiceImplV1IntegrationTest {
             // then
             assertEquals(ErrorCode.REJECTED_EXECUSION, e.getErrorCode());
         }
-    }
-
-    @Test
-    @DisplayName("카드 삭제 성공")
-    void deleteCardTest_success() {
-        // given
-        CardResponseDto card = cardService.createCard(catalog.getId(), member.getId(),
-            cardRequestDto);
-
-        // when
-        cardService.deleteCard(card.id(), member.getId());
-        Card deletedCard = cardRepository.findById(card.id()).orElse(null);
-
-        // then
-        assertNull(deletedCard);
     }
 
     @Nested
@@ -301,31 +350,5 @@ public class CardServiceImplV1IntegrationTest {
             // then
             assertEquals(ErrorCode.NOT_FOUND_COLLABORATOR, e.getErrorCode());
         }
-    }
-
-    @Test
-    @DisplayName("카드 순서 이동 성공")
-    @Transactional
-    void updateCardPosTest_success() {
-        // given
-        CardPositionRequestDto cardPositionRequestDto = new CardPositionRequestDto(2L);
-        CardResponseDto card1 = cardService.createCard(catalog.getId(), member.getId(),
-            cardRequestDto);
-        CardResponseDto card2 = cardService.createCard(catalog.getId(), member.getId(),
-            cardRequestDto);
-        CardResponseDto card3 = cardService.createCard(catalog.getId(), member.getId(),
-            cardRequestDto);
-
-        // when
-        cardService.updateCardPos(card1.id(), member.getId(), cardPositionRequestDto);
-
-        Card response1 = cardRepository.findById(card1.id()).get();
-        Card response2 = cardRepository.findById(card2.id()).get();
-        Card response3 = cardRepository.findById(card3.id()).get();
-
-        // then
-        assertEquals(2L, response1.getPosition());
-        assertEquals(1L, response2.getPosition());
-        assertEquals(3L, response3.getPosition());
     }
 }
