@@ -22,7 +22,7 @@ public enum ResponseCode {
   UPDATE_BOARD(200, "보드 수정 완료"),
   DELETE_BOARD(200, "보드 삭제 완료"),
   INVITE_MEMBER(200, "멤버 초대 성공"),
-  GET_BOARD(200, "보드 수정 완료"),
+  GET_BOARD(200, "보드 가져오기"),
   UPDATE_IMAMGE(200, "배경이미지 수정 완료"),
   DELETE_IMAMGE(200, "배경이미지 삭제 완료"),
 
