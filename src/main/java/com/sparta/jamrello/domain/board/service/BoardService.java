@@ -2,7 +2,7 @@ package com.sparta.jamrello.domain.board.service;
 
 import com.sparta.jamrello.domain.board.dto.request.BoardRequestDto;
 import com.sparta.jamrello.domain.board.dto.request.InviteMemberDto;
-import com.sparta.jamrello.domain.board.dto.response.BoardListResponseDto;
+import com.sparta.jamrello.domain.board.dto.response.CatalogListResponseDto;
 import com.sparta.jamrello.domain.board.dto.response.BoardResponseDto;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import java.util.List;
@@ -50,5 +50,5 @@ public interface BoardService {
    *
    * @param boardId 조회할 보드 ID
    */
-  List<BoardListResponseDto> getBoard(Long boardId);
+  List<CatalogListResponseDto> getBoard(Long boardId);
 }

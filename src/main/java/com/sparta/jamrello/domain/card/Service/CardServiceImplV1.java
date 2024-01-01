@@ -1,6 +1,7 @@
 package com.sparta.jamrello.domain.card.Service;
 
 import com.sparta.jamrello.domain.card.dto.request.CardCatalogRequestDto;
+import com.sparta.jamrello.domain.card.dto.request.CardDuedateRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardPositionRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
@@ -41,7 +42,7 @@ public class CardServiceImplV1 implements CardService {
         Card card = Card.builder()
             .title(requestDto.title()).member(member).catalog(catalog).build();
 
-        card.setPosition((long) (catalog.getCardList().size() + 1));
+        card.updatePosition((long) (catalog.getCardList().size() + 1));
         cardRepository.save(card);
         catalog.getCardList().add(card);
 
@@ -75,6 +76,17 @@ public class CardServiceImplV1 implements CardService {
         Card card = findCard(cardId);
         checkMember(memberId, card);
         card.update(requestDto);
+
+        return card.createResponseDto(card);
+    }
+
+    @Override
+    @Transactional
+    public CardResponseDto updateCardDueDay(Long cardId, Long memberId, CardDuedateRequestDto requestDto) {
+
+        Card card = findCard(cardId);
+        checkMember(memberId, card);
+        card.updateCardDueDay(requestDto);
 
         return card.createResponseDto(card);
     }
