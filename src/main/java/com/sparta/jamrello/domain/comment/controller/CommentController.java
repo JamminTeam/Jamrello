@@ -1,8 +1,7 @@
 package com.sparta.jamrello.domain.comment.controller;
 
-import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
-import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
-import com.sparta.jamrello.domain.comment.repository.entity.Comment;
+import com.sparta.jamrello.domain.comment.dto.request.CommentRequestDto;
+import com.sparta.jamrello.domain.comment.dto.response.CommentResponseDto;
 import com.sparta.jamrello.domain.comment.service.CommentService;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.annotation.AuthUser;
@@ -35,12 +34,11 @@ public class CommentController {
         @AuthUser Member member,
         @PathVariable Long cardId) {
 
-
-        CommentResponseDto commentResponseDto = Comment.toCommentResponse(member,
-            commentService.createComment(member.getId(), cardId, commentRequestDto));
+        CommentResponseDto responseDto = commentService.createComment(member.getId(), cardId,
+            commentRequestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(BaseResponse.of(ResponseCode.CREATED_COMMENT, commentResponseDto));
+            .body(BaseResponse.of(ResponseCode.CREATED_COMMENT, responseDto));
     }
 
     @PatchMapping("/comments/{commentId}")
@@ -49,8 +47,8 @@ public class CommentController {
         @AuthUser Member member,
         @PathVariable Long commentId) {
 
-        CommentResponseDto commentResponseDto = Comment.toCommentResponse(member,
-            commentService.updateComment(commentId, member.getId(), commentRequestDto));
+        CommentResponseDto commentResponseDto = commentService.updateComment(commentId,
+            member.getId(), commentRequestDto);
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(ResponseCode.UPDATE_COMMENT, commentResponseDto));
@@ -70,8 +68,7 @@ public class CommentController {
     public ResponseEntity<BaseResponse<CommentResponseDto>> getComment(
         @PathVariable Long commentId) {
 
-        Member member = commentService.getMemberByCommentId(commentId);
-        CommentResponseDto commentResponseDto = Comment.toCommentResponse(member, commentService.getComment(commentId));
+        CommentResponseDto commentResponseDto = commentService.getComment(commentId);
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(ResponseCode.GET_COMMENT_CONTENT, commentResponseDto));
@@ -85,7 +82,5 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(ResponseCode.GET_COMMENT_CONTENT, comments));
     }
-
-
 
 }

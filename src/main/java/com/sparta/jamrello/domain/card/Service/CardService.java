@@ -2,6 +2,7 @@ package com.sparta.jamrello.domain.card.Service;
 
 
 import com.sparta.jamrello.domain.card.dto.request.CardCatalogRequestDto;
+import com.sparta.jamrello.domain.card.dto.request.CardDuedateRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardPositionRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
@@ -17,6 +18,8 @@ public interface CardService {
     CardResponseDto getCard(Long cardId);
 
     CardResponseDto updateCard(Long cardId, Long memberId, CardRequestDto requestDto);
+
+    CardResponseDto updateCardDueDay(Long cardId, Long memberId, CardDuedateRequestDto requestDto);
 
     void deleteCard(Long cardId, Long memberId);
 

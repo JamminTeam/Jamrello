@@ -19,47 +19,47 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class EmailService {
 
-  private final JavaMailSender emailSender;
+    private final JavaMailSender emailSender;
 
-  public void sendEmail(String toEmail,
-      String title,
-      String text) {
-    SimpleMailMessage emailForm = createEmailForm(toEmail, title, text);
-    try {
-      emailSender.send(emailForm);
-    } catch (RuntimeException e) {
-      log.debug("MailService.sendEmail exception occur toEmail: {}, " +
-          "title: {}, text: {}", toEmail, title, text);
-      throw new BisException(ErrorCode.INTERNAL_SERVER_ERROR);
+    public void sendEmail(String toEmail,
+        String title,
+        String text) {
+        SimpleMailMessage emailForm = createEmailForm(toEmail, title, text);
+        try {
+            emailSender.send(emailForm);
+        } catch (RuntimeException e) {
+            log.debug("MailService.sendEmail exception occur toEmail: {}, " +
+                "title: {}, text: {}", toEmail, title, text);
+            throw new BisException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
-  }
 
-  // 발신할 이메일 데이터 세팅
-  private SimpleMailMessage createEmailForm(String toEmail,
-      String title,
-      String text) {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(toEmail);
-    message.setSubject(title);
-    message.setText(text);
+    // 발신할 이메일 데이터 세팅
+    private SimpleMailMessage createEmailForm(String toEmail,
+        String title,
+        String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject(title);
+        message.setText(text);
 
-    return message;
-  }
-
-  // 인증코드 생성
-  public String createCode() {
-    int lenth = 6;
-    try {
-      Random random = SecureRandom.getInstanceStrong();
-      StringBuilder builder = new StringBuilder();
-      for (int i = 0; i < lenth; i++) {
-        builder.append(random.nextInt(10));
-      }
-      return builder.toString();
-    } catch (NoSuchAlgorithmException e) {
-      log.debug("EmailService.createCode() exception occur");
-      throw new BisException(ErrorCode.INTERNAL_SERVER_ERROR);
+        return message;
     }
-  }
+
+    // 인증코드 생성
+    public String createCode() {
+        int lenth = 6;
+        try {
+            Random random = SecureRandom.getInstanceStrong();
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < lenth; i++) {
+                builder.append(random.nextInt(10));
+            }
+            return builder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            log.debug("EmailService.createCode() exception occur");
+            throw new BisException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

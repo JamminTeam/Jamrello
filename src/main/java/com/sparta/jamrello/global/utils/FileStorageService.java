@@ -20,7 +20,7 @@ public class FileStorageService {
 
     public FileStorageService() {
         this.fileStorageLocation = Paths.get(uploadDir)
-                .toAbsolutePath().normalize();
+            .toAbsolutePath().normalize();
 
         try {
             Files.createDirectories(this.fileStorageLocation);

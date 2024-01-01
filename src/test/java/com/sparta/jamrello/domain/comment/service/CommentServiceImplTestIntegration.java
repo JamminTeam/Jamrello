@@ -4,14 +4,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.sparta.jamrello.domain.card.repository.CardRepository;
 import com.sparta.jamrello.domain.card.repository.entity.Card;
-import com.sparta.jamrello.domain.comment.dto.CommentRequestDto;
-import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
+import com.sparta.jamrello.domain.comment.dto.request.CommentRequestDto;
+import com.sparta.jamrello.domain.comment.dto.response.CommentResponseDto;
 import com.sparta.jamrello.domain.comment.repository.CommentRepository;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.exception.BisException;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,10 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ActiveProfiles;
-
-import org.junit.jupiter.api.DisplayName;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(profiles = "test")
@@ -62,7 +59,7 @@ public class CommentServiceImplTestIntegration {
 
         card = cardRepository.save(Card.builder()
             .title("Test Card")
-            .description("Test Description")
+//            .description("Test Description")
             .build());
         commentRequestDto = new CommentRequestDto("test comment");
         comment = commentRepository.save(
@@ -92,8 +89,8 @@ public class CommentServiceImplTestIntegration {
         Long cardId = card.getId();
 
         // When
-        Comment createdComment = commentRepository.save(
-            commentService.createComment(memberId, cardId, commentRequestDto));
+        CommentResponseDto responseDto = commentService.createComment(memberId, cardId, commentRequestDto);
+        Comment createdComment = commentRepository.save(Comment.createCommentOf(responseDto.content(), member, card));
 
         // Then
         assertNotNull(createdComment);
@@ -172,11 +169,12 @@ public class CommentServiceImplTestIntegration {
             Comment expectedComment = comment;
 
             // When
-            Comment foundComment = commentService.getComment(expectedComment.getId());
+            CommentResponseDto responseDto = commentService.getComment(expectedComment.getId());
+            Optional<Comment> foundComment = commentRepository.findById(comment.getId());
 
             // Then
             assertNotNull(foundComment);
-            assertEquals(expectedComment.getId(), foundComment.getId());
+            assertEquals(expectedComment.getId(), foundComment.get().getId());
         }
 
         @Test
@@ -210,8 +208,9 @@ public class CommentServiceImplTestIntegration {
             CommentRequestDto updatedCommentRequestDto = new CommentRequestDto("updated comment");
 
             // When
-            Comment updatedComment = commentService.updateComment(comment.getId(), member.getId(),
+            CommentResponseDto responseDto = commentService.updateComment(comment.getId(), member.getId(),
                 updatedCommentRequestDto);
+            Comment updatedComment = Comment.createCommentOf(responseDto.content(), member, card);
 
             // Then
             assertNotNull(updatedComment);

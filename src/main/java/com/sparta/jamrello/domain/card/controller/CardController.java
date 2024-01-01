@@ -2,6 +2,7 @@ package com.sparta.jamrello.domain.card.controller;
 
 import com.sparta.jamrello.domain.card.Service.CardServiceImplV1;
 import com.sparta.jamrello.domain.card.dto.request.CardCatalogRequestDto;
+import com.sparta.jamrello.domain.card.dto.request.CardDuedateRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardPositionRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
@@ -54,7 +55,7 @@ public class CardController {
         );
     }
 
-    @GetMapping("cards/{cardId}")
+    @GetMapping("/cards/{cardId}")
     public ResponseEntity<BaseResponse<CardResponseDto>> getCard(
         @PathVariable Long cardId
     ) {
@@ -65,7 +66,7 @@ public class CardController {
         );
     }
 
-    @PatchMapping("cards/{cardId}")
+    @PatchMapping("/cards/{cardId}")
     public ResponseEntity<BaseResponse<CardResponseDto>> updateCard(
         @PathVariable Long cardId,
         @AuthUser Member member,
@@ -78,7 +79,20 @@ public class CardController {
         );
     }
 
-    @DeleteMapping("cards/{cardId}")
+    @PatchMapping("/cards/{cardId}/day")
+    public ResponseEntity<BaseResponse<CardResponseDto>> updateCardDueDay(
+        @PathVariable Long cardId,
+        @AuthUser Member member,
+        @RequestBody CardDuedateRequestDto requestDto) {
+
+        CardResponseDto responseDto = cardService.updateCardDueDay(cardId, member.getId(), requestDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.UPDATE_CARD, responseDto)
+        );
+    }
+
+    @DeleteMapping("/cards/{cardId}")
     public ResponseEntity<BaseResponse<String>> deleteCard(
         @PathVariable Long cardId,
         @AuthUser Member member
@@ -90,7 +104,7 @@ public class CardController {
         );
     }
 
-    @PostMapping("cards/{cardId}/collaborators")
+    @PostMapping("/cards/{cardId}/collaborators")
     public ResponseEntity<BaseResponse<String>> addCollaborator(
         @PathVariable Long cardId,
         @AuthUser Member member,
@@ -99,11 +113,11 @@ public class CardController {
         cardService.addCollaborator(cardId, member.getId(), requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(
-            BaseResponse.of(ResponseCode.INVITE_USER, "")
+            BaseResponse.of(ResponseCode.INVITE_MEMBER, "")
         );
     }
 
-    @DeleteMapping("cards/{cardId}/collaborators/{collaboratorId}")
+    @DeleteMapping("/cards/{cardId}/collaborators/{collaboratorId}")
     public ResponseEntity<BaseResponse<String>> deleteCollaborator(
         @PathVariable Long cardId,
         @PathVariable Long collaboratorId,
@@ -116,7 +130,7 @@ public class CardController {
         );
     }
 
-    @PatchMapping("cards/{cardId}/move")
+    @PatchMapping("/cards/{cardId}/move")
     public ResponseEntity<BaseResponse<String>> changeCardCatalog(
         @PathVariable Long cardId,
         @AuthUser Member member,
@@ -129,7 +143,7 @@ public class CardController {
         );
     }
 
-    @PatchMapping("cards/{cardId}/pos")
+    @PatchMapping("/cards/{cardId}/pos")
     public ResponseEntity<BaseResponse<String>> updateCardPos(
         @PathVariable Long cardId,
         @AuthUser Member member,
@@ -141,4 +155,5 @@ public class CardController {
             BaseResponse.of(ResponseCode.MOVE_CARD_POSITION, "")
         );
     }
+
 }

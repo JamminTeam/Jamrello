@@ -2,7 +2,7 @@ package com.sparta.jamrello.domain.board.controller;
 
 import com.sparta.jamrello.domain.board.dto.request.BoardRequestDto;
 import com.sparta.jamrello.domain.board.dto.request.InviteMemberDto;
-import com.sparta.jamrello.domain.board.dto.response.BoardListResponseDto;
+import com.sparta.jamrello.domain.board.dto.response.CatalogListResponseDto;
 import com.sparta.jamrello.domain.board.dto.response.BoardResponseDto;
 import com.sparta.jamrello.domain.board.service.BoardService;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
@@ -67,13 +67,13 @@ public class BoardController {
     boardService.inviteMember(boardId, inviteMemberDto);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(BaseResponse.of(ResponseCode.INVITE_USER, ""));
+        .body(BaseResponse.of(ResponseCode.INVITE_MEMBER, ""));
   }
 
   @GetMapping("/{boardId}")
-  public ResponseEntity<BaseResponse<List<BoardListResponseDto>>> getBoard(
+  public ResponseEntity<BaseResponse<List<CatalogListResponseDto>>> getBoard(
       @PathVariable Long boardId) {
-    List<BoardListResponseDto> responseDtoList = boardService.getBoard(boardId);
+    List<CatalogListResponseDto> responseDtoList = boardService.getBoard(boardId);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(BaseResponse.of(ResponseCode.GET_BOARD, responseDtoList));

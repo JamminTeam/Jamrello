@@ -1,11 +1,12 @@
 package com.sparta.jamrello.domain.card.repository.entity;
 
+import com.sparta.jamrello.domain.card.dto.request.CardDuedateRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.cardCollaborators.dto.CardCollaboratorResponseDto;
 import com.sparta.jamrello.domain.cardCollaborators.repository.entity.CardCollaborator;
 import com.sparta.jamrello.domain.catalog.repository.entity.Catalog;
-import com.sparta.jamrello.domain.comment.dto.CommentResponseDto;
+import com.sparta.jamrello.domain.comment.dto.response.CommentResponseDto;
 import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.time.TimeStamp;
@@ -57,15 +58,10 @@ public class Card extends TimeStamp {
 
     private boolean status;
 
-    @Setter
     private Long position;
 
-    @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startDay;
 
-    @Column(updatable = true)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime dueDay;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -79,20 +75,30 @@ public class Card extends TimeStamp {
     private Member member;
 
     @Builder
-    public Card(String title, Member member, Catalog catalog) {
+    public Card(String title, String description,Member member, Catalog catalog) {
         this.title = title;
+        this.description = description;
         this.member = member;
         this.catalog = catalog;
         this.backgroundColor = "#ffffff";
         this.status = false;
         this.startDay = LocalDateTime.now();
-        this.dueDay = LocalDateTime.now();
+        this.dueDay = LocalDateTime.now().plusDays(1);
+    }
+
+    public void updatePosition(Long position) {
+        this.position = position;
     }
 
     public void update(CardRequestDto requestDto) {
         this.title = requestDto.title();
         this.description = requestDto.description();
         this.backgroundColor = requestDto.backgroundColor();
+    }
+
+    public void updateCardDueDay(CardDuedateRequestDto requestDto) {
+        this.startDay = requestDto.startDay();
+        this.dueDay = requestDto.dueDay();
     }
 
     public void updateCatalog(Catalog catalog) {
