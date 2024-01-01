@@ -6,16 +6,16 @@ import java.util.List;
 
 public record CardResponseDto(
 
-    Long id,
-    String title,
-    String nickname,
-    String description,
-    String backgroundColor,
-    String modifiedAt,
-    String startDay,
-    String dueDay,
-    List<CommentResponseDto> commentList,
-    List<CardCollaboratorResponseDto> cardCollaboratorList
+        Long id,
+        String title,
+        String nickname,
+        String description,
+        String backgroundColor,
+        String modifiedAt,
+        String startDay,
+        String dueDay,
+        List<CommentResponseDto> commentList,
+        List<CardCollaboratorResponseDto> cardCollaboratorList
 ) {
 
 }
