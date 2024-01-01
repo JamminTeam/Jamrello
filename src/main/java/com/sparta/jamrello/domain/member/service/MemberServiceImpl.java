@@ -7,6 +7,7 @@ import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
 import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
+import com.sparta.jamrello.global.config.EmailConfig;
 import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;
 import com.sparta.jamrello.global.security.jwt.RefreshTokenRepository;
@@ -14,6 +15,7 @@ import com.sparta.jamrello.global.utils.EmailService;
 import com.sparta.jamrello.global.utils.RedisService;
 import java.time.Duration;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,9 @@ public class MemberServiceImpl implements MemberService{
 
   private final RedisService redisService;
 
+  private final EmailConfig emailConfig;
+
+
   @Override
   public void sendCodeToEmail(EmailRequestDto emailRequestDto) {
     String email = emailRequestDto.email();
@@ -47,7 +52,7 @@ public class MemberServiceImpl implements MemberService{
 
     // 이메일 인증 요청 시 인증 번호 Redis에 저장 ( key = "AuthCode " + Email / value = AuthCode )
     redisService.setValues(AUTH_CODE_PREFIX + email,
-        authCode, Duration.ofMillis(300000));
+        authCode, Duration.ofMillis(emailConfig.authCodeExpirationMillis));
   }
 
   @Override
@@ -79,7 +84,7 @@ public class MemberServiceImpl implements MemberService{
     Member member = findUserInDBById(memberId);
 
     if (!member.getUsername().equals(loginMember.getUsername())) {
-      new BisException(ErrorCode.YOUR_NOT_COME_IN);
+      throw new BisException(ErrorCode.YOUR_NOT_COME_IN);
     }
 
     return MemberResponseDto.buildMemberResponseDto(member);
@@ -95,7 +100,7 @@ public class MemberServiceImpl implements MemberService{
     Member member = findUserInDBById(memberId);
 
     if (!member.getUsername().equals(loginMember.getUsername())) {
-      new BisException(ErrorCode.REJECTED_EXECUSION);
+      throw new BisException(ErrorCode.REJECTED_EXECUSION);
     }
 
     member.updateMember(updateMemberRequestDto, passwordEncoder.encode(updateMemberRequestDto.password()));
@@ -112,11 +117,11 @@ public class MemberServiceImpl implements MemberService{
     Member member = findUserInDBById(memberId);
 
     if (!member.getUsername().equals(loginMember.getUsername())) {
-      new BisException(ErrorCode.YOUR_NOT_COME_IN);
+      throw new BisException(ErrorCode.YOUR_NOT_COME_IN);
     }
 
     if (!passwordEncoder.matches(deleteMemberRequestDto.password(), member.getPassword())) {
-      new BisException(ErrorCode.NOT_MATCH_PASSWORD);
+      throw new BisException(ErrorCode.NOT_MATCH_PASSWORD);
     }
 
     memberRepository.delete(member);
@@ -125,29 +130,29 @@ public class MemberServiceImpl implements MemberService{
 
   public void sameMemberInDBByUsername(String username) {
     if (memberRepository.existsUserByUsername(username)) {
-      new BisException(ErrorCode.DUPLICATE_MEMBER);
+      throw new BisException(ErrorCode.DUPLICATE_MEMBER);
     }
   }
   public void sameMemberInDBByNickname(String nickname) {
     if (memberRepository.existsUserByNickname(nickname)) {
-      new BisException(ErrorCode.DUPLICATE_USERNAME);
+      throw new BisException(ErrorCode.DUPLICATE_USERNAME);
     }
   }
 
   public Member findUserInDBById(Long id) {
     Member member = memberRepository.findById(id).orElseThrow(() ->
-       new BisException(ErrorCode.NOT_FOUND_MEMBER)
+        new BisException(ErrorCode.NOT_FOUND_MEMBER)
     );
     return member;
   }
 
   public void sameMemberInDBByEmail(String email) {
     if (memberRepository.existsUserByEmail(email)) {
-      new BisException(ErrorCode.DUPLICATE_EMAIL);
+      throw new BisException(ErrorCode.DUPLICATE_EMAIL);
     }
   }
 
-  private void emailVerification(String email, String authCode) {
+  public void emailVerification(String email, String authCode) {
 
     //관리자용 테스트 인증번호 추후에 테스트완료 후 삭제 예정
     if (authCode.equals("777777")) {
@@ -156,7 +161,7 @@ public class MemberServiceImpl implements MemberService{
 
     String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
     if (!(redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode))) {
-      new BisException(ErrorCode.NOT_MATCH_AUTHCODE);
+      throw new BisException(ErrorCode.NOT_MATCH_AUTHCODE);
     } else {
       redisService.deleteValues(redisAuthCode);
     }
