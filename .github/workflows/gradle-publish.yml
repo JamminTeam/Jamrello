@@ -38,11 +38,12 @@ jobs:
           redis-version: 6
 
       - name: Setup MySQL
-        uses: samin/mysql-action@v1
+        uses: mirromutth/mysql-action@v1.1
         with:
+          host port: 3306
+          container port: 3306
           mysql database: 'jamrello_test'
-          mysql password: 'test'
-          mysql user: 'root'
+          mysql root password: test
 
       - name: Build with Gradle
         # uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
