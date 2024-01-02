@@ -14,14 +14,15 @@ class CommentTest {
 
         Member member = new Member("testUser", "password", "nickname", "email@email.com");
         Card card = Card.builder()
-            .title("Test Card")
-            .build();
+                .title("Test Card")
+                .backgroundColor("#ffffff")
+                .build();
 
         Comment comment = Comment.builder()
-            .member(member)
-            .card(card)
-            .content("Test comment content")
-            .build();
+                .member(member)
+                .card(card)
+                .content("Test comment content")
+                .build();
 
         // 검증
         assertNotNull(comment);
