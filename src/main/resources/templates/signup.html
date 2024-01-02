@@ -11,6 +11,46 @@
         crossorigin="anonymous">
 </head>
 <body>
+<div class="container">
+  <div class="row justify-content-center"></div>
+  <div class="col-md-4">
+    <form id="loginForm" class="bg-light" th:action="@{/api/members/signup}" method="post">
+      <!-- CSRF 토큰 -->
+      <input type="hidden" th:if="${_csrf != null}" name="${_csrf.parameterName}"
+             th:value="${_csrf.token}"/>
+      <h3 class="mt-5 text-center">회원가입</h3>
+      <div class="m-5">
+        <div class="mb-2 form-group">
+          <label for="userId">ID</label>
+          <input type="text" class="form-control" id="userId" name="username"
+                 placeholder="아이디를 입력 하세요">
+        </div>
+        <div class="mb-2 form-group">
+          <label for="password">PASSWORD</label>
+          <input type="password" class="form-control" id="password" name="password"
+                 placeholder="비밀번호를 입력 하세요">
+        </div>
+        <div class="mb-2 form-group">
+          <label for="nickname">PASSWORD</label>
+          <input type="password" class="form-control" id="nickname" name="nickname"
+                 placeholder="비밀번호를 입력 하세요">
+        </div>
+        <div class="mb-2 form-group">
+          <label for="email">PASSWORD</label>
+          <input type="password" class="form-control" id="email" name="password"
+                 placeholder="비밀번호를 입력 하세요">
+        </div>
+        <div class="mb-2 form-group">
+          <label for="email-code">PASSWORD</label>
+          <input type="password" class="form-control" id="email-code" name="email-code"
+                 placeholder="비밀번호를 입력 하세요">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">로그인</button>
+        <a href="/jamrello/signup" class="btn btn-primary btn-block">회원가입</a>
+      </div>
+    </form>
 
+  </div>
+</div>
 </body>
 </html>
