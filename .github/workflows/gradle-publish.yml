@@ -16,17 +16,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Run chmod to make gralew executable
       run: chmod +x ./gradlew
-    - name: Start Redis
-      uses: supercharge/redis-github-action@1.1.0
-      with:
-        redis-version: 6
-    - name: Setup MySQL
-      uses: samin/mysql-action@v1
-      with:
-        character set server: 'utf8'
-        mysql database: 'jamrello_test'
-        mysql user: 'root'
-        mysql password: 'test'
+
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
@@ -34,7 +24,20 @@ jobs:
         distribution: 'temurin'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
-
+        
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.1.0
+      with:
+        redis-version: 6
+        
+    - name: Setup MySQL
+      uses: samin/mysql-action@v1
+      with:
+        character set server: 'utf8'
+        mysql database: 'jamrello_test'
+        mysql user: 'root'
+        mysql password: 'test'
+        
     - name: Build with Gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       env: 
