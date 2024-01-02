@@ -33,10 +33,16 @@ public class BoardServiceImplV1 implements BoardService {
     @Override
     public BoardResponseDto createBoard(BoardRequestDto requestDto, Member authMember) {
         Board board = Board.fromRequestDto(requestDto);
+
+        if (board.getBackgroundColor() == null || board.getBackgroundColor().isBlank()) {
+            board.updateBackgroundColor("#ffffff");
+        }
+
         boardRepository.save(board);
 
         MemberBoard memberBoard = MemberBoard.createMemberBoard(authMember, board,
-            MemberBoardRoleEnum.ADMIN);
+                MemberBoardRoleEnum.ADMIN);
+
         memberBoardRepository.save(memberBoard);
 
         return new BoardResponseDto(board.getTitle(), board.getBackgroundColor());
@@ -46,7 +52,7 @@ public class BoardServiceImplV1 implements BoardService {
     @Transactional
     @Override
     public BoardResponseDto updateBoard(Long boardId, BoardRequestDto requestDto,
-        Long authMemberId) {
+            Long authMemberId) {
         Board board = findByBoardId(boardId);
         Member member = findByMemberId(authMemberId);
         checkPermissionfromMemberAndBoard(member, board);
@@ -72,7 +78,7 @@ public class BoardServiceImplV1 implements BoardService {
     public void inviteMember(Long boardId, InviteMemberDto inviteMemberDto) {
         // 이메일 존재 여부
         Member member = memberRepository.findByEmail(inviteMemberDto.email()).orElseThrow(
-            () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
+                () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
         );
 
         // 보드 존재 여부
@@ -80,15 +86,16 @@ public class BoardServiceImplV1 implements BoardService {
 
         // 멤버가 해당 보드에 있는지 확인
         Optional<MemberBoard> getMemberBoardInfo = memberBoardRepository.findByMemberAndBoard(
-            member,
-            board);
+                member,
+                board);
 
         MemberBoard memberBoard = getMemberBoardInfo
-            .map(getMemberBoard -> {
-                getMemberBoard.updateRole(MemberBoardRoleEnum.INVITED_MEMBER);
-                return getMemberBoard;
-            })
-            .orElseGet(() -> new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER));
+                .map(getMemberBoard -> {
+                    getMemberBoard.updateRole(MemberBoardRoleEnum.INVITED_MEMBER);
+                    return getMemberBoard;
+                })
+                .orElseGet(
+                        () -> new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER));
 
         // 저장
         memberBoardRepository.save(memberBoard);
@@ -105,26 +112,27 @@ public class BoardServiceImplV1 implements BoardService {
         List<Catalog> catalogList = board.getCatalogList();
 
         List<CatalogListResponseDto> responseDtoList = catalogList.stream()
-            .map(catalog -> {
-                    List<Card> cardList = catalog.getCardList();
-                    List<GetFromCardListDto> getCardList = cardList.stream()
-                        .map(card -> new GetFromCardListDto(
-                            card.getTitle(),
-                            card.getImageUrl(),
-                            card.getBackgroundColor(),
-                            card.getCommentList().size(),
-                            card.getCardCollaboratorList().size()
-                        )).toList();
-                    return new CatalogListResponseDto(catalog.getId(), catalog.getTitle(), getCardList);
-                }
-            )
-            .toList();
+                .map(catalog -> {
+                            List<Card> cardList = catalog.getCardList();
+                            List<GetFromCardListDto> getCardList = cardList.stream()
+                                    .map(card -> new GetFromCardListDto(
+                                            card.getTitle(),
+                                            card.getImageUrl(),
+                                            card.getBackgroundColor(),
+                                            card.getCommentList().size(),
+                                            card.getCardCollaboratorList().size()
+                                    )).toList();
+                            return new CatalogListResponseDto(catalog.getId(), catalog.getTitle(),
+                                    getCardList);
+                        }
+                )
+                .toList();
         return responseDtoList;
     }
 
     private Board findByBoardId(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(
-            () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
+                () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
         );
 
         return board;
@@ -133,7 +141,7 @@ public class BoardServiceImplV1 implements BoardService {
     // 인증된 유저가 실제로 존재하는지 확인
     private Member findByMemberId(Long authMemberId) {
         Member member = memberRepository.findById(authMemberId).orElseThrow(
-            () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
+                () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
         );
 
         return member;
@@ -142,9 +150,9 @@ public class BoardServiceImplV1 implements BoardService {
     // 인증된 유저가 보드에 있는지 확인
     private MemberBoard checkPermissionfromMemberAndBoard(Member member, Board board) {
         MemberBoard memberBoard = memberBoardRepository.findByMemberAndBoard(member, board)
-            .orElseThrow(
-                () -> new BisException(ErrorCode.YOUR_NOT_INVITED_BOARD)
-            );
+                .orElseThrow(
+                        () -> new BisException(ErrorCode.YOUR_NOT_INVITED_BOARD)
+                );
 
         return memberBoard;
     }

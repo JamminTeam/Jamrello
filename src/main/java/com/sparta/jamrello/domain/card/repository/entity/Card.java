@@ -92,6 +92,10 @@ public class Card extends TimeStamp {
             .build();
     }
 
+    public void updatePosition(Long position) {
+        this.position = position;
+    }
+
     public void update(CardRequestDto requestDto) {
         this.title = requestDto.title();
         this.description = requestDto.description();
@@ -101,10 +105,6 @@ public class Card extends TimeStamp {
     public void updateCardDueDay(CardDuedateRequestDto requestDto) {
         this.startDay = requestDto.startDay();
         this.dueDay = requestDto.dueDay();
-    }
-
-    public void updatePosition(Long position) {
-        this.position = position;
     }
 
     public void updateCatalog(Catalog catalog) {

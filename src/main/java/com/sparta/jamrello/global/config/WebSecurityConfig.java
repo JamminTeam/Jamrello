@@ -86,7 +86,6 @@ public class WebSecurityConfig {
             .deleteCookies("refreshtoken")
                 .addLogoutHandler(logoutHandler)
                     .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK ));
-//                        .permitAll();
 
 
 
