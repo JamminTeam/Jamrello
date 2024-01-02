@@ -28,7 +28,7 @@ jobs:
           echo "JWT_SECRET_KEY: $JWT_SECRET_KEY"
           echo "DB_HOST: $DB_HOST"
           echo "MAIL_USERNAME: $MAIL_USERNAME"
-          echo "MAIL_PASSWORD": $MAIL_PASSWORD"
+          echo "MAIL_PASSWORD: $MAIL_PASSWORD"
 
       - uses: actions/checkout@v3
       - name: Run chmod to make gralew executable
