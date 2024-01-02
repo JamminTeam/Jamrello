@@ -7,6 +7,7 @@ import com.sparta.jamrello.domain.member.dto.SignupRequestDto;
 import com.sparta.jamrello.domain.member.dto.UpdateMemberRequestDto;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
+import com.sparta.jamrello.global.config.EmailConfig;
 import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;
 import com.sparta.jamrello.global.security.jwt.RefreshTokenRepository;
@@ -36,6 +37,8 @@ public class MemberServiceImpl implements MemberService {
 
     private final RedisService redisService;
 
+  private final EmailConfig emailConfig;
+
     @Override
     public void sendCodeToEmail(EmailRequestDto emailRequestDto) {
         String email = emailRequestDto.email();
@@ -49,7 +52,7 @@ public class MemberServiceImpl implements MemberService {
 
         // 이메일 인증 요청 시 인증 번호 Redis에 저장 ( key = "AuthCode " + Email / value = AuthCode )
         redisService.setValues(AUTH_CODE_PREFIX + email,
-            authCode, Duration.ofMillis(300000));
+            authCode, Duration.ofMillis(emailConfig.authCodeExpirationMillis));
     }
 
     @Override
@@ -150,7 +153,7 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    private void emailVerification(String email, String authCode) {
+    public void emailVerification(String email, String authCode) {
 
         //관리자용 테스트 인증번호 추후에 테스트완료 후 삭제 예정
         if (authCode.equals("777777")) {
