@@ -26,6 +26,7 @@ jobs:
       - name: Create appliction.properties
         run: | 
           pwd
+          ls -al
           touch ./src/main/resources/application.properties
           echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
           cat ./src/main/resources/application.properties
