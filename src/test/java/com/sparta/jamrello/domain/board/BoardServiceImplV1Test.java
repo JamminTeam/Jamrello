@@ -35,7 +35,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 @Transactional
 @SpringBootTest
@@ -43,216 +42,222 @@ import org.springframework.transaction.annotation.Transactional;
 class BoardServiceImplV1Test {
 
 
-  @Autowired
-  private BoardServiceImplV1 boardService;
+    @Autowired
+    private BoardServiceImplV1 boardService;
 
-  @Autowired
-  private BoardRepository boardRepository;
+    @Autowired
+    private BoardRepository boardRepository;
 
-  @Autowired
-  private MemberService memberService;
+    @Autowired
+    private MemberService memberService;
 
-  @Autowired
-  private MemberRepository memberRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
-  @Autowired
-  private MemberBoardRepository memberBoardRepository;
+    @Autowired
+    private MemberBoardRepository memberBoardRepository;
 
-  @Autowired
-  private CatalogRepository catalogRepository;
+    @Autowired
+    private CatalogRepository catalogRepository;
 
-  @Autowired
-  private CardRepository cardRepository;
+    @Autowired
+    private CardRepository cardRepository;
 
 
-  private Member member;
-  private Long memberId;
+    private Member member;
+    private Long memberId;
 
-  @BeforeEach
-  void createBasicInfo() {
-    boardRepository.deleteAll();
-    memberRepository.deleteAll();
-    memberBoardRepository.deleteAll();
+    @BeforeEach
+    void createBasicInfo() {
+        boardRepository.deleteAll();
+        memberRepository.deleteAll();
+        memberBoardRepository.deleteAll();
 
-    member = memberRepository.save(Member.builder()
-        .username("testUser")
-        .password("password")
-        .nickname("nickname")
-        .email("email@email.com")
-        .build()
-    );
+        member = memberRepository.save(Member.builder()
+                .username("testUser")
+                .password("password")
+                .nickname("nickname")
+                .email("email@email.com")
+                .build()
+        );
 
-    memberId = member.getId();
-  }
+        memberId = member.getId();
+    }
 
     @Test
     @Order(1)
     @DisplayName("보드 생성")
     void successToCreateBoard() {
-      // Given
-      BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
-      Board testBoard = Board.fromRequestDto(requestDto);
-      MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, testBoard, MemberBoardRoleEnum.ADMIN);
+        // Given
+        BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
+        Board testBoard = Board.fromRequestDto(requestDto);
+        MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, testBoard,
+                MemberBoardRoleEnum.ADMIN);
 
-      // When
-      BoardResponseDto responseDto = boardService.createBoard(requestDto, member);
-      boardRepository.save(testBoard);
-      memberBoardRepository.save(testMemberBoard);
+        // When
+        BoardResponseDto responseDto = boardService.createBoard(requestDto, member);
+        boardRepository.save(testBoard);
+        memberBoardRepository.save(testMemberBoard);
 
-      // Then
-      assertEquals(requestDto.title(), responseDto.title());
-      assertEquals(requestDto.backgroundColor(), responseDto.backgroundColor());
-      assertEquals(MemberBoardRoleEnum.ADMIN, testMemberBoard.getRole());
+        // Then
+        assertEquals(requestDto.title(), responseDto.title());
+        assertEquals(requestDto.backgroundColor(), responseDto.backgroundColor());
+        assertEquals(MemberBoardRoleEnum.ADMIN, testMemberBoard.getRole());
     }
 
-@Nested
-@DisplayName("보드 수정")
-class BoardUpdateTestList{
-  private Long boardId;
+    @Nested
+    @DisplayName("보드 수정")
+    class BoardUpdateTestList {
 
-  @BeforeEach
-  void setUp() {
-    BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
-    Board testBoard = Board.fromRequestDto(requestDto);
-    boardRepository.save(testBoard);
+        private Long boardId;
 
-    MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, testBoard, MemberBoardRoleEnum.ADMIN);
-    memberBoardRepository.save(testMemberBoard);
+        @BeforeEach
+        void setUp() {
+            BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
+            Board testBoard = Board.fromRequestDto(requestDto);
+            boardRepository.save(testBoard);
 
-    boardId = testBoard.getId();
-  }
+            MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, testBoard,
+                    MemberBoardRoleEnum.ADMIN);
+            memberBoardRepository.save(testMemberBoard);
 
-  @Test
-  @Order(2)
-  @DisplayName("보드 수정 성공")
-  void updateBoard() {
-    // Given
-    String updateTitle = "제목수정";
-    String updateBackgroundColor = "#121212";
+            boardId = testBoard.getId();
+        }
 
-    BoardRequestDto requestDto = new BoardRequestDto(updateTitle, updateBackgroundColor);
+        @Test
+        @Order(2)
+        @DisplayName("보드 수정 성공")
+        void updateBoard() {
+            // Given
+            String updateTitle = "제목수정";
+            String updateBackgroundColor = "#121212";
 
-    Board testUpdateBoard = Board.fromRequestDto(requestDto);
+            BoardRequestDto requestDto = new BoardRequestDto(updateTitle, updateBackgroundColor);
 
-    // When
-    BoardResponseDto responseDto = boardService.updateBoard(boardId, requestDto, memberId);
+            Board testUpdateBoard = Board.fromRequestDto(requestDto);
 
-    // Then
-    assertEquals(updateTitle, responseDto.title());
-    assertEquals(updateBackgroundColor, responseDto.backgroundColor());
-  }
-}
+            // When
+            BoardResponseDto responseDto = boardService.updateBoard(boardId, requestDto, memberId);
 
-  @Nested
-  @DisplayName("보드 조회")
-  class GetBoardTestList{
-    private Board board;
-    private Catalog catalog;
-    private Card card;
-
-    @BeforeEach
-    void setUp() {
-      BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
-      board = boardRepository.save(Board.fromRequestDto(requestDto));
-
-      MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, board, MemberBoardRoleEnum.ADMIN);
-      memberBoardRepository.save(testMemberBoard);
-
-      catalog = catalogRepository.save(Catalog.builder()
-                                    .board(board)
-                                    .title("카테고리제목")
-                                    .status(false)
-                                    .position(1L)
-                                    .build());
-
-      card = cardRepository.save(Card.builder()
-                            .member(member)
-                            .catalog(catalog)
-                              .title("카드제목")
-                              .build());
-      catalog.getCardList().add(card);
-      board.getCatalogList().add(catalog);
+            // Then
+            assertEquals(updateTitle, responseDto.title());
+            assertEquals(updateBackgroundColor, responseDto.backgroundColor());
+        }
     }
 
-    @Test
-    @DisplayName("보드 조회 메서드 getBoard")
-    void getBoard() {
-      // When
-      List<CatalogListResponseDto> list = boardService.getBoard(board.getId());
+    @Nested
+    @DisplayName("보드 조회")
+    class GetBoardTestList {
 
-      // Then
-      assertEquals("카테고리제목", list.get(0).title());
-      assertEquals("카드제목", list.get(0).fromCardListDtoList().get(0).title());
-    }
-  }
+        private Board board;
+        private Catalog catalog;
+        private Card card;
 
+        @BeforeEach
+        void setUp() {
+            BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
+            board = boardRepository.save(Board.fromRequestDto(requestDto));
 
-  @Nested
-  @DisplayName("보드 삭제")
-  class BoardDeleteTestList {
+            MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, board,
+                    MemberBoardRoleEnum.ADMIN);
+            memberBoardRepository.save(testMemberBoard);
 
-    private Long boardId;
-    private Long memberId;
+            catalog = catalogRepository.save(Catalog.builder()
+                    .board(board)
+                    .title("카테고리제목")
+                    .status(false)
+                    .position(1L)
+                    .build());
 
-    @BeforeEach
-    void setUp() {
-      BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
-      Board testBoard = Board.fromRequestDto(requestDto);
-      boardRepository.save(testBoard);
+            card = cardRepository.save(Card.builder()
+                    .member(member)
+                    .catalog(catalog)
+                    .backgroundColor("#ffffff")
+                    .title("카드제목")
+                    .build());
+            catalog.getCardList().add(card);
+            board.getCatalogList().add(catalog);
+        }
 
-      MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, testBoard,
-          MemberBoardRoleEnum.ADMIN);
-      memberBoardRepository.save(testMemberBoard);
+        @Test
+        @DisplayName("보드 조회 메서드 getBoard")
+        void getBoard() {
+            // When
+            List<CatalogListResponseDto> list = boardService.getBoard(board.getId());
 
-      boardId = testBoard.getId();
-      memberId = testMemberBoard.getMember().getId();
-    }
-
-    @Test
-    void deleteBoard() {
-      // When
-      boardService.deleteBoard(boardId, memberId);
-
-      // Then
-      Optional<Board> checkDeleteBoard = boardRepository.findById(boardId);
-      assertTrue(checkDeleteBoard.isEmpty());
-
-    }
-  }
-
-  @Nested
-  @DisplayName("이메일 초대 테스트")
-  class InviteTest {
-
-    private Long boardId;
-    private Long memberId;
-
-    @BeforeEach
-    void setUp() {
-      BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
-      Board testBoard = Board.fromRequestDto(requestDto);
-      boardRepository.save(testBoard);
-
-      MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, testBoard,
-          MemberBoardRoleEnum.ADMIN);
-      memberBoardRepository.save(testMemberBoard);
-
-      boardId = testBoard.getId();
-      memberId = 3L;
+            // Then
+            assertEquals("카테고리제목", list.get(0).title());
+            assertEquals("카드제목", list.get(0).fromCardListDtoList().get(0).title());
+        }
     }
 
-    @Test
-    void inviteMember() {
-      // Given
-      InviteMemberDto inviteMemberDto = new InviteMemberDto("email@email.com");
 
-      // When
-      boardService.inviteMember(boardId, inviteMemberDto);
+    @Nested
+    @DisplayName("보드 삭제")
+    class BoardDeleteTestList {
 
-      // Then
-      assertEquals("email@email.com", inviteMemberDto.email());
+        private Long boardId;
+        private Long memberId;
 
+        @BeforeEach
+        void setUp() {
+            BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
+            Board testBoard = Board.fromRequestDto(requestDto);
+            boardRepository.save(testBoard);
+
+            MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, testBoard,
+                    MemberBoardRoleEnum.ADMIN);
+            memberBoardRepository.save(testMemberBoard);
+
+            boardId = testBoard.getId();
+            memberId = testMemberBoard.getMember().getId();
+        }
+
+        @Test
+        void deleteBoard() {
+            // When
+            boardService.deleteBoard(boardId, memberId);
+
+            // Then
+            Optional<Board> checkDeleteBoard = boardRepository.findById(boardId);
+            assertTrue(checkDeleteBoard.isEmpty());
+
+        }
     }
-  }
+
+    @Nested
+    @DisplayName("이메일 초대 테스트")
+    class InviteTest {
+
+        private Long boardId;
+        private Long memberId;
+
+        @BeforeEach
+        void setUp() {
+            BoardRequestDto requestDto = new BoardRequestDto("제목", "#000000");
+            Board testBoard = Board.fromRequestDto(requestDto);
+            boardRepository.save(testBoard);
+
+            MemberBoard testMemberBoard = MemberBoard.createMemberBoard(member, testBoard,
+                    MemberBoardRoleEnum.ADMIN);
+            memberBoardRepository.save(testMemberBoard);
+
+            boardId = testBoard.getId();
+            memberId = 3L;
+        }
+
+        @Test
+        void inviteMember() {
+            // Given
+            InviteMemberDto inviteMemberDto = new InviteMemberDto("email@email.com");
+
+            // When
+            boardService.inviteMember(boardId, inviteMemberDto);
+
+            // Then
+            assertEquals("email@email.com", inviteMemberDto.email());
+
+        }
+    }
 
 }

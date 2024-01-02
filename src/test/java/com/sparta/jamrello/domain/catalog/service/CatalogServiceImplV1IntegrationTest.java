@@ -2,6 +2,7 @@ package com.sparta.jamrello.domain.catalog.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -78,6 +79,17 @@ class CatalogServiceImplV1IntegrationTest {
     @DisplayName("카탈로그 저장 테스트 모음")
     class CatalogSaveTestList {
 
+        private Long memberId;
+        private Long boardId;
+        private String title;
+
+        @BeforeEach
+        void setup() {
+            memberId = member.getId();
+            boardId = board.getId();
+            title = "제목";
+        }
+
         @Test
         @DisplayName("카탈로그 저장 테스트 성공 - 멤버")
         void createCatalogSuccessMember() {
@@ -85,9 +97,6 @@ class CatalogServiceImplV1IntegrationTest {
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
 
-            Long memberId = member.getId();
-            Long boardId = board.getId();
-            String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
 
             // When
@@ -108,9 +117,6 @@ class CatalogServiceImplV1IntegrationTest {
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
 
-            Long memberId = member.getId();
-            Long boardId = board.getId();
-            String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
 
             // When
@@ -131,9 +137,6 @@ class CatalogServiceImplV1IntegrationTest {
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.NOT_INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
 
-            Long memberId = member.getId();
-            Long boardId = board.getId();
-            String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
             // When - Then
             assertThrows(BisException.class,
@@ -144,9 +147,6 @@ class CatalogServiceImplV1IntegrationTest {
         @DisplayName("카탈로그 저장 테스트 실패 - 보드 가입 X")
         void createCatalogButMemberDidNotSignUpInBoard() {
             // Given
-            Long memberId = member.getId();
-            Long boardId = board.getId();
-            String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
 
             // When - Then
@@ -159,32 +159,44 @@ class CatalogServiceImplV1IntegrationTest {
     @DisplayName("카탈로그 제목 업데이트 모음")
     class CatalogUpdateTitleTestList {
 
+        private Long memberId;
+        private Long boardId;
+        private Long catalogId;
+        private String originalTitle;
+        private String updatedTitle;
+        private Catalog originalCatalog;
+
+        @BeforeEach
+        void setUp() {
+            memberId = member.getId();
+            boardId = board.getId();
+            originalTitle = "제목";
+            updatedTitle = "수정 제목";
+            originalCatalog = Catalog.builder()
+                                     .title(originalTitle)
+                                     .status(false)
+                                     .position(2L)
+                                     .board(board)
+                                     .build();
+            catalogRepository.save(originalCatalog);
+            catalogId = originalCatalog.getId();
+        }
+
         @Test
         @DisplayName("카탈로그 제목 업데이트 성공")
         void updateCatalogTitleSuccess() {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-
-            Long memberId = member.getId();
-            Long boardId = board.getId();
-            String title = "제목";
-            String titleForUpdate = "수정 제목";
-            CatalogRequestDto requestDtoForCreate = new CatalogRequestDto(title);
-            CatalogResponseDto createdResponseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDtoForCreate);
-            Catalog catalog = catalogRepository.findById(createdResponseDto.id()).get();
-            Long catalogId = catalog.getId();
-            CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(titleForUpdate);
+            CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(updatedTitle);
             // When
             CatalogResponseDto actual = catalogService.updateCatalogTitle(memberId,
                     catalogId, requestDtoForUpdate);
             // Then
             assertNotNull(actual);
-            assertEquals(titleForUpdate, actual.title());
+            assertEquals(updatedTitle, actual.title());
             assertEquals(catalogId, actual.id());
-            assertEquals(createdResponseDto.position(), actual.position());
-            assertEquals(createdResponseDto.createdAt(), actual.createdAt());
+            assertEquals(originalCatalog.getPosition(), actual.position());
         }
 
         @Test
@@ -194,26 +206,18 @@ class CatalogServiceImplV1IntegrationTest {
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
 
-            Long memberId = member.getId();
-            Long boardId = board.getId();
-            String title = "제목";
-            String titleForUpdate = "수정 제목";
-            CatalogRequestDto requestDtoForCreate = new CatalogRequestDto(title);
-            CatalogResponseDto createdResponseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDtoForCreate);
-            Catalog catalog = catalogRepository.findById(createdResponseDto.id()).get();
-            Long catalogId = catalog.getId();
-            CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(titleForUpdate);
+            CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(updatedTitle);
 
-            Member memberSignUp = Member.builder()
+            Member newMember = Member.builder()
                     .username("username2")
                     .email("email2@email.com")
                     .password("password")
                     .nickname("nickname2")
                     .build();
-            memberSignUp = memberRepository.save(memberSignUp);
-            Long memberSignUpId = memberSignUp.getId();
-            MemberBoard memberBoardSignUp = new MemberBoard(memberSignUp, board,
+            newMember = memberRepository.save(newMember);
+            Long memberSignUpId = newMember.getId();
+
+            MemberBoard memberBoardSignUp = new MemberBoard(newMember, board,
                     MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoardSignUp);
 
@@ -222,10 +226,9 @@ class CatalogServiceImplV1IntegrationTest {
                     catalogId, requestDtoForUpdate);
             // Then
             assertNotNull(actual);
-            assertEquals(titleForUpdate, actual.title());
+            assertEquals(updatedTitle, actual.title());
             assertEquals(catalogId, actual.id());
-            assertEquals(createdResponseDto.position(), actual.position());
-            assertEquals(createdResponseDto.createdAt(), actual.createdAt());
+            assertEquals(originalCatalog.getPosition(), actual.position());
         }
 
         @Test
@@ -235,16 +238,8 @@ class CatalogServiceImplV1IntegrationTest {
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
 
-            Long memberId = member.getId();
-            Long boardId = board.getId();
-            String title = "제목";
-            String titleForUpdate = "수정 제목";
-            CatalogRequestDto requestDtoForCreate = new CatalogRequestDto(title);
-            CatalogResponseDto createdResponseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDtoForCreate);
-            Catalog catalog = catalogRepository.findById(createdResponseDto.id()).get();
-            Long catalogId = catalog.getId();
-            CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(titleForUpdate);
+            CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(updatedTitle);
+
             Member memberNotSignUp = Member.builder()
                     .username("username2")
                     .email("email2@email.com")
@@ -253,9 +248,11 @@ class CatalogServiceImplV1IntegrationTest {
                     .build();
             memberNotSignUp = memberRepository.save(memberNotSignUp);
             Long memberNotSignUpId = memberNotSignUp.getId();
+
             MemberBoard memberBoardNotSignUp = new MemberBoard(memberNotSignUp, board,
                     MemberBoardRoleEnum.NOT_INVITED_MEMBER);
             memberBoardRepository.save(memberBoardNotSignUp);
+
             // When - Then
             assertThrows(BisException.class,
                     () -> catalogService.updateCatalogTitle(memberNotSignUpId,
@@ -269,16 +266,8 @@ class CatalogServiceImplV1IntegrationTest {
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
 
-            Long memberId = member.getId();
-            Long boardId = board.getId();
-            String title = "제목";
-            String titleForUpdate = "수정 제목";
-            CatalogRequestDto requestDtoForCreate = new CatalogRequestDto(title);
-            CatalogResponseDto createdResponseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDtoForCreate);
-            Catalog catalog = catalogRepository.findById(createdResponseDto.id()).get();
-            Long catalogId = catalog.getId();
-            CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(titleForUpdate);
+            CatalogRequestDto requestDtoForUpdate = new CatalogRequestDto(updatedTitle);
+
             Member memberNotSignUp = Member.builder()
                     .username("username2")
                     .email("email2@email.com")
@@ -299,22 +288,38 @@ class CatalogServiceImplV1IntegrationTest {
     @DisplayName("카탈로그 상태 변경 테스트 모음")
     class CatalogStatusUpdateTestList {
 
+        private Long boardId;
+        private Long memberId;
+        private String title;
+        private Catalog originalCatalog;
+        private Long catalogId;
+
+        @BeforeEach
+        void setUp() {
+            boardId = board.getId();
+            memberId = member.getId();
+            title = "제목";
+
+            originalCatalog = Catalog.builder()
+                    .title(title)
+                    .status(false)
+                    .position(2L)
+                    .board(board)
+                    .build();
+            catalogRepository.save(originalCatalog);
+            catalogId = originalCatalog.getId();
+        }
+
         @Test
         @DisplayName("카탈로그 상태 변경 테스트 성공")
         void updateCatalogStatusSuccess() {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
-            String title = "제목";
-            CatalogRequestDto requestDto = new CatalogRequestDto(title);
-            CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDto);
 
             // When
-            catalogService.updateCatalogStatus(memberId, responseDto.id());
-            Catalog afterCatalog = catalogRepository.findById(responseDto.id()).get();
+            catalogService.updateCatalogStatus(memberId, catalogId);
+            Catalog afterCatalog = catalogRepository.findById(catalogId).get();
 
             // Then
             assertTrue(afterCatalog.isStatus());
@@ -326,17 +331,11 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
-            String title = "제목";
-            CatalogRequestDto requestDto = new CatalogRequestDto(title);
-            CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDto);
 
             // When
-            catalogService.updateCatalogStatus(memberId, responseDto.id());
-            catalogService.updateCatalogStatus(memberId, responseDto.id());
-            Catalog afterCatalog = catalogRepository.findById(responseDto.id()).get();
+            catalogService.updateCatalogStatus(memberId, catalogId);
+            catalogService.updateCatalogStatus(memberId, catalogId);
+            Catalog afterCatalog = catalogRepository.findById(catalogId).get();
 
             // Then
             assertFalse(afterCatalog.isStatus());
@@ -348,12 +347,6 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
-            String title = "제목";
-            CatalogRequestDto requestDto = new CatalogRequestDto(title);
-            CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDto);
 
             Member notInvitedMember = Member.builder()
                     .username("othername")
@@ -369,7 +362,7 @@ class CatalogServiceImplV1IntegrationTest {
             // When - Then
             assertThrows(BisException.class,
                     () -> catalogService.updateCatalogStatus(notInvitedMemberId,
-                            responseDto.id()));
+                            catalogId));
         }
 
         @Test
@@ -378,12 +371,6 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
-            String title = "제목";
-            CatalogRequestDto requestDto = new CatalogRequestDto(title);
-            CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDto);
 
             Member notInvitedMember = Member.builder()
                     .username("othername")
@@ -396,7 +383,7 @@ class CatalogServiceImplV1IntegrationTest {
             // When - Then
             assertThrows(BisException.class,
                     () -> catalogService.updateCatalogStatus(notInvitedMemberId,
-                            responseDto.id()));
+                            catalogId));
         }
     }
 
@@ -404,21 +391,37 @@ class CatalogServiceImplV1IntegrationTest {
     @DisplayName("카탈로그 삭제 테스트 모음")
     class DeleteCatalogTestList {
 
+        private Long boardId;
+        private Long memberId;
+        private String title;
+        private Catalog originalCatalog;
+        private Long catalogId;
+
+        @BeforeEach
+        void setUp() {
+            boardId = board.getId();
+            memberId = member.getId();
+            title = "제목";
+            originalCatalog = Catalog.builder()
+                    .title(title)
+                    .status(false)
+                    .position(2L)
+                    .board(board)
+                    .build();
+            catalogRepository.save(originalCatalog);
+            catalogId = originalCatalog.getId();
+        }
+
         @Test
         @DisplayName("카탈로그 삭제 테스트 성공")
         void deleteCatalogSuccess() {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
-            String title = "제목";
-            CatalogRequestDto requestDto = new CatalogRequestDto(title);
-            CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDto);
+
             // When
-            catalogService.deleteCatalog(memberId, responseDto.id());
-            Optional<Catalog> actual = catalogRepository.findById(responseDto.id());
+            catalogService.deleteCatalog(memberId, catalogId);
+            Optional<Catalog> actual = catalogRepository.findById(catalogId);
             // Then
             assertTrue(actual.isEmpty());
         }
@@ -429,12 +432,7 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
-            String title = "제목";
-            CatalogRequestDto requestDto = new CatalogRequestDto(title);
-            CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDto);
+
             Member notInvitedMember = Member.builder()
                     .username("othername")
                     .password("password")
@@ -449,7 +447,7 @@ class CatalogServiceImplV1IntegrationTest {
 
             assertThrows(BisException.class,
                     () -> catalogService.deleteCatalog(savedMember.getId(),
-                            responseDto.id()));
+                            catalogId));
         }
 
         @Test
@@ -458,12 +456,7 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
-            String title = "제목";
-            CatalogRequestDto requestDto = new CatalogRequestDto(title);
-            CatalogResponseDto responseDto = catalogService.createCatalog(boardId, memberId,
-                    requestDto);
+
             Member notInvitedMember = Member.builder()
                     .username("othername")
                     .password("password")
@@ -474,7 +467,7 @@ class CatalogServiceImplV1IntegrationTest {
             // When - Then
             assertThrows(BisException.class,
                     () -> catalogService.deleteCatalog(savedMember.getId(),
-                            responseDto.id()));
+                            catalogId));
         }
     }
 
@@ -482,14 +475,22 @@ class CatalogServiceImplV1IntegrationTest {
     @DisplayName("카탈로그 순서 이동 테스트 모음")
     class UpdateCatalogPositionTestList {
 
+        private Long boardId;
+        private Long memberId;
+
+        @BeforeEach
+        void setUp() {
+            boardId = board.getId();
+            memberId = member.getId();
+        }
+
         @Test
         @DisplayName("카탈로그 순서 변경 테스트 성공 1 2 3 -> 2 1 3")
         void updateCatalogPositionSuccessCaseOne() {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
+
             String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
             CatalogResponseDto responseDto1 = catalogService.createCatalog(boardId, memberId,
@@ -519,8 +520,7 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
+
             String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
             CatalogResponseDto responseDto1 = catalogService.createCatalog(boardId, memberId,
@@ -550,8 +550,7 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
+
             String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
             CatalogResponseDto responseDto1 = catalogService.createCatalog(boardId, memberId,
@@ -574,8 +573,7 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
+
             String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
             CatalogResponseDto responseDto1 = catalogService.createCatalog(boardId, memberId,
@@ -598,8 +596,7 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
+
             String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
             CatalogResponseDto responseDto1 = catalogService.createCatalog(boardId, memberId,
@@ -622,8 +619,7 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
+
             String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
             CatalogResponseDto responseDto1 = catalogService.createCatalog(boardId, memberId,
@@ -657,8 +653,7 @@ class CatalogServiceImplV1IntegrationTest {
             // Given
             memberBoard = new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER);
             memberBoardRepository.save(memberBoard);
-            Long boardId = board.getId();
-            Long memberId = member.getId();
+
             String title = "제목";
             CatalogRequestDto requestDto = new CatalogRequestDto(title);
             CatalogResponseDto responseDto1 = catalogService.createCatalog(boardId, memberId,
