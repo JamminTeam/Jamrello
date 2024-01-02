@@ -23,12 +23,17 @@ jobs:
       packages: write
 
     steps:
-      - name: Print
+      - name: Create appliction.properties
         run: | 
-          echo "JWT_SECRET_KEY: $JWT_SECRET_KEY"
-          echo "DB_HOST: $DB_HOST"
-          echo "MAIL_USERNAME: $MAIL_USERNAME"
-          echo "MAIL_PASSWORD: $MAIL_PASSWORD"
+          touch ./src/main/resources/application.properties
+          echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+          cat ./src/main/resources/application.properties
+
+      - name: Create appliction-test.properties
+        run: | 
+          touch ./src/main/resources/application-test.properties
+          echo "${{ secrets.APPLICATION_TEST }}" > ./src/main/resources/application-test.properties
+          cat ./src/main/resources/application-test.properties
 
       - uses: actions/checkout@v3
       - name: Run chmod to make gralew executable
