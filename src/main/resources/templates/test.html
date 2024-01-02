@@ -5,53 +5,30 @@
   <title>Title</title>
 </head>
 <body>
-<button id="test" onclick="callApi(1)">댓글 가져오기</button>
-<button id="ajax" onclick="callApi(1)">댓글 가져오기 ajax</button>
-<div id="getComment"></div>
-
-<script>
-  $(document).ready(function () {
-
-    $('#ajax').on('click', function () {
-      console.log("일단 호출")
-      var commentId = 1;
-      var apiUrl = [] + commentId;
-      var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MDQwMTI4NTEsImlhdCI6MTcwNDAxMTA1MX0.3SSrUzuXSX7W4OroBMCwJJAV9i2R3W6ZNWVP42QQTjM"
-
-      $.ajax({
-        type:"GET"
-        , url:apiUrl
-
-        , success : function(data) {
-          var commentData = data.data;
-          document.getElementById("getComment").innerText = JSON.stringify(
-              commentData)
+  <button id="test" onclick="callApi(1)">댓글 가져오기</button>
+  <div id="getComment"></div>
+  <script>
+    function callApi(commentId) {
+      var apiUrl = "api/comments/" + commentId;
+      var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MDQxNzk0MTgsImlhdCI6MTcwNDE3NzYxOH0.qBHPaeBQN-PMuJwJs6nn73XAo2sO-oOf5wjsr5nlo0g"
+      fetch(apiUrl, {
+        headers: {
+          'Authorization': token
         }
-      });
-    })
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        // throw new Error() do something 해야함
+      })
+      .then(date => {
+        var commentData = data.data;
+        document.getElementById("getComment").innerText = JSON.stringify(
+            commentData)
+      })
+    }
+  </script>
 
-  })
-  function callApi(commentId) {
-    console.log("일단 호출")
-    var apiUrl = "http://localhost:8080/api/comments/" + commentId;
-    var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MDQwMTI4NTEsImlhdCI6MTcwNDAxMTA1MX0.3SSrUzuXSX7W4OroBMCwJJAV9i2R3W6ZNWVP42QQTjM"
-    fetch(apiUrl, {
-      headers: {
-        'Authorization': token
-      }
-    })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      // throw new Error() do something 해야함
-    })
-    .then(data => {
-      var commentData = data.data;
-      document.getElementById("getComment").innerText = JSON.stringify(
-          commentData)
-    })
-  }
-</script>
 </body>
 </html>

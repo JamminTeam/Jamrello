@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>main</title>
+</head>
+<body>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{api/member/login}">login</a>
+        <a class="nav-link" th:href="@{/api/member/signup}">signup</a>
+      </li>
+    </ul>
+  </div>
+  <div>
+    <a>my workspace</a>
+    <ul>
+      <li th:each="board : ${member.getBoards()}">
+        <a th:href="@{'api/boards/' + ${board.id}}" th:text="${board.name}"></a>
+      </li>
+    </ul>
+  </div>
+</body>
+</html>
