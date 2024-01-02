@@ -63,11 +63,9 @@ jobs:
           # arguments: build
       - name: Test with Gradle
         run: | 
+          echo "hello"
           cat ./src/main/resources/application-test.properties
           ./gradlew test -Dspring.config.location=classpath:application-test.propertie
-      # - name: Test with Gradle
-        # run: | 
-          # ./gradlew test-Dspring.config.location=classpath:application-test.properties
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
