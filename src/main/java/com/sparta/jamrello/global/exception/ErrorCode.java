@@ -21,7 +21,6 @@ public enum ErrorCode {
     NOT_MATCH_AUTHCODE(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
 
     // 401 UNAUTHORIZED
-    REJECTED_EXECUSION(UNAUTHORIZED, "수정 권한이 없습니다"),
 
     ACCESS_DENIED(UNAUTHORIZED, "유효하지 못한 토큰입니다."),
 
@@ -34,6 +33,8 @@ public enum ErrorCode {
     NOT_EXIST_ACCESS_TOKEN(UNAUTHORIZED, "엑세스토큰이 존재하지 않슴니다."),
 
     // 403 FORBIDDEN
+    REJECTED_EXECUSION(FORBIDDEN, "수정 권한이 없습니다"),
+
     YOUR_NOT_INVITED_BOARD(FORBIDDEN, "보드에 가입하지 않아서 권한이 없습니다."),
 
     YOUR_NOT_COME_IN(FORBIDDEN, "권한이 없습니다"), // 포괄적인 Forbidden 코드
@@ -54,7 +55,7 @@ public enum ErrorCode {
     // 409 CONFLICT
     DUPLICATE_MEMBER(CONFLICT, "이미 가입한 멤버 입니다."),
 
-    DUPLICATE_USERNAME(CONFLICT, "중복된 Username 입니다"),
+    DUPLICATE_NICKNAME(CONFLICT, "중복된 Nickname 입니다"),
 
     DUPLICATE_EMAIL(CONFLICT, "중복된 Email 입니다"),
 

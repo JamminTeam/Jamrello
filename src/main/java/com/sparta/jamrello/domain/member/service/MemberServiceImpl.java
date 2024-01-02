@@ -100,8 +100,14 @@ public class MemberServiceImpl implements MemberService {
         Member member = findUserInDBById(memberId);
 
         if (!member.getUsername().equals(loginMember.getUsername())) {
-            throw new BisException(ErrorCode.REJECTED_EXECUSION);
+          throw new BisException(ErrorCode.REJECTED_EXECUSION);
         }
+
+        // 닉네임 중복검사
+        sameMemberInDBByNickname(updateMemberRequestDto.nickname());
+
+        // 이메일 중복검사
+        sameMemberInDBByEmail(updateMemberRequestDto.email());
 
         member.updateMember(updateMemberRequestDto,
             passwordEncoder.encode(updateMemberRequestDto.password()));
@@ -137,7 +143,7 @@ public class MemberServiceImpl implements MemberService {
 
     public void sameMemberInDBByNickname(String nickname) {
         if (memberRepository.existsUserByNickname(nickname)) {
-            throw new BisException(ErrorCode.DUPLICATE_USERNAME);
+            throw new BisException(ErrorCode.DUPLICATE_NICKNAME);
         }
     }
 

@@ -50,12 +50,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 if (!jwtUtil.validateToken(accessTokenValue)) {
                     log.error("유효하지않은 AccesToken");
                     setResponse(res, ErrorCode.ACCESS_DENIED);
+
                     return;
                 }
 
                 if (!jwtUtil.checkTokenAboutLogout(accessTokenValue)) {
                     log.error("로그아웃한 멤버입니다. 다시 로그인 해주세요");
                     setResponse(res, ErrorCode.LOGOUT_USER);
+
                     return;
                 }
 
@@ -67,6 +69,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 if (refreshToken == null) {
                     log.error("쿠키에 RereshToken이 존재하지 않습니다.");
                     setResponse(res, ErrorCode.NOT_EXIST_REFRESH_TOKEN);
+
                     return;
                 }
 
@@ -75,11 +78,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     if (!jwtUtil.validateToken(refreshToken)) {
                         log.error("유효하지않은 RefreshToken");
                         setResponse(res,ErrorCode.ACCESS_DENIED);
+
                         return;
                     }
                 } catch (ExpiredJwtException exception) {
                     log.error("만료된 RefreshToken");
                     setResponse(res,ErrorCode.EXPIRED_TOKEN);
+
                     return;
                 }
 
@@ -87,6 +92,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 if (!jwtUtil.checkTokenDBByToken(refreshToken)) {
                     log.error("DB에 해당 RefreshToken이 존재하지 않습니다.");
                     setResponse(res,ErrorCode.NOT_EXIST_REFRESH_TOKEN);
+
                     return;
                 }
 
@@ -112,7 +118,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {
                 log.error(e.getMessage());
-                setResponse(res, ErrorCode.INVALID_VALUE);
+                setResponse(res, ErrorCode.NOT_FOUND_MEMBER);
+
                 return;
             }
         }
