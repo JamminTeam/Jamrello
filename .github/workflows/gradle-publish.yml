@@ -3,19 +3,21 @@ name: Gradle Package
 on:
   push:
     branches: [dev]
-env:
-  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-  DB_HOST: ${{ secrets.DB_HOST }}
-  MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-  MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-  s3AccessKey: ${{ secrets.S3ACCESSKEY }}
-  s3SecretAccessKey: ${{ secrets.S3SECRETACCESSKEY }}
-  TEST_DB_URL: ${{ secrets.TEST_DB_URL }}
-  TEST_DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      s3AccessKey: ${{ secrets.S3ACCESSKEY }}
+      s3SecretAccessKey: ${{ secrets.S3SECRETACCESSKEY }}
+      TEST_DB_URL: ${{ secrets.TEST_DB_URL }}
+      TEST_DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+
     permissions:
       contents: read
       packages: write
