@@ -35,7 +35,7 @@ public class CardServiceImplV1 implements CardService {
     @Override
     @Transactional
     public CardResponseDto createCard(Long catalogId, Long memberId,
-            CardRequestDto requestDto) {
+        CardRequestDto requestDto) {
 
         Catalog catalog = findCatalog(catalogId);
         Member member = findMember(memberId);
@@ -58,11 +58,13 @@ public class CardServiceImplV1 implements CardService {
 
         Catalog catalog = findCatalog(catalogId);
 
-        List<Card> cardList = catalog.getCardList();
-        cardList.sort(Comparator.comparing(Card::getPosition));
+        List<Card> cardList = catalog.getCardList().stream()
+            .filter(card -> !card.isStatus())
+            .sorted(Comparator.comparing(Card::getPosition))
+            .toList();
 
         return cardList.stream()
-                .map(card -> card.createResponseDto(card)).toList();
+            .map(card -> card.createResponseDto(card)).toList();
     }
 
     @Override
@@ -86,13 +88,22 @@ public class CardServiceImplV1 implements CardService {
     @Override
     @Transactional
     public CardResponseDto updateCardDueDay(Long cardId, Long memberId,
-            CardDuedateRequestDto requestDto) {
+        CardDuedateRequestDto requestDto) {
 
         Card card = findCard(cardId);
         checkMember(memberId, card);
         card.updateCardDueDay(requestDto);
 
         return card.createResponseDto(card);
+    }
+
+    @Override
+    @Transactional
+    public void keepCard(Long cardId, Long memberId) {
+
+        Card card = findCard(cardId);
+        checkMember(memberId, card);
+        card.updateStatus();
     }
 
     @Override
@@ -111,16 +122,16 @@ public class CardServiceImplV1 implements CardService {
         Card card = findCard(cardId);
         checkMember(memberId, card);
         Member collaborator = memberRepository.findByUsername(requestDto.username())
-                .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_MEMBER));
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_MEMBER));
 
         Optional<CardCollaborator> cardCol =
-                cardCollaboratorRepository.findByCardIdAndMemberId(cardId, collaborator.getId());
+            cardCollaboratorRepository.findByCardIdAndMemberId(cardId, collaborator.getId());
         if (cardCol.isPresent()) {
             throw new BisException(ErrorCode.ALREADY_EXIST_COLLABORATOR);
         }
 
         CardCollaborator cardCollaborator = CardCollaborator.builder()
-                .member(collaborator).card(card).build();
+            .member(collaborator).card(card).build();
         cardCollaboratorRepository.save(cardCollaborator);
         card.getCardCollaboratorList().add(cardCollaborator);
     }
@@ -130,8 +141,8 @@ public class CardServiceImplV1 implements CardService {
     public void deleteCollaborator(Long cardId, Long collaboratorId, Long memberId) {
 
         CardCollaborator cardCollaborator = cardCollaboratorRepository.findByCardIdAndMemberId(
-                        cardId, collaboratorId)
-                .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COLLABORATOR));
+                cardId, collaboratorId)
+            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COLLABORATOR));
         cardCollaboratorRepository.delete(cardCollaborator);
     }
 
@@ -170,19 +181,19 @@ public class CardServiceImplV1 implements CardService {
 
     private Card findCard(Long id) {
         return cardRepository.findById(id).orElseThrow(() ->
-                new BisException(ErrorCode.NOT_FOUND_CARD)
+            new BisException(ErrorCode.NOT_FOUND_CARD)
         );
     }
 
     private Catalog findCatalog(Long id) {
         return catalogRepository.findById(id).orElseThrow(() ->
-                new BisException(ErrorCode.NOT_FOUND_CATALOG)
+            new BisException(ErrorCode.NOT_FOUND_CATALOG)
         );
     }
 
     private Member findMember(Long id) {
         return memberRepository.findById(id).orElseThrow(() ->
-                new BisException(ErrorCode.NOT_FOUND_MEMBER)
+            new BisException(ErrorCode.NOT_FOUND_MEMBER)
         );
     }
 
