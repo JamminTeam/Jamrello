@@ -34,8 +34,8 @@ jobs:
       - name: Restore dependencies
         run: ./gradlew dependencies
           
-      - name: Start MySQL with Docker Compose
-        run: docker-compose up -d
+      # - name: Start MySQL with Docker Compose
+      #   run: docker-compose up -d
 
       - name: Start Redis
         uses: supercharge/redis-github-action@1.1.0
