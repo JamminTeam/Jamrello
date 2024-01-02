@@ -25,7 +25,10 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+      # uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+      run: |
+        chmod +x ./gradlew
+        ./gradlew build
       env: 
         JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         DB_HOST: ${{ secrets.DB_HOST }}
@@ -35,8 +38,8 @@ jobs:
         s3SecretAccessKey: ${{ secrets.S3SECRETACCESSKEY }}
         TEST_DB_URL: ${{ secrets.TEST_DB_URL }}
         TEST_DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
-      with:
-        arguments: build
+      # with:
+      #   arguments: build
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
