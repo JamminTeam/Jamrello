@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Run chmod to make gralew executable
-      run: chmod +x ./gradlew
+      run: chmod +x gradlew
     
     - uses: actions/checkout@v3
     - name: Set up JDK 17
