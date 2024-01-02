@@ -25,12 +25,14 @@ jobs:
     steps:
       - name: Create appliction.properties
         run: | 
+          pwd
           touch ./src/main/resources/application.properties
           echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
           cat ./src/main/resources/application.properties
 
       - name: Create appliction-test.properties
         run: | 
+          pwd
           touch ./src/main/resources/application-test.properties
           echo "${{ secrets.APPLICATION_TEST }}" > ./src/main/resources/application-test.properties
           cat ./src/main/resources/application-test.properties
