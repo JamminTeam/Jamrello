@@ -100,7 +100,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = findUserInDBById(memberId);
 
         if (!member.getUsername().equals(loginMember.getUsername())) {
-            throw new BisException(ErrorCode.REJECTED_EXECUSION);
+            throw new BisException(ErrorCode.YOUR_NOT_COME_IN);
         }
 
         member.updateMember(updateMemberRequestDto,

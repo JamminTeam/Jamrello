@@ -42,6 +42,7 @@ public class BoardServiceImplV1 implements BoardService {
 
         MemberBoard memberBoard = MemberBoard.createMemberBoard(authMember, board,
                 MemberBoardRoleEnum.ADMIN);
+
         memberBoardRepository.save(memberBoard);
 
         return new BoardResponseDto(board.getTitle(), board.getBackgroundColor());
@@ -131,7 +132,7 @@ public class BoardServiceImplV1 implements BoardService {
 
     private Board findByBoardId(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
+                () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
         );
 
         return board;

@@ -1,6 +1,10 @@
 package com.sparta.jamrello.global.exception;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +25,6 @@ public enum ErrorCode {
     NOT_MATCH_AUTHCODE(BAD_REQUEST, "인증번호가 일치하지 않습니다."),
 
     // 401 UNAUTHORIZED
-    REJECTED_EXECUSION(UNAUTHORIZED, "수정 권한이 없습니다"),
-
     ACCESS_DENIED(UNAUTHORIZED, "유효하지 못한 토큰입니다."),
 
     LOGOUT_USER(UNAUTHORIZED, "로그아웃한 유저입니다. 다시 로그인해주세요."),

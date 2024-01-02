@@ -188,9 +188,9 @@ public class CardServiceImplV1 implements CardService {
 
     private void checkMember(Long id, Card card) {
         if (!id.equals(card.getMember().getId()) &&
-                card.getCardCollaboratorList().stream()
-                        .noneMatch(collaborator -> id.equals(collaborator.getMember().getId()))) {
-            throw new BisException(ErrorCode.REJECTED_EXECUSION);
+            card.getCardCollaboratorList().stream()
+                .noneMatch(collaborator -> id.equals(collaborator.getMember().getId()))) {
+            throw new BisException(ErrorCode.YOUR_NOT_COME_IN);
         }
     }
 }

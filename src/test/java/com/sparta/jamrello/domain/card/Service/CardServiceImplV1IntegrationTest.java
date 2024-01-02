@@ -251,7 +251,7 @@ public class CardServiceImplV1IntegrationTest {
             });
 
             // then
-            assertEquals(ErrorCode.REJECTED_EXECUSION, e.getErrorCode());
+            assertEquals(ErrorCode.YOUR_NOT_COME_IN, e.getErrorCode());
         }
     }
 
