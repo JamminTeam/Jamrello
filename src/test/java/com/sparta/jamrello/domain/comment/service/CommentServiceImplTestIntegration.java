@@ -11,6 +11,7 @@ import com.sparta.jamrello.domain.comment.repository.entity.Comment;
 import com.sparta.jamrello.domain.member.repository.MemberRepository;
 import com.sparta.jamrello.domain.member.repository.entity.Member;
 import com.sparta.jamrello.global.exception.BisException;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -27,6 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(profiles = "test")
 @SpringBootTest
+@Transactional
 @DisplayName("댓글 서비스 통합 테스트")
 public class CommentServiceImplTestIntegration {
 
@@ -50,20 +52,20 @@ public class CommentServiceImplTestIntegration {
     @BeforeEach
     void setUp() {
         member = memberRepository.save(Member.builder()
-            .username("testUser")
-            .password("password")
-            .nickname("nickname")
-            .email("email@email.com")
-            .build()
+                .username("testUser")
+                .password("password")
+                .nickname("nickname")
+                .email("email@email.com")
+                .build()
         );
 
         card = cardRepository.save(Card.builder()
-            .title("Test Card")
-//            .description("Test Description")
-            .build());
+                .title("Test Card")
+                .backgroundColor("#ffffff")
+                .build());
         commentRequestDto = new CommentRequestDto("test comment");
         comment = commentRepository.save(
-            Comment.createCommentOf(commentRequestDto.content(), member, card));
+                Comment.createCommentOf(commentRequestDto.content(), member, card));
 
     }
 
@@ -79,18 +81,20 @@ public class CommentServiceImplTestIntegration {
     void createCommentTest() {
         // Given
         member = memberRepository.save(Member.builder()
-            .username("newtestUser")
-            .password("newpassword")
-            .nickname("newnickname")
-            .email("newemail@email.com")
-            .build()
+                .username("newtestUser")
+                .password("newpassword")
+                .nickname("newnickname")
+                .email("newemail@email.com")
+                .build()
         );
         Long memberId = member.getId();
         Long cardId = card.getId();
 
         // When
-        CommentResponseDto responseDto = commentService.createComment(memberId, cardId, commentRequestDto);
-        Comment createdComment = commentRepository.save(Comment.createCommentOf(responseDto.content(), member, card));
+        CommentResponseDto responseDto = commentService.createComment(memberId, cardId,
+                commentRequestDto);
+        Comment createdComment = commentRepository.save(
+                Comment.createCommentOf(responseDto.content(), member, card));
 
         // Then
         assertNotNull(createdComment);
@@ -120,7 +124,8 @@ public class CommentServiceImplTestIntegration {
 
         // When & Then
         assertThrows(BisException.class,
-            () -> commentService.createComment(invalidMemberId, card.getId(), commentRequestDto));
+                () -> commentService.createComment(invalidMemberId, card.getId(),
+                        commentRequestDto));
 
     }
 
@@ -132,8 +137,10 @@ public class CommentServiceImplTestIntegration {
 
         // When & Then
         assertThrows(BisException.class,
-            () -> commentService.createComment(member.getId(), invalidCardId, commentRequestDto));
+                () -> commentService.createComment(member.getId(), invalidCardId,
+                        commentRequestDto));
     }
+
     @Test
     @DisplayName("존재하지 않는 댓글 예외")
     void findComment_NOT_FOUND_COMMENT() {
@@ -142,7 +149,8 @@ public class CommentServiceImplTestIntegration {
 
         // When & Then
         assertThrows(BisException.class,
-            () -> commentService.createComment(member.getId(), invalidCardId, commentRequestDto));
+                () -> commentService.createComment(member.getId(), invalidCardId,
+                        commentRequestDto));
     }
 
     @Test
@@ -183,7 +191,7 @@ public class CommentServiceImplTestIntegration {
             // Given
             for (int i = 0; i < 20; i++) {
                 comment = commentRepository.save(
-                    Comment.createCommentOf(commentRequestDto.content(), member, card));
+                        Comment.createCommentOf(commentRequestDto.content(), member, card));
             }
             int pageSize = 10;
             Pageable pageable = PageRequest.of(0, pageSize);
@@ -208,8 +216,9 @@ public class CommentServiceImplTestIntegration {
             CommentRequestDto updatedCommentRequestDto = new CommentRequestDto("updated comment");
 
             // When
-            CommentResponseDto responseDto = commentService.updateComment(comment.getId(), member.getId(),
-                updatedCommentRequestDto);
+            CommentResponseDto responseDto = commentService.updateComment(comment.getId(),
+                    member.getId(),
+                    updatedCommentRequestDto);
             Comment updatedComment = Comment.createCommentOf(responseDto.content(), member, card);
 
             // Then
@@ -223,14 +232,14 @@ public class CommentServiceImplTestIntegration {
             // Given
             Comment originalComment = comment;
             Member unauthorizedMember = memberRepository.save(
-                Member.createMember("badUser", "password", "badnickname",
-                    "bad@bad.com")); // 다른 사용자 정보
+                    Member.createMember("badUser", "password", "badnickname",
+                            "bad@bad.com")); // 다른 사용자 정보
 
             // When & Then
             assertThrows(BisException.class,
-                () -> commentService.updateComment(originalComment.getId(),
-                    unauthorizedMember.getId(),
-                    commentRequestDto));
+                    () -> commentService.updateComment(originalComment.getId(),
+                            unauthorizedMember.getId(),
+                            commentRequestDto));
         }
 
     }

@@ -103,6 +103,12 @@ public class MemberServiceImpl implements MemberService {
             throw new BisException(ErrorCode.YOUR_NOT_COME_IN);
         }
 
+        // 닉네임 중복검사
+        sameMemberInDBByNickname(updateMemberRequestDto.nickname());
+
+        // 이메일 중복검사
+        sameMemberInDBByEmail(updateMemberRequestDto.email());
+
         member.updateMember(updateMemberRequestDto,
             passwordEncoder.encode(updateMemberRequestDto.password()));
         return MemberResponseDto.buildMemberResponseDto(member);
@@ -137,7 +143,7 @@ public class MemberServiceImpl implements MemberService {
 
     public void sameMemberInDBByNickname(String nickname) {
         if (memberRepository.existsUserByNickname(nickname)) {
-            throw new BisException(ErrorCode.DUPLICATE_USERNAME);
+            throw new BisException(ErrorCode.DUPLICATE_NICKNAME);
         }
     }
 
