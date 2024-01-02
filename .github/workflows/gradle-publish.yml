@@ -46,8 +46,8 @@ jobs:
       - name: Setup MySQL
         uses: samin/mysql-action@v1
         with:
-          host port: 3306
-          container port: 3306
+          host port: '3306'
+          container port: '3306'
           character set server: 'utf8'
           mysql database: 'jamrello_test'
           mysql password: 'test'
@@ -63,8 +63,6 @@ jobs:
           # arguments: build
       - name: Test with Gradle
         run: | 
-          echo "hello"
-          cat ./src/main/resources/application-test.properties
           ./gradlew test -Dspring.config.location=classpath:application-test.propertie
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
