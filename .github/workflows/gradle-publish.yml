@@ -31,6 +31,8 @@ jobs:
           distribution: 'temurin'
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - name: Restore dependencies
+        run: ./gradlew dependencies
           
       - name: Start MySQL with Docker Compose
         run: docker-compose up -d
@@ -54,9 +56,6 @@ jobs:
           ./gradlew build
         # with:
           # arguments: build
-      # - name: Test with Gradle
-      #   run: | 
-      #     ./gradlew test -Dspring.config.location=classpath:application-test.properties
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
