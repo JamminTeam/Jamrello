@@ -16,8 +16,10 @@ import com.sparta.jamrello.domain.memberboard.entity.MemberBoardRoleEnum;
 import com.sparta.jamrello.domain.memberboard.repository.MemberBoardRepository;
 import com.sparta.jamrello.global.exception.BisException;
 import com.sparta.jamrello.global.exception.ErrorCode;
+
 import java.util.List;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ public class BoardServiceImplV1 implements BoardService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final MemberBoardRepository memberBoardRepository;
+
 
     @Override
     public BoardResponseDto createBoard(BoardRequestDto requestDto, Member authMember) {
@@ -112,6 +115,7 @@ public class BoardServiceImplV1 implements BoardService {
         List<Catalog> catalogList = board.getCatalogList();
 
         List<CatalogListResponseDto> responseDtoList = catalogList.stream()
+                .filter(catalog -> !catalog.isStatus())
                 .map(catalog -> {
                             List<Card> cardList = catalog.getCardList();
                             List<GetFromCardListDto> getCardList = cardList.stream()
@@ -122,8 +126,7 @@ public class BoardServiceImplV1 implements BoardService {
                                             card.getCommentList().size(),
                                             card.getCardCollaboratorList().size()
                                     )).toList();
-                            return new CatalogListResponseDto(catalog.getId(), catalog.getTitle(),
-                                    getCardList);
+                            return new CatalogListResponseDto(catalog.getId(), catalog.getTitle(), getCardList);
                         }
                 )
                 .toList();

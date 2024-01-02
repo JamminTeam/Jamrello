@@ -11,8 +11,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "boards")
 public class Board extends TimeStamp {
 
     @Id
@@ -32,9 +36,6 @@ public class Board extends TimeStamp {
     @Column(nullable = false)
     private String backgroundColor;
 
-    @Column(nullable = false)
-    private boolean status;
-
     @Column(name = "board_image")
     private String boardImageUrl;
 
@@ -46,17 +47,15 @@ public class Board extends TimeStamp {
 
 
     @Builder
-    public Board(String title, String backgroundColor, boolean status) {
+    public Board(String title, String backgroundColor) {
         this.title = title;
         this.backgroundColor = backgroundColor;
-        this.status = status;
     }
 
     public static Board fromRequestDto(BoardRequestDto requestDto) {
         return Board.builder()
                 .title(requestDto.title())
                 .backgroundColor(requestDto.backgroundColor())
-                .status(false)
                 .build();
     }
 
