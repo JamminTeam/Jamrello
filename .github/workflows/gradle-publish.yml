@@ -20,6 +20,9 @@ jobs:
 
       - name: Start MySQL with Docker Compose
         run: docker-compose up -d
+        
+      - name: checkDocker
+        run: docker ps
 
       - name: Create appliction-test.properties
         run: | 
