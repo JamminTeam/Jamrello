@@ -5,11 +5,14 @@ import com.sparta.jamrello.global.security.jwt.JwtUtil;
 import com.sparta.jamrello.global.security.jwt.RefreshTokenRepository;
 import com.sparta.jamrello.global.utils.RedisService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.Duration;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j(topic = "logout 핸들러")
 public class CustomLogoutHandler implements LogoutHandler {
   private final RefreshTokenRepository refreshTokenRepository;
 
@@ -38,8 +42,50 @@ public class CustomLogoutHandler implements LogoutHandler {
   public void logout(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) {
     String accessToken = jwtUtil.getJwtFromHeader(request);
+    try {
+      if (!jwtUtil.validateToken(accessToken)) {
+        log.error("유효하지않은 AccesToken");
+        response.setStatus(401);
+        response.setCharacterEncoding("utf-8");
+        try {
+          PrintWriter writer = response.getWriter();
+          writer.println(" 401 : UNAUTHORIZED");
+          writer.println("유효하지 않은 AccessToken입니다.");
+        } catch (IOException ex) {
+          throw new RuntimeException(ex);
+        }
+        return;
+      }
+    } catch (ExpiredJwtException e) {
+      log.error("만료된 AccesToken");
+      response.setStatus(401);
+      response.setCharacterEncoding("utf-8");
+      try {
+        PrintWriter writer = response.getWriter();
+        writer.println(" 401 : UNAUTHORIZED");
+        writer.println("만료된 AccessToken입니다.");
+      } catch (IOException ex) {
+        throw new RuntimeException(ex);
+      }
+      return;
+    }
+
     Claims member = jwtUtil.getUserInfoFromToken(accessToken);
     String username = member.getSubject();
+
+    if (!refreshTokenRepository.existsByKeyUsername(username)) {
+      log.error("이미 로그아웃한 유저");
+      response.setStatus(400);
+      response.setCharacterEncoding("utf-8");
+      try {
+        PrintWriter writer = response.getWriter();
+        writer.println(" 400 : BAD REQUEST");
+        writer.println("이미 로그아웃한 유저입니다.");
+      } catch (IOException ex) {
+        throw new RuntimeException(ex);
+      }
+      return;
+    }
 
     redisService.setValues(username, accessToken, Duration.ofMinutes(30));   // AccessToken 만료시간
     refreshTokenRepository.deleteByKeyUsername(username);

@@ -2,8 +2,8 @@ package com.sparta.jamrello.domain.board.service;
 
 import com.sparta.jamrello.domain.board.dto.request.BoardRequestDto;
 import com.sparta.jamrello.domain.board.dto.request.InviteMemberDto;
-import com.sparta.jamrello.domain.board.dto.response.CatalogListResponseDto;
 import com.sparta.jamrello.domain.board.dto.response.BoardResponseDto;
+import com.sparta.jamrello.domain.board.dto.response.CatalogListResponseDto;
 import com.sparta.jamrello.domain.board.dto.response.GetFromCardListDto;
 import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.board.repository.BoardRepository;
@@ -32,12 +32,20 @@ public class BoardServiceImplV1 implements BoardService {
     private final MemberRepository memberRepository;
     private final MemberBoardRepository memberBoardRepository;
 
+
     @Override
     public BoardResponseDto createBoard(BoardRequestDto requestDto, Member authMember) {
         Board board = Board.fromRequestDto(requestDto);
+
+        if (board.getBackgroundColor() == null || board.getBackgroundColor().isBlank()) {
+            board.updateBackgroundColor("#ffffff");
+        }
+
         boardRepository.save(board);
 
-        MemberBoard memberBoard = MemberBoard.createMemberBoard(authMember, board, MemberBoardRoleEnum.ADMIN);
+        MemberBoard memberBoard = MemberBoard.createMemberBoard(authMember, board,
+                MemberBoardRoleEnum.ADMIN);
+
         memberBoardRepository.save(memberBoard);
 
         return new BoardResponseDto(board.getTitle(), board.getBackgroundColor());
@@ -46,11 +54,11 @@ public class BoardServiceImplV1 implements BoardService {
 
     @Transactional
     @Override
-    public BoardResponseDto updateBoard(Long boardId, BoardRequestDto requestDto, Long authMemberId) {
+    public BoardResponseDto updateBoard(Long boardId, BoardRequestDto requestDto,
+            Long authMemberId) {
         Board board = findByBoardId(boardId);
         Member member = findByMemberId(authMemberId);
         checkPermissionfromMemberAndBoard(member, board);
-
 
         board.update(requestDto);
 
@@ -80,7 +88,8 @@ public class BoardServiceImplV1 implements BoardService {
         Board board = findByBoardId(boardId);
 
         // 멤버가 해당 보드에 있는지 확인
-        Optional<MemberBoard> getMemberBoardInfo = memberBoardRepository.findByMemberAndBoard(member,
+        Optional<MemberBoard> getMemberBoardInfo = memberBoardRepository.findByMemberAndBoard(
+                member,
                 board);
 
         MemberBoard memberBoard = getMemberBoardInfo
@@ -88,7 +97,8 @@ public class BoardServiceImplV1 implements BoardService {
                     getMemberBoard.updateRole(MemberBoardRoleEnum.INVITED_MEMBER);
                     return getMemberBoard;
                 })
-                .orElseGet(() -> new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER));
+                .orElseGet(
+                        () -> new MemberBoard(member, board, MemberBoardRoleEnum.INVITED_MEMBER));
 
         // 저장
         memberBoardRepository.save(memberBoard);
@@ -125,7 +135,7 @@ public class BoardServiceImplV1 implements BoardService {
 
     private Board findByBoardId(Long boardId) {
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new BisException(ErrorCode.NOT_FOUND_MEMBER)
+                () -> new BisException(ErrorCode.NOT_FOUND_BOARD)
         );
 
         return board;
@@ -142,9 +152,10 @@ public class BoardServiceImplV1 implements BoardService {
 
     // 인증된 유저가 보드에 있는지 확인
     private MemberBoard checkPermissionfromMemberAndBoard(Member member, Board board) {
-        MemberBoard memberBoard = memberBoardRepository.findByMemberAndBoard(member, board).orElseThrow(
-                () -> new BisException(ErrorCode.YOUR_NOT_INVITED_BOARD)
-        );
+        MemberBoard memberBoard = memberBoardRepository.findByMemberAndBoard(member, board)
+                .orElseThrow(
+                        () -> new BisException(ErrorCode.YOUR_NOT_INVITED_BOARD)
+                );
 
         return memberBoard;
     }

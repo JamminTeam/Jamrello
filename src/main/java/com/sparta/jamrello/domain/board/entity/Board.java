@@ -59,6 +59,9 @@ public class Board extends TimeStamp {
                 .build();
     }
 
+    public void updateBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
 
     public void update(BoardRequestDto requestDto) {
         this.title = requestDto.title();

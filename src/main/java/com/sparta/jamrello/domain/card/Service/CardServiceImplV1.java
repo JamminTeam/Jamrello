@@ -1,6 +1,7 @@
 package com.sparta.jamrello.domain.card.Service;
 
 import com.sparta.jamrello.domain.card.dto.request.CardCatalogRequestDto;
+import com.sparta.jamrello.domain.card.dto.request.CardDuedateRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardPositionRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
@@ -34,14 +35,17 @@ public class CardServiceImplV1 implements CardService {
     @Override
     @Transactional
     public CardResponseDto createCard(Long catalogId, Long memberId,
-        CardRequestDto requestDto) {
+            CardRequestDto requestDto) {
 
         Catalog catalog = findCatalog(catalogId);
         Member member = findMember(memberId);
-        Card card = Card.builder()
-            .title(requestDto.title()).member(member).catalog(catalog).build();
+        Card card = Card.createCard(requestDto, member, catalog);
 
-        card.setPosition((long) (catalog.getCardList().size() + 1));
+        if (card.getBackgroundColor() == null || card.getBackgroundColor().isBlank()) {
+            card.updateBackgroundColor("#ffffff");
+        }
+
+        card.updatePosition((long) (catalog.getCardList().size() + 1));
         cardRepository.save(card);
         catalog.getCardList().add(card);
 
@@ -58,7 +62,7 @@ public class CardServiceImplV1 implements CardService {
         cardList.sort(Comparator.comparing(Card::getPosition));
 
         return cardList.stream()
-            .map(card -> card.createResponseDto(card)).toList();
+                .map(card -> card.createResponseDto(card)).toList();
     }
 
     @Override
@@ -81,6 +85,18 @@ public class CardServiceImplV1 implements CardService {
 
     @Override
     @Transactional
+    public CardResponseDto updateCardDueDay(Long cardId, Long memberId,
+            CardDuedateRequestDto requestDto) {
+
+        Card card = findCard(cardId);
+        checkMember(memberId, card);
+        card.updateCardDueDay(requestDto);
+
+        return card.createResponseDto(card);
+    }
+
+    @Override
+    @Transactional
     public void deleteCard(Long cardId, Long memberId) {
 
         Card card = findCard(cardId);
@@ -95,16 +111,16 @@ public class CardServiceImplV1 implements CardService {
         Card card = findCard(cardId);
         checkMember(memberId, card);
         Member collaborator = memberRepository.findByUsername(requestDto.username())
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_MEMBER));
 
         Optional<CardCollaborator> cardCol =
-            cardCollaboratorRepository.findByCardIdAndMemberId(cardId, collaborator.getId());
+                cardCollaboratorRepository.findByCardIdAndMemberId(cardId, collaborator.getId());
         if (cardCol.isPresent()) {
             throw new BisException(ErrorCode.ALREADY_EXIST_COLLABORATOR);
         }
 
         CardCollaborator cardCollaborator = CardCollaborator.builder()
-            .member(collaborator).card(card).build();
+                .member(collaborator).card(card).build();
         cardCollaboratorRepository.save(cardCollaborator);
         card.getCardCollaboratorList().add(cardCollaborator);
     }
@@ -114,8 +130,8 @@ public class CardServiceImplV1 implements CardService {
     public void deleteCollaborator(Long cardId, Long collaboratorId, Long memberId) {
 
         CardCollaborator cardCollaborator = cardCollaboratorRepository.findByCardIdAndMemberId(
-                cardId, collaboratorId)
-            .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COLLABORATOR));
+                        cardId, collaboratorId)
+                .orElseThrow(() -> new BisException(ErrorCode.NOT_FOUND_COLLABORATOR));
         cardCollaboratorRepository.delete(cardCollaborator);
     }
 
@@ -154,19 +170,19 @@ public class CardServiceImplV1 implements CardService {
 
     private Card findCard(Long id) {
         return cardRepository.findById(id).orElseThrow(() ->
-            new BisException(ErrorCode.NOT_FOUND_CARD)
+                new BisException(ErrorCode.NOT_FOUND_CARD)
         );
     }
 
     private Catalog findCatalog(Long id) {
         return catalogRepository.findById(id).orElseThrow(() ->
-            new BisException(ErrorCode.NOT_FOUND_CATALOG)
+                new BisException(ErrorCode.NOT_FOUND_CATALOG)
         );
     }
 
     private Member findMember(Long id) {
         return memberRepository.findById(id).orElseThrow(() ->
-            new BisException(ErrorCode.NOT_FOUND_MEMBER)
+                new BisException(ErrorCode.NOT_FOUND_MEMBER)
         );
     }
 
@@ -174,7 +190,7 @@ public class CardServiceImplV1 implements CardService {
         if (!id.equals(card.getMember().getId()) &&
             card.getCardCollaboratorList().stream()
                 .noneMatch(collaborator -> id.equals(collaborator.getMember().getId()))) {
-            throw new BisException(ErrorCode.REJECTED_EXECUSION);
+            throw new BisException(ErrorCode.YOUR_NOT_COME_IN);
         }
     }
 }

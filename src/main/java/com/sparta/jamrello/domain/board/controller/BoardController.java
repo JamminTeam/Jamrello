@@ -67,7 +67,7 @@ public class BoardController {
     boardService.inviteMember(boardId, inviteMemberDto);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(BaseResponse.of(ResponseCode.INVITE_USER, ""));
+        .body(BaseResponse.of(ResponseCode.INVITE_MEMBER, ""));
   }
 
   @GetMapping("/{boardId}")

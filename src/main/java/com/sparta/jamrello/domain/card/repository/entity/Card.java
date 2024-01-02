@@ -1,5 +1,6 @@
 package com.sparta.jamrello.domain.card.repository.entity;
 
+import com.sparta.jamrello.domain.card.dto.request.CardDuedateRequestDto;
 import com.sparta.jamrello.domain.card.dto.request.CardRequestDto;
 import com.sparta.jamrello.domain.card.dto.response.CardResponseDto;
 import com.sparta.jamrello.domain.cardCollaborators.dto.CardCollaboratorResponseDto;
@@ -19,9 +20,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,12 +27,10 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "cards")
 public class Card extends TimeStamp {
 
     @Id
@@ -57,15 +53,10 @@ public class Card extends TimeStamp {
 
     private boolean status;
 
-    @Setter
     private Long position;
 
-    @Column(updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startDay;
 
-    @Column(updatable = true)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime dueDay;
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -79,14 +70,30 @@ public class Card extends TimeStamp {
     private Member member;
 
     @Builder
-    public Card(String title, Member member, Catalog catalog) {
+    public Card(String title, String description, String backgroundColor, Member member,
+            Catalog catalog) {
         this.title = title;
+        this.description = description;
         this.member = member;
         this.catalog = catalog;
-        this.backgroundColor = "#ffffff";
+        this.backgroundColor = backgroundColor;
         this.status = false;
         this.startDay = LocalDateTime.now();
-        this.dueDay = LocalDateTime.now();
+        this.dueDay = LocalDateTime.now().plusDays(1);
+    }
+
+    public static Card createCard(CardRequestDto requestDto, Member member, Catalog catalog) {
+        return Card.builder()
+                .title(requestDto.title())
+                .description(requestDto.description())
+                .backgroundColor(requestDto.backgroundColor())
+                .member(member)
+                .catalog(catalog)
+                .build();
+    }
+
+    public void updatePosition(Long position) {
+        this.position = position;
     }
 
     public void update(CardRequestDto requestDto) {
@@ -95,30 +102,40 @@ public class Card extends TimeStamp {
         this.backgroundColor = requestDto.backgroundColor();
     }
 
+    public void updateCardDueDay(CardDuedateRequestDto requestDto) {
+        this.startDay = requestDto.startDay();
+        this.dueDay = requestDto.dueDay();
+    }
+
     public void updateCatalog(Catalog catalog) {
         this.catalog = catalog;
     }
 
     public CardResponseDto createResponseDto(Card card) {
         return new CardResponseDto(
-            card.getId(),
-            card.getTitle(),
-            card.getMember().getNickname(),
-            card.getDescription(),
-            card.getBackgroundColor(),
-            card.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            card.getStartDay().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            card.getDueDay().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-            card.getCommentList().stream().map(
-                comment -> new CommentResponseDto(
-                    comment.getMember().getNickname(),
-                    comment.getContent(),
-                    comment.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                )).toList(),
-            card.getCardCollaboratorList().stream().map(
-                cardCollaborator -> new CardCollaboratorResponseDto(
-                    cardCollaborator.getMember().getNickname()
-                )).toList()
+                card.getId(),
+                card.getTitle(),
+                card.getMember().getNickname(),
+                card.getDescription(),
+                card.getBackgroundColor(),
+                card.getModifiedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                card.getStartDay().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                card.getDueDay().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                card.getCommentList().stream().map(
+                        comment -> new CommentResponseDto(
+                                comment.getMember().getNickname(),
+                                comment.getContent(),
+                                comment.getCreatedAt()
+                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                        )).toList(),
+                card.getCardCollaboratorList().stream().map(
+                        cardCollaborator -> new CardCollaboratorResponseDto(
+                                cardCollaborator.getMember().getNickname()
+                        )).toList()
         );
+    }
+
+    public void updateBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 }

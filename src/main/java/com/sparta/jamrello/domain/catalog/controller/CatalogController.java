@@ -30,7 +30,8 @@ public class CatalogController {
     private final CatalogService catalogService;
 
     @PostMapping("/boards/{boardId}/catalog")
-    public ResponseEntity<BaseResponse<CatalogResponseDto>> createCatalog(@PathVariable Long boardId,
+    public ResponseEntity<BaseResponse<CatalogResponseDto>> createCatalog(
+            @PathVariable Long boardId,
             @AuthUser Member member,
             @RequestBody @Valid CatalogRequestDto requestDto) {
 
@@ -53,7 +54,7 @@ public class CatalogController {
                 .body(BaseResponse.of(ResponseCode.UPDATE_CATALOG, responseDto));
     }
 
-    @PatchMapping("/catalog/{catalogId}/delete")
+    @PatchMapping("/catalog/{catalogId}/keep")
     public ResponseEntity<BaseResponse<String>> updateCatalogStatus(
             @PathVariable Long catalogId, @AuthUser Member member) {
         catalogService.updateCatalogStatus(member.getId(), catalogId);
@@ -61,7 +62,7 @@ public class CatalogController {
         return ResponseEntity.status(OK).body(BaseResponse.of(ResponseCode.KEEP_CATALOG, ""));
     }
 
-    @DeleteMapping("/catalog/{catalogId}/delete")
+    @DeleteMapping("/catalog/{catalogId}/keep")
     public ResponseEntity<BaseResponse<String>> deleteCatalog(
             @PathVariable Long catalogId, @AuthUser Member member) {
         catalogService.deleteCatalog(member.getId(), catalogId);
