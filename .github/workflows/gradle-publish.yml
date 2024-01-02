@@ -1,0 +1,56 @@
+name: Gradle Package
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run chmod to make gralew executable
+      run: chmod +x ./gradlew
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+      env: 
+        JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+        MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+        s3AccessKey: ${{ secrets.S3ACCESSKEY }}
+        s3SecretAccessKey: ${{ secrets.S3SECRETACCESSKEY }}
+        TEST_DB_URL: ${{ secrets.TEST_DB_URL }}
+        TEST_DB_USERNAME: ${{ secrets.TEST_DB_USERNAME }}
+      with:
+        arguments: build
+
+    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
+    # the publishing section of your build.gradle
+    - name: Publish to GitHub Packages
+      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+      with:
+        arguments: publish
+      env:
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #테스트

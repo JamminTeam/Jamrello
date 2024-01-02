@@ -63,7 +63,7 @@ public class CardServiceImplV1IntegrationTest {
     @BeforeEach
     void setUp() {
         member = new Member("user1", "password", "user1", "user@email.com");
-        board = new Board("제목", "#000000", false);
+        board = new Board("제목", "#000000");
         catalog = new Catalog("제목", 1L, board, true);
         cardRequestDto = new CardRequestDto("제목", null, null);
 
@@ -251,7 +251,7 @@ public class CardServiceImplV1IntegrationTest {
             });
 
             // then
-            assertEquals(ErrorCode.REJECTED_EXECUSION, e.getErrorCode());
+            assertEquals(ErrorCode.YOUR_NOT_COME_IN, e.getErrorCode());
         }
     }
 
