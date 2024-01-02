@@ -18,6 +18,9 @@ jobs:
       - name: Run chmod to make gralew executable
         run: chmod +x ./gradlew
 
+      - name: Start MySQL with Docker Compose
+        run: docker-compose up -d
+
       - name: Create appliction-test.properties
         run: | 
           touch ./src/main/resources/application-test.properties
@@ -37,13 +40,13 @@ jobs:
         with:
           redis-version: 6
 
-      - name: Setup MySQL
-        uses: mirromutth/mysql-action@v1.1
-        with:
-          host port: 3306
-          container port: 3306
-          mysql database: 'jamrello_test'
-          mysql root password: test
+      # - name: Setup MySQL
+      #   uses: mirromutth/mysql-action@v1.1
+      #   with:
+      #     host port: 3306
+      #     container port: 3306
+      #     mysql database: 'jamrello_test'
+      #     mysql root password: test
 
       - name: Build with Gradle
         # uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
