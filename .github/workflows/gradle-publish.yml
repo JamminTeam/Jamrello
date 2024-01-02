@@ -18,12 +18,6 @@ jobs:
       - name: Run chmod to make gralew executable
         run: chmod +x ./gradlew
 
-      - name: Start MySQL with Docker Compose
-        run: docker-compose up -d
-        
-      - name: checkDocker
-        run: docker ps
-
       - name: Create appliction-test.properties
         run: | 
           touch ./src/main/resources/application-test.properties
@@ -37,6 +31,9 @@ jobs:
           distribution: 'temurin'
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
+          
+      - name: Start MySQL with Docker Compose
+        run: docker-compose up -d
 
       - name: Start Redis
         uses: supercharge/redis-github-action@1.1.0
