@@ -33,9 +33,9 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
           
       - name: Run Database SQL
-        uses: docker-compose-action@v2
+        uses: docker/compose-action@v2
         with:
-          compose-file: ./docker-compose.yml
+          compose-file: docker-compose.yml
           service-name: mysql-db
           service-wait-text: "제발 돼라.ㅠ.ㅠㅠ.ㅠ.ㅠ.ㅠㅠ.ㅠㅠㅠㅠ"
 
