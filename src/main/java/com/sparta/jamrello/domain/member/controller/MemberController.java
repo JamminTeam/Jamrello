@@ -38,22 +38,8 @@ public class MemberController {
 
   @PostMapping("/email")
   public ResponseEntity<BaseResponse> authenticationEmail (
-      @Valid @RequestBody EmailRequestDto emailRequestDto,
-      BindingResult bindingResult
+      @Valid @RequestBody EmailRequestDto emailRequestDto
   ) {
-    // Validation 예외처리
-    List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-    if (fieldErrors.size() > 0) {
-      for (FieldError fieldError : bindingResult.getFieldErrors()) {
-        log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-      }
-      return ResponseEntity.status(ErrorCode.INVALID_VALUE.getStatus()).body(
-          BaseResponse.of(
-              ErrorCode.INVALID_VALUE.getMsg(),
-              ErrorCode.INVALID_VALUE.getStatus().value(),
-              emailRequestDto
-          ));
-    }
 
     memberService.sendCodeToEmail(emailRequestDto);
     return ResponseEntity.ok().body(BaseResponse.of(ResponseCode.SEND_MAIL, emailRequestDto));
@@ -61,22 +47,8 @@ public class MemberController {
 
   @PostMapping("/signup")
   public ResponseEntity<BaseResponse<String>> signupMember (
-      @Valid @RequestBody SignupRequestDto signupRequestDto,
-      BindingResult bindingResult
+      @Valid @RequestBody SignupRequestDto signupRequestDto
   ) {
-    // Validation 예외처리
-    List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-    if (fieldErrors.size() > 0) {
-      for (FieldError fieldError : bindingResult.getFieldErrors()) {
-        log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-      }
-      return ResponseEntity.status(ErrorCode.INVALID_VALUE.getStatus()).body(
-          BaseResponse.of(
-              ErrorCode.INVALID_VALUE.getMsg(),
-              ErrorCode.INVALID_VALUE.getStatus().value(),
-              ""
-          ));
-    }
 
     memberService.signup(signupRequestDto);
     return ResponseEntity.status(201).body(BaseResponse.of(ResponseCode.SIGNUP, ""));
@@ -113,7 +85,7 @@ public class MemberController {
   ) {
     memberService.deleteMember(memberId, deleteMemberRequestDto, loginMember);
     return ResponseEntity.status(ResponseCode.DELETE_USER.getHttpStatus()).body(
-        BaseResponse.of(ResponseCode.DELETE_USER, "")
+        BaseResponse.of(ResponseCode.DELETE_USER, null)
     );
   }
 

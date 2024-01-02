@@ -10,10 +10,10 @@ public enum ResponseCode {
   /* 200 OK */
   /* uSER */
   OK(200, "요청 성공"),
-  SEND_MAIL(200, "이메일이 발송 완료."),
+  SEND_MAIL(200, "이메일이 발송되었습니다. 이메일을 확인해주세요."),
   LOGIN(200, "로그인 성공"),
   SUCCESS_REISSUANCETOKEN(200, "토큰이 재발급되었습니다. 다시 시도해주세요."),
-  LOGOUT(200, "로그아웃 성공"),
+  LOGOUT(200, "로그아웃 되었습니다."),
   GET_MY_PROFILE(200, "회원정보 가져오기 성공"),
   UPDATE_MY_PROFILE(200, "회원정보 수정 완료"),
   WITHDRAW_MEMBER(200, "회원탈퇴 완료"),

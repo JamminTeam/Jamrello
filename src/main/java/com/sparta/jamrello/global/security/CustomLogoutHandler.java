@@ -45,11 +45,11 @@ public class CustomLogoutHandler implements LogoutHandler {
     try {
       if (!jwtUtil.validateToken(accessToken)) {
         log.error("유효하지않은 AccesToken");
-        response.setStatus(401);
+        response.setStatus(403);
         response.setCharacterEncoding("utf-8");
         try {
           PrintWriter writer = response.getWriter();
-          writer.println(" 401 : UNAUTHORIZED");
+          writer.println(" 403 : Forbidden");
           writer.println("유효하지 않은 AccessToken입니다.");
         } catch (IOException ex) {
           throw new RuntimeException(ex);
@@ -58,11 +58,11 @@ public class CustomLogoutHandler implements LogoutHandler {
       }
     } catch (ExpiredJwtException e) {
       log.error("만료된 AccesToken");
-      response.setStatus(401);
+      response.setStatus(403);
       response.setCharacterEncoding("utf-8");
       try {
         PrintWriter writer = response.getWriter();
-        writer.println(" 401 : UNAUTHORIZED");
+        writer.println(" 403 : Forbidden");
         writer.println("만료된 AccessToken입니다.");
       } catch (IOException ex) {
         throw new RuntimeException(ex);
