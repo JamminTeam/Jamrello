@@ -23,6 +23,10 @@ jobs:
       packages: write
 
     steps:
+      - uses: actions/checkout@v3
+      - name: Run chmod to make gralew executable
+        run: chmod +x ./gradlew
+
       - name: Create appliction.properties
         run: | 
           pwd
@@ -37,10 +41,6 @@ jobs:
           touch ./src/main/resources/application-test.properties
           echo "${{ secrets.APPLICATION_TEST }}" > ./src/main/resources/application-test.properties
           cat ./src/main/resources/application-test.properties
-
-      - uses: actions/checkout@v3
-      - name: Run chmod to make gralew executable
-        run: chmod +x ./gradlew
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
