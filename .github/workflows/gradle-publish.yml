@@ -53,7 +53,7 @@ jobs:
       # uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
       run: |
         chmod +x ./gradlew
-        ./gradlew build
+        ./gradlew build -x test
       # with:
       #   arguments: build
     - name: Test with Gradle
