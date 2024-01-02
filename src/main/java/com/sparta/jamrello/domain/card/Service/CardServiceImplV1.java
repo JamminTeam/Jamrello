@@ -39,8 +39,11 @@ public class CardServiceImplV1 implements CardService {
 
         Catalog catalog = findCatalog(catalogId);
         Member member = findMember(memberId);
-        Card card = Card.builder()
-            .title(requestDto.title()).member(member).catalog(catalog).build();
+        Card card = Card.createCard(requestDto, member, catalog);
+
+        if (card.getBackgroundColor() == null || card.getBackgroundColor().isBlank()) {
+            card.updateBackgroundColor("#ffffff");
+        }
 
         card.updatePosition((long) (catalog.getCardList().size() + 1));
         cardRepository.save(card);
@@ -55,8 +58,10 @@ public class CardServiceImplV1 implements CardService {
 
         Catalog catalog = findCatalog(catalogId);
 
-        List<Card> cardList = catalog.getCardList();
-        cardList.sort(Comparator.comparing(Card::getPosition));
+        List<Card> cardList = catalog.getCardList().stream()
+            .filter(card -> !card.isStatus())
+            .sorted(Comparator.comparing(Card::getPosition))
+            .toList();
 
         return cardList.stream()
             .map(card -> card.createResponseDto(card)).toList();
@@ -82,13 +87,23 @@ public class CardServiceImplV1 implements CardService {
 
     @Override
     @Transactional
-    public CardResponseDto updateCardDueDay(Long cardId, Long memberId, CardDuedateRequestDto requestDto) {
+    public CardResponseDto updateCardDueDay(Long cardId, Long memberId,
+        CardDuedateRequestDto requestDto) {
 
         Card card = findCard(cardId);
         checkMember(memberId, card);
         card.updateCardDueDay(requestDto);
 
         return card.createResponseDto(card);
+    }
+
+    @Override
+    @Transactional
+    public void keepCard(Long cardId, Long memberId) {
+
+        Card card = findCard(cardId);
+        checkMember(memberId, card);
+        card.updateStatus();
     }
 
     @Override

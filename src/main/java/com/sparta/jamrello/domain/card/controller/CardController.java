@@ -85,10 +85,23 @@ public class CardController {
         @AuthUser Member member,
         @RequestBody CardDuedateRequestDto requestDto) {
 
-        CardResponseDto responseDto = cardService.updateCardDueDay(cardId, member.getId(), requestDto);
+        CardResponseDto responseDto = cardService.updateCardDueDay(cardId, member.getId(),
+            requestDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(
             BaseResponse.of(ResponseCode.UPDATE_CARD, responseDto)
+        );
+    }
+
+    @DeleteMapping("/cards/{cardId}/keep")
+    public ResponseEntity<BaseResponse<String>> keepCard(
+        @PathVariable Long cardId,
+        @AuthUser Member member
+    ) {
+        cardService.keepCard(cardId, member.getId());
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+            BaseResponse.of(ResponseCode.KEEP_CARD, "")
         );
     }
 

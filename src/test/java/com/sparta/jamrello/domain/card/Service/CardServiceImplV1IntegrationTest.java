@@ -3,6 +3,7 @@ package com.sparta.jamrello.domain.card.Service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.sparta.jamrello.domain.board.entity.Board;
 import com.sparta.jamrello.domain.board.repository.BoardRepository;
@@ -93,6 +94,22 @@ public class CardServiceImplV1IntegrationTest {
 
         // then
         assertNull(deletedCard);
+    }
+
+    @Test
+    @DisplayName("카드 보관 성공")
+    @Transactional
+    void keepCardTest() {
+        // given
+        CardResponseDto card = cardService.createCard(catalog.getId(), member.getId(),
+            cardRequestDto);
+
+        // when
+        cardService.keepCard(card.id(), member.getId());
+        Card updatedCard = cardRepository.findById(card.id()).orElse(null);
+
+        // then
+        assertTrue(updatedCard.isStatus());
     }
 
     @Test

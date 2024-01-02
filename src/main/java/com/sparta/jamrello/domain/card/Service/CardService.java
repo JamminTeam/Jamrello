@@ -21,6 +21,8 @@ public interface CardService {
 
     CardResponseDto updateCardDueDay(Long cardId, Long memberId, CardDuedateRequestDto requestDto);
 
+    void keepCard(Long cardId, Long memberId);
+
     void deleteCard(Long cardId, Long memberId);
 
     void addCollaborator(Long cardId, Long memberId, CardCollaboratorRequestDto requestDto);
