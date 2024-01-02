@@ -29,15 +29,12 @@ jobs:
 
       - name: Create appliction.properties
         run: | 
-          pwd
-          ls -al
           touch ./src/main/resources/application.properties
           echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
           cat ./src/main/resources/application.properties
 
       - name: Create appliction-test.properties
         run: | 
-          pwd
           touch ./src/main/resources/application-test.properties
           echo "${{ secrets.APPLICATION_TEST }}" > ./src/main/resources/application-test.properties
           cat ./src/main/resources/application-test.properties
@@ -67,14 +64,17 @@ jobs:
           mysql root password: 'test'
 
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
-        # run: |
-        #   chmod +x ./gradlew
-          # ./gradlew build -x test
-        with:
-          arguments: build
+        # uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build -x test
+        # with:
+          # arguments: build
+      - name: Test with Gradle
+        run: ./gradlew test-Dspring.config.location=classpath:application-test.properties
       # - name: Test with Gradle
-      #   run: ./gradlew test
+        # run: | 
+          # ./gradlew test-Dspring.config.location=classpath:application-test.properties
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
