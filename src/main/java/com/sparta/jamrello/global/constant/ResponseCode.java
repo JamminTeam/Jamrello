@@ -33,6 +33,7 @@ public enum ResponseCode {
   MOVE_CATALOG_POSITION(200, "카탈로그 순서 이동 완료"),
 
   /* CARD */
+  KEEP_CARD(200, "카탈로그 보관 완료"),
   UPDATE_CARD(200, "카드 수정 완료"),
   DELETE_CARD(200, "카드 삭제 완료"),
   GET_CARD_CONTENT(200, "카드 조회 성공"),
