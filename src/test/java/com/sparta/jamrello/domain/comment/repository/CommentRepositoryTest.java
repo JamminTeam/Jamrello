@@ -39,20 +39,21 @@ class CommentRepositoryTest {
     @BeforeEach
     void setUp() {
         member = memberRepository.save(Member.builder()
-            .username("testUser")
-            .password("password")
-            .nickname("nickname")
-            .email("email@email.com")
-            .build()
+                .username("testUser")
+                .password("password")
+                .nickname("nickname")
+                .email("email@email.com")
+                .build()
         );
         Card card = cardRepository.save(Card.builder()
-            .title("Test Card")
-            .build());
+                .title("Test Card")
+                .backgroundColor("#ffffff")
+                .build());
         comment = commentRepository.save(Comment.builder()
-            .member(member)
-            .card(card)
-            .content("test comment")
-            .build());
+                .member(member)
+                .card(card)
+                .content("test comment")
+                .build());
     }
 
     @AfterEach
@@ -78,7 +79,7 @@ class CommentRepositoryTest {
         int pageSize = 10;
         Pageable pageable = PageRequest.of(0, pageSize);
         Page<Comment> commentsPage = commentRepository.findAllCommentsWithPagination(
-            pageable);
+                pageable);
 
         assertThat(commentsPage).isNotNull();
         assertThat(commentsPage.getContent()).isNotNull();
