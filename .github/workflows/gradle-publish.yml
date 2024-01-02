@@ -24,9 +24,9 @@ jobs:
       uses: samin/mysql-action@v1
       with:
         character set server: 'utf8'
-        mysql database: jamrello_test
-        mysql user: root
-        mysql password: test
+        mysql database: 'jamrello_test'
+        mysql user: 'root'
+        mysql password: 'test'
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
