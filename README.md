@@ -1,22 +1,22 @@
-## 😎 Jamrello - 재밌는 잼렐로
+# 😎 Jamrello - 재밌는 잼렐로
 <img width="512" alt="스크린샷 2024-01-02 오전 12 14 48" src="https://github.com/JamminTeam/Jamrello/assets/123870616/195e0e84-5225-4ed3-919d-1b9bf1c1aaf6"> <br>
 오늘 일은 내일로? 잼렐로와 함께면 바로바로!
 
-## 😎 개발환경
+# 😎 개발환경
 언어 - JDK 17<br>
 환경 - SpringBoot 3.2.1<br>
 배포 환경 - AWS S3 / EC2 / ELASTICACHE<br>
 DB - MySQL 8.1, Redis<br>
+<br>
 
-
-## 😎 시연 영상
+# 😎 시연 영상
 [![잼렐로 시연영상](http://img.youtube.com/vi/2JrGnKTE0IU/0.jpg)](https://youtu.be/2JrGnKTE0IU?t=0s)
-
-## 😎 Links
+<br>
+# 😎 Links
 <a href="https://documenter.getpostman.com/view/30896712/2s9YsDmFos"> PostMan </a> <br>
 <a href="https://www.notion.so/10-ee5b850bfa1a44ea8dc9758b10dc957a?pvs=4"> Notion </a>
-
-## 😎 Role
+<br>
+# 😎 Role
 
 | Name | Role |
 | --- | --- |
@@ -26,7 +26,7 @@ DB - MySQL 8.1, Redis<br>
 | 김지현 | Card API |
 | 문정현 | Card Detail API |
 
-## 😎 Commit Convention
+# 😎 Commit Convention
 
 | Tag Name | Description |
 | --- | --- |
@@ -36,22 +36,20 @@ DB - MySQL 8.1, Redis<br>
 | refactor | 리팩토링 |
 | !HOTFIX | 메인 핫 픽스 |
 
-## 😎 Pipeline
+# 😎 Pipeline
 
 ![스크린샷 2024-01-03 오후 3 20 30](https://github.com/JamminTeam/Jamrello/assets/123870616/8553fee6-daac-4e4e-a84e-484e81a57c62)
 
-
-## 😎 UI/UX
+# 😎 UI/UX
 
 ![image](https://github.com/JamminTeam/Jamrello/assets/123870616/7028a087-2ec2-4455-8965-b6fef6b6e085)
 
-
-## 😎 ERD
+# 😎 ERD
 
 ![image](https://github.com/JamminTeam/Jamrello/assets/123870616/abe3775c-eb26-4371-9c52-9888f8ad20ba)
 
 
-## 😎 API 명세서
+# 😎 API 명세서
 
 ### User API
 
@@ -109,7 +107,7 @@ DB - MySQL 8.1, Redis<br>
 | 댓글 삭제 | /api/comment/{commentId} | Delete | Access Token |
 | 날짜 지정 | /api/card/{cardId}/due | Patch | Access Token |
 
-## 😎 파일구조
+# 😎 파일구조
 
 ```java
 📦─ src
@@ -201,17 +199,18 @@ DB - MySQL 8.1, Redis<br>
 
 ```
 
-## 😎 Technical Decision
+# 😎 Technical Decision
 
 1. 순서 옮기기 로직
 - 삽입 정렬
 - Between 벌크 연산
 <br>
+
 2. 정적 팩토리 메소드 + 빌더 패턴 사용
 - 의미 있는 이름으로 메서드 명을 지을 수 있다는 장점
 - 빌더 패턴을 쓸 때, 잊을 수도 있는 필드 값을 한 곳에서 관리 할 수 있다는 장점으로 위 패턴 채택
 
-## 😎 TrubleShooting!
+# 😎 TrubleShooting!
 
 ## 1. 통합 환경 테스트에서 환경 변수를 못읽는 오류
     
