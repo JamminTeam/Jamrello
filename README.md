@@ -2,7 +2,15 @@
 <img width="512" alt="스크린샷 2024-01-02 오전 12 14 48" src="https://github.com/JamminTeam/Jamrello/assets/123870616/195e0e84-5225-4ed3-919d-1b9bf1c1aaf6"> <br>
 오늘 일은 내일로? 잼렐로와 함께면 바로바로!
 
+## 😎 개발환경
+언어 - JDK 17<br>
+환경 - SpringBoot 3.2.1<br>
+배포 환경 - AWS S3 / EC2 / ELASTICACHE<br>
+DB - MySQL 8.1, Redis<br>
+
+
 ## 😎 시연 영상
+[![잼렐로 시연영상](http://img.youtube.com/vi/2JrGnKTE0IU/0.jpg)](https://youtu.be/2JrGnKTE0IU?t=0s)
 
 ## 😎 Links
 <a href="https://documenter.getpostman.com/view/30896712/2s9YsDmFos"> PostMan </a> <br>
