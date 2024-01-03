@@ -54,7 +54,7 @@ public enum ResponseCode {
   /* 201 CREATED */
   SIGNUP(201, "회원가입 성공"),
   CREATED_BOARD(201, "보드 생성 성공"),
-  CREATED_CATALOG(201, "카탈로그 생성 성공"),
+  CREATED_CATALOG(201, "카탈로그 생성 성공!!"),
   CREATED_CARD(201, "카드 생성 성공"),
   CREATED_COMMENT(201, "댓글 생성 성공");
 
