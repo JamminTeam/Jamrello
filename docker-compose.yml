@@ -1,8 +1,1 @@
-version: 3
-service:
-    jamrello:
-        image: wonow/jamrello
-        restart: always
-        container_name: jamrello
-        ports:
-         - 8080:8080
+
