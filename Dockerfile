@@ -1,5 +1,7 @@
-FROM openjdk:17-jdk-slim
-EXPOSE 8080
-ARG JAR_FILE=/build/libs/Jamrello-0.0.1-SNAPSHOT.jar
+FROM openjdk:17 as build
+
+ARG JAR_FILE=/build/libs/*.jar
+
 COPY ${JAR_FILE} app.jar
+
 ENTRYPOINT ["java","-jar","-Dspring.profiles.active=dev","/app.jar"]
