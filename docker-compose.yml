@@ -1,16 +1,8 @@
-version: '3.8'
-services:
-  mysql-db:
-    image: mysql:latest
-    container_name: mysql-container
-    environment:
-      MYSQL_ROOT_PASSWORD: test
-      MYSQL_DATABASE: jamrello_test
-      MYSQL_USER: root
-      MYSQL_PASSWORD: test
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-volumes:
-  mysql-data:
+version: 3
+service:
+    jamrello:
+        image: wonow/jamrello
+        restart: always
+        container_name: jamrello
+        ports:
+         - 8080:8080
