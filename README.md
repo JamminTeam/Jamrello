@@ -15,7 +15,7 @@ DB - MySQL 8.1, Redis<br>
 # 😎 Links
 <a href="https://documenter.getpostman.com/view/30896712/2s9YsDmFos"> PostMan </a> <br>
 <a href="https://www.notion.so/10-ee5b850bfa1a44ea8dc9758b10dc957a?pvs=4"> Notion </a> <br>
-<a href="https://www.miricanvas.com/v/12rx2ok"> PPT </a>
+<a href="https://www.miricanvas.com/v/12rx5c8"> PPT </a>
 <br>
 # 😎 Role
 
